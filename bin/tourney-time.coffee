@@ -1,7 +1,7 @@
 #!/usr/bin/env coffee
 
 argv = require('yargs')
-  .usage('Usage: $0 -teams [num] -time [num] -rest [num] -areas [num]')
+  .usage('Usage: $0 --teams [num] --time [num] --rest [num] --areas [num]')
   .demand(['teams'])
   .default('time', 33)
   .default('rest', 7)
