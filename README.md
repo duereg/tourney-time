@@ -20,6 +20,8 @@ Options:
   --rest   [default: 7]
   --areas  [default: 1]
 
+  Example: tourney-time --teams 28 --time 20 --rest 10 --areas 3
+
 ## Testing
 
     npm test
