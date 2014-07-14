@@ -3,14 +3,22 @@
 [![Dependency status](https://david-dm.org/duereg/tourney-time.svg)](https://david-dm.org/duereg/tourney-time)
 [![devDependency Status](https://david-dm.org/duereg/tourney-time/dev-status.svg)](https://david-dm.org/duereg/tourney-time#info=devDependencies)
 [![Build Status](https://secure.travis-ci.org/duereg/tourney-time.svg?branch=master)](https://travis-ci.org/duereg/tourney-time)
-
+<!--
 [![NPM](https://nodei.co/npm/tourney-time.svg)](https://npmjs.org/package/tourney-time)
-
+ -->
 ## Installation
 
     npm install tourney-time
 
 ## Usage Example
+
+  Usage: tourney-time -teams [num] -time [num] -rest [num] -areas [num]
+
+Options:
+  --teams  [required]
+  --time   [default: 33]
+  --rest   [default: 7]
+  --areas  [default: 1]
 
 ## Testing
 
