@@ -1,0 +1,104 @@
+Seems need two types of modules:
+
+regular season calculator
+playoff calculator
+
+Assuming:
+ * full round robin
+ * knockout playoff (expect for bronze)
+ * drop out for teams below threshold
+
+game length
+time needed between games (travel/rest time)
+time per day
+number days
+playing areas
+number of teams
+
+round robin games = (N(N + 1))/2 where N = teams - 1
+
+time needed = (totalGames * (gameLength + travel) ) / playingAreas
+
+where totalGames = teams + ((teams - 1)(teams))/2
+
+2 = 1
+4 = 2
+8 = 3
+12 = 4
+16 = 4
+20 = 5
+24 = 5
+
+mod by 4
+largest power 2 that can divide evenly
+
+8 = 8, no extra
+12 = 8, 4 extra
+16 = 16, no extra
+20 = 16, 4 extra
+24 = 16, 8 extra
+28 = 16, 12 extra *** doesn't work ***
+32 = 32
+
+if no extra, keep dividing by two until you get last round - then two games
+if extra, another round with # of games equal to extra, then start dividing again.
+
+8 Teams: 8 Game Playoffs
+
+1x8 2x7 3x6 4x5
+
+1x4 2x3
+
+1x2 3x4
+
+10 Teams: Drop 2, 8 Playoff Games
+
+
+12 Teams: 12 Games
+
+5x12 6x11 7x10 8x9
+
+1x8 2x7 3x6 4x5
+
+1x4 2x3
+
+1x2 3x4
+
+
+16 teams: 16 game playoffs
+
+1x16 2x15 3x14 4x13 5x12 6x11 7x10 8x9
+
+1x8 2x7 3x6 4x5
+
+1x4 2x3
+
+1x2 3x4
+
+20 Teams: 20 Game Playoffs
+
+1x16 2x15 3x14 4x13 5x12 6x11 7x10 8x9
+
+1x8 2x7 3x6 4x5
+
+1x8 2x7 3x6 4x5
+
+1x4 2x3
+
+1x2 3x4
+
+24 Teams: 24 Game Playoffs
+
+1x16 2x15 3x14 4x13 5x12 6x11 7x10 8x9
+
+1x16 2x15 3x14 4x13 5x12 6x11 7x10 8x9
+
+1x8 2x7 3x6 4x5
+
+1x4 2x3
+
+1x2 3x4
+
+
+
+

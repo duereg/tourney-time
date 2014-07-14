@@ -9,6 +9,7 @@ expect = chai.expect
 chai.use require 'sinon-chai'
 
 describe 'tourney-time', ->
-  it 'works', ->
-    actual = tourneyTime 'World'
-    expect(actual).to.eql 'Hello World'
+  describe 'given all options', ->
+    it 'generates correct output', ->
+      actual = tourneyTime {teams: 10, time: 30, rest: 10, areas: 2}
+      expect(actual).to.eql {"roundRobinGames":55,"playoffGames":8,"totalGames":63,"timeNeededMinutes":1260,"timeNeededHumanize":"21 hours"}

@@ -1,14 +1,17 @@
 {
   "name": "tourney-time",
   "version": "0.0.1",
-  "description": "Awesome module",
+  "description": "figure out time needed to run tournament",
   "keywords": [],
   "homepage": "https://github.com/duereg/tourney-time",
   "bugs": "https://github.com/duereg/tourney-time/issues",
   "author": {
     "name": "Matt",
-    "email": "",
+    "email": "matt@mattblair.co",
     "url": "https://github.com/duereg"
+  },
+  "bin": {
+    "tourney-time": "./bin/tourney-time.coffee"
   },
   "main": "./lib/tourney-time.js",
   "repository": {
@@ -16,10 +19,12 @@
     "url": "https://github.com/duereg/tourney-time.git"
   },
   "scripts": {
+    "build": "./node_modules/.bin/coffee --bare --output ./lib --compile ./src/*.coffee",
     "test": "./node_modules/.bin/mocha test/*.spec.coffee",
     "pretest": "./node_modules/.bin/coffee --bare --output ./lib --compile ./src/*.coffee"
   },
   "dependencies": {
+    "moment": "2.7.0",
     "yargs": "1.2.6"
   },
   "devDependencies": {
