@@ -1,0 +1,38 @@
+{
+  "name": "tourney-time",
+  "version": "0.0.1",
+  "description": "Awesome module",
+  "keywords": [],
+  "homepage": "https://github.com/duereg/tourney-time",
+  "bugs": "https://github.com/duereg/tourney-time/issues",
+  "author": {
+    "name": "Matt",
+    "email": "",
+    "url": "https://github.com/duereg"
+  },
+  "main": "./lib/tourney-time.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/duereg/tourney-time.git"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/mocha test/*.spec.coffee",
+    "pretest": "./node_modules/.bin/coffee --bare --output ./lib --compile ./src/*.coffee"
+  },
+  "dependencies": {
+    "yargs": "1.2.6"
+  },
+  "devDependencies": {
+    "coffee-script": "^1.7.1",
+    "coffee-errors": "^0.8.5",
+    "sinon": "^1.9.1",
+    "sinon-chai": "^2.5.0",
+    "mocha": "^1.18.2",
+    "chai": "^1.9.1"
+  },
+  "engines": {
+    "node": ">=0.10.0",
+    "npm": ">=1.2.10"
+  },
+  "license": "MIT"
+}
