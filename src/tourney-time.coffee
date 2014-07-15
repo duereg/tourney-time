@@ -1,5 +1,3 @@
-{duration} = require('moment')
-
 module.exports = ({teams, time, rest, areas}) ->
   roundRobinGames = teams + ((teams - 1) * teams) / 2
   playoffGames = teams - (teams % 4)
@@ -7,5 +5,5 @@ module.exports = ({teams, time, rest, areas}) ->
 
   timeNeeded = (totalGames * (time + rest) ) / areas
 
-  {roundRobinGames, playoffGames, totalGames, timeNeededMinutes: timeNeeded, timeNeededHumanize: duration(timeNeeded, 'minutes').humanize()}
+  {roundRobinGames, playoffGames, totalGames, timeNeededMinutes: timeNeeded}
 
