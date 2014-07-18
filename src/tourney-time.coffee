@@ -1,9 +1,14 @@
+regularGamesCalculator = require 'regular/round-robin'
+playoffGamesCalculator = require 'playoffs/knockout'
+timeNeededCalculator = require 'timing/standard'
+
 module.exports = ({teams, time, rest, areas}) ->
-  roundRobinGames = teams + ((teams - 1) * teams) / 2
-  playoffGames = teams - (teams % 4)
-  totalGames = roundRobinGames + playoffGames
+  throw new Error("You must have at least two teams to continue") if teams < 2
 
-  timeNeeded = (totalGames * (time + rest) ) / areas
+  regularGames = regularGamesCalculator teams
+  playoffGames = playoffGamesCalculator teams
 
-  {roundRobinGames, playoffGames, totalGames, timeNeededMinutes: timeNeeded}
+  timeNeeded = timeNeededCalculator {regularGames, playoffGames, gameTime: time, restTime: rest, areas}
+
+  {regularGames, playoffGames, timeNeededMinutes: timeNeeded}
 

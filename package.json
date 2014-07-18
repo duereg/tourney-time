@@ -36,7 +36,8 @@
     "gulp-util": "^2.2.20",
     "mocha": "^1.18.2",
     "sinon": "^1.9.1",
-    "sinon-chai": "^2.5.0"
+    "sinon-chai": "^2.5.0",
+    "underscore": "^1.6.0"
   },
   "engines": {
     "node": ">=0.10.0",

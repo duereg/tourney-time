@@ -101,4 +101,12 @@ if extra, another round with # of games equal to extra, then start dividing agai
 
 
 
+# pods = teams / 4
+# smallPod = modulo
+
+# # first day
+# dayOne = pods * 3 + (smallPod -1) if smallPod > 0
+
+# dayTwo =
+
 
