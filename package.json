@@ -24,7 +24,6 @@
     "pretest": "gulp"
   },
   "dependencies": {
-    "moment": "2.7.0",
     "yargs": "1.2.6"
   },
   "devDependencies": {
