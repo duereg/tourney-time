@@ -11,11 +11,11 @@ argv = require('yargs')
   .argv
 
 {teams, time, rest, areas} = argv
-{timeNeededMinutes, roundRobinGames, playoffGames} = require('../lib/tourney-time')(argv)
+{timeNeededMinutes, regularGames, playoffGames} = require('../lib/tourney-time')(argv)
 
 console.log """For #{teams} teams
                Playing #{time} minute games
                with #{rest} minute breaks in between games
                on #{areas} playing area(s)
-               you'll play #{roundRobinGames + playoffGames} total games (#{roundRobinGames} regular games and #{playoffGames} playoff games)
+               you'll play #{regularGames + playoffGames} total games (#{regularGames} regular games and #{playoffGames} playoff games)
                which will take #{duration(timeNeededMinutes, 'minutes').humanize()}"""
