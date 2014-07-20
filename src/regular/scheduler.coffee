@@ -5,4 +5,5 @@ module.exports = (teams) ->
   if teams > 8
     {type: 'pods', games: pods(teams)}
   else
-    {type: 'round robin', games: roundRobin(teams)}
+    tourney = roundRobin(teams)
+    {type: 'round robin', games: tourney.games}

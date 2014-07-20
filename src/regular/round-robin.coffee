@@ -1,2 +1,8 @@
+robinSchedule = require 'roundrobin'
+_ = require 'underscore'
+
 module.exports = (teams) ->
-  ((teams - 1) * teams) / 2
+  schedule = _(robinSchedule(teams)).flatten(true)
+  games = schedule.length
+  {games, schedule}
+

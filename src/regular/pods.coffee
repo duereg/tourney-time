@@ -5,9 +5,9 @@ calculateDivisionGames = (teamsInDivision, numOfDivisions, leftOverTeams) ->
 
   for i in [0...numOfDivisions] by 1
     if i < leftOverTeams
-      divisionGames += roundRobin(teamsInDivision + 1)
+      divisionGames += roundRobin(teamsInDivision + 1).games
     else
-      divisionGames += roundRobin(teamsInDivision)
+      divisionGames += roundRobin(teamsInDivision).games
 
   divisionGames
 
@@ -27,7 +27,7 @@ module.exports = (teams) ->
   leftOverTeams = teams % teamsInPods
 
   #a bunch of mini round robins to determine divisions
-  podGames = roundRobin(teamsInPods) * numOfPods + roundRobin(leftOverTeams)
+  podGames = roundRobin(teamsInPods).games * numOfPods + roundRobin(leftOverTeams).games
 
   #round robins amongst the divisions
   divisionGames = calculateDivisionGames teamsInDivision, numOfDivisions, leftOverTeams
