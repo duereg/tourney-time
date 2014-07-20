@@ -20,7 +20,7 @@
   },
   "scripts": {
     "build": "gulp",
-    "test": "./node_modules/.bin/mocha test/*.spec.coffee",
+    "test": "./node_modules/.bin/mocha test/**/*.spec.coffee",
     "pretest": "gulp"
   },
   "dependencies": {
