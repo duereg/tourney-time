@@ -19,17 +19,39 @@ describe 'tourney-time', ->
 
     describe 'given two teams', ->
       it 'generates correct output', ->
-        expect(tourneyTime _(defaultTourney).extend(teams: 2)).to.eql {"regularGames": 1, "playoffGames": 0, "timeNeededMinutes": 40}
+        expect(tourneyTime _(defaultTourney).extend(teams: 2)).to.eql(
+          "playoffGames": 0
+          "timeNeededMinutes": 40,
+          "tourneySchedule":
+            "games": 1,
+            "type": "round robin"
+        )
 
     describe 'given three teams', ->
       it 'generates correct output', ->
-        expect(tourneyTime _(defaultTourney).extend(teams: 3)).to.eql {"regularGames": 3, "playoffGames": 0, "timeNeededMinutes": 80}
-
+        expect(tourneyTime _(defaultTourney).extend(teams: 3)).to.eql(
+          "playoffGames": 0
+          "timeNeededMinutes": 80,
+          "tourneySchedule":
+            "games": 3,
+            "type": "round robin"
+        )
     describe 'given three teams', ->
       it 'generates correct output', ->
-        expect(tourneyTime _(defaultTourney).extend(teams: 4)).to.eql {"regularGames": 6, "playoffGames": 4, "timeNeededMinutes": 200}
-
+        expect(tourneyTime _(defaultTourney).extend(teams: 4)).to.eql(
+          "playoffGames": 4
+          "timeNeededMinutes": 200,
+          "tourneySchedule":
+            "games": 6,
+            "type": "round robin"
+        )
     describe 'given ten teams, with all options', ->
       it 'generates correct output', ->
         actual = tourneyTime _(defaultTourney).extend teams: 10
-        expect(actual).to.eql {"regularGames": 45, "playoffGames": 8, "timeNeededMinutes": 1080}
+        expect(actual).to.eql(
+          "playoffGames": 8
+          "timeNeededMinutes": 720,
+          "tourneySchedule":
+            "games": 27,
+            "type": "pods"
+        )
