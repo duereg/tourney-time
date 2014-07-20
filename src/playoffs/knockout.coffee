@@ -1,2 +1,7 @@
 module.exports = (teams) ->
-  teams - (teams % 4)
+  if teams < 2
+    0
+  else if teams < 4
+    1
+  else
+    teams - (teams % 4)

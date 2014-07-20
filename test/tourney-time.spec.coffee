@@ -20,8 +20,8 @@ describe 'tourney-time', ->
     describe 'given two teams', ->
       it 'generates correct output', ->
         expect(tourneyTime _(defaultTourney).extend(teams: 2)).to.eql(
-          "playoffGames": 0
-          "timeNeededMinutes": 40,
+          "playoffGames": 1
+          "timeNeededMinutes": 80,
           "tourneySchedule":
             "games": 1,
             "type": "round robin"
@@ -30,13 +30,13 @@ describe 'tourney-time', ->
     describe 'given three teams', ->
       it 'generates correct output', ->
         expect(tourneyTime _(defaultTourney).extend(teams: 3)).to.eql(
-          "playoffGames": 0
-          "timeNeededMinutes": 80,
+          "playoffGames": 1
+          "timeNeededMinutes": 120,
           "tourneySchedule":
             "games": 3,
             "type": "round robin"
         )
-    describe 'given three teams', ->
+    describe 'given four teams', ->
       it 'generates correct output', ->
         expect(tourneyTime _(defaultTourney).extend(teams: 4)).to.eql(
           "playoffGames": 4
