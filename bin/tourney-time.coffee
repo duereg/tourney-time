@@ -14,10 +14,15 @@ argv = require('yargs')
 hours = Math.floor(timeNeededMinutes / 60)
 minutes = timeNeededMinutes % 60
 
+time = ""
+time += "#{hours} hours" if hours
+time += ', ' if hours and minutes
+time += "#{minutes} minutes" if minutes
+
 console.log """For #{teams} teams
                Playing #{time} minute games
                with #{rest} minute breaks in between games
                on #{areas} playing area(s)
                you'll play a #{tourneySchedule.type} tournament with #{tourneySchedule.games + playoffGames} total games
                #{tourneySchedule.games} tourney games and #{playoffGames} playoff games
-               which will take #{hours} hours, #{minutes} minutes """
+               which will take #{time} """
