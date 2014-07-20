@@ -12,7 +12,7 @@ chai.use require 'sinon-chai'
 describe 'tourney-time', ->
   describe 'given one team', ->
     it 'throws an error', ->
-      expect(tourneyTime).to.throw
+      expect(()-> tourneyTime teams:0).to.throw "You must have at least two teams to continue"
 
   describe 'with two playing areas, 30 min games, and 10 min rest', ->
     defaultTourney = {areas: 2, time: 30, rest: 10}
