@@ -19,14 +19,17 @@
     "url": "https://github.com/duereg/tourney-time.git"
   },
   "scripts": {
-    "build": "gulp",
-    "test": "./node_modules/.bin/mocha test/**/*.spec.coffee; ./node_modules/.bin/mocha test/*.spec.coffee",
-    "pretest": "gulp"
+    "test": "istanbul cover ./node_modules/.bin/mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
+    "pretest": "gulp",
+    "posttest": "rm -rf coverage"
   },
   "dependencies": {
     "yargs": "1.2.6"
   },
   "devDependencies": {
+    "coveralls": "^2.11.1",
+    "istanbul": "^0.3.0",
+    "mocha-lcov-reporter": "0.0.1",
     "chai": "^1.9.1",
     "coffee-errors": "^0.8.5",
     "coffee-script": "^1.7.1",
