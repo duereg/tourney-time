@@ -13,6 +13,7 @@
 
 ## Usage Example
 
+```shell
   Usage: tourney-time -teams [num] -time [num] -rest [num] -areas [num]
 
 Options:
@@ -20,8 +21,11 @@ Options:
   --time   [default: 33]
   --rest   [default: 7]
   --areas  [default: 1]
+```
 
+```shell
   Example: tourney-time --teams 28 --time 20 --rest 10 --areas 3
+```
 
 ## Testing
 
