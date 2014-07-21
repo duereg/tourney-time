@@ -38,6 +38,9 @@ Options:
 [Round Robin in C](http://www.math.niu.edu/~rusin/known-math/97/roundrobin)
 [Swiss System Tournament](http://en.wikipedia.org/wiki/Swiss_system_tournament)
 [Static Tournament Implementations](https://github.com/clux/tournament)
+[Fair Grouping for Tournaments](https://github.com/clux/group)
+[Single/Double Elimination Tournaments](https://github.com/clux/duel)
+[Group Stage Tournaments](https://github.com/clux/groupstage)
 
 ## License
 
