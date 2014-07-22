@@ -11,7 +11,7 @@ gulp.task 'coffee', ->
     .pipe gulp.dest './lib/'
 
 gulp.task 'test', ['coffee'], ->
-  gulp.src ['lib/**/*.js', 'lib/tourney-time.js']
+  gulp.src ['lib/**/*.js']
     .pipe(istanbul()) # Covering files
     .on 'finish', ->
       gulp.src(['test/**/*.spec.coffee'])
