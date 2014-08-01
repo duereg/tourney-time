@@ -27,4 +27,4 @@ console.log """For #{teams} teams
                #{tourneySchedule.games} tourney games and #{playoffGames} playoff games
                which will take #{totalTime} """
 
-console.log schedule
+console.log schedule if schedule?.length
