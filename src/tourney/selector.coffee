@@ -6,4 +6,4 @@ module.exports = (teams) ->
     {type: 'pods', games: pods(teams)}
   else
     tourney = roundRobin(teams)
-    {type: 'round robin', games: tourney.games}
+    {type: 'round robin', games: tourney.games, schedule: tourney.schedule}

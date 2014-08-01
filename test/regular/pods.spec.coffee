@@ -5,7 +5,7 @@ sinon = require 'sinon'
 expect = chai.expect
 chai.use require 'sinon-chai'
 
-pods = require 'regular/pods'
+pods = require 'tourney/pods'
 
 describe 'pods', ->
   it 'given no teams returns zero', ->

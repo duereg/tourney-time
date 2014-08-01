@@ -5,7 +5,7 @@ sinon = require 'sinon'
 expect = chai.expect
 chai.use require 'sinon-chai'
 
-roundRobin = require 'regular/round-robin'
+roundRobin = require 'tourney/round-robin'
 
 describe 'round robin', ->
   it 'given no teams returns zero games', ->

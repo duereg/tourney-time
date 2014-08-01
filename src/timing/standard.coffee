@@ -1,9 +1,9 @@
-module.exports = ({regularGames, playoffGames, gameTime, restTime, areas}) ->
+module.exports = ({tourneyGames, playoffGames, gameTime, restTime, areas}) ->
 
   calcAreaLength = (games) ->
     Math.floor(games / areas) + games % areas
 
-  regularAreaLength = calcAreaLength(regularGames)
+  tourneyAreaLength = calcAreaLength(tourneyGames)
   playoffAreaLength = calcAreaLength(playoffGames)
 
-  (regularAreaLength + playoffAreaLength) * (gameTime + restTime)
+  (tourneyAreaLength + playoffAreaLength) * (gameTime + restTime)

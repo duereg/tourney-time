@@ -26,3 +26,5 @@ console.log """For #{teams} teams
                you'll play a #{tourneySchedule.type} tournament with #{tourneySchedule.games + playoffGames} total games
                #{tourneySchedule.games} tourney games and #{playoffGames} playoff games
                which will take #{time} """
+
+console.log tourneySchedule
