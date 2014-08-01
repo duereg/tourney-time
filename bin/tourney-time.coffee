@@ -9,15 +9,15 @@ argv = require('yargs')
   .argv
 
 {teams, time, rest, areas} = argv
-{timeNeededMinutes, tourneySchedule, playoffGames} = require('../lib/tourney-time')(argv)
+{timeNeededMinutes, tourneySchedule, playoffGames, schedule} = require('../lib/tourney-time')(argv)
 
 hours = Math.floor(timeNeededMinutes / 60)
 minutes = timeNeededMinutes % 60
 
-time = ""
-time += "#{hours} hours" if hours
-time += ', ' if hours and minutes
-time += "#{minutes} minutes" if minutes
+totalTime = ""
+totalTime += "#{hours} hours" if hours
+totalTime += ', ' if hours and minutes
+totalTime += "#{minutes} minutes" if minutes
 
 console.log """For #{teams} teams
                Playing #{time} minute games
@@ -25,6 +25,6 @@ console.log """For #{teams} teams
                on #{areas} playing area(s)
                you'll play a #{tourneySchedule.type} tournament with #{tourneySchedule.games + playoffGames} total games
                #{tourneySchedule.games} tourney games and #{playoffGames} playoff games
-               which will take #{time} """
+               which will take #{totalTime} """
 
-console.log tourneySchedule
+console.log schedule
