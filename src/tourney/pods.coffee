@@ -1,4 +1,5 @@
 roundRobin = require './round-robin'
+getTeamNamesAndNumber = require './team-names-and-number'
 
 calculateDivisionGames = (teamsInDivision, numOfDivisions, leftOverTeams) ->
   divisionGames = 0
@@ -19,8 +20,9 @@ calculateCrossoverGames = (numOfPods, teamsInPods) ->
 
   crossOverGames
 
-
 module.exports = (teams) ->
+  {teams, names} = getTeamNamesAndNumber.apply(null, arguments)
+
   # How should you calculate how many pods you should have?
   teamsInPods = numOfDivisions = 4
   numOfPods = teamsInDivision = Math.floor(teams / teamsInPods)
@@ -35,6 +37,6 @@ module.exports = (teams) ->
   #cross over games (top of lower division plays bottom of division above)
   crossOverGames = calculateCrossoverGames numOfPods, teamsInPods
 
-  podGames + divisionGames + crossOverGames
+  {games: podGames + divisionGames + crossOverGames, schedule: [] }
 
 
