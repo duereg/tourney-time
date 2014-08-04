@@ -6,5 +6,8 @@ module.exports = (teams) ->
   if teams?.length
     names = teams
     teams = teams.length
+  else
+    names = []
+    names.push(name) for name in [1...teams + 1]
 
   { names, teams }
