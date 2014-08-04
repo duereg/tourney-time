@@ -4,6 +4,7 @@ gutil = require 'gulp-util'
 coffee = require 'gulp-coffee'
 istanbul = require 'gulp-istanbul'
 mocha = require 'gulp-mocha'
+rimraf = require 'rimraf'
 
 gulp.task 'coffee', ->
   gulp.src './src/**/*.coffee'
@@ -18,4 +19,7 @@ gulp.task 'test', ['coffee'], ->
         .pipe mocha reporter: 'spec', compilers: 'coffee:coffee-script'
         .pipe istanbul.writeReports() # Creating the reports after tests run
 
-gulp.task 'default', ['coffee']
+gulp.task 'clean', ->
+  rimraf.sync('lib')
+
+gulp.task 'default', ['clean', 'coffee']
