@@ -16,7 +16,7 @@ describe 'round robin', ->
       expect(roundRobin(0)).to.eql { games: 0, schedule: [], teams: [] }
 
     it 'given 1 team returns zero', ->
-      expect(roundRobin(1)).to.eql { games: 0, schedule: [], teams: [] }
+      expect(roundRobin(1)).to.eql { games: 0, schedule: [], teams: [1] }
 
     it 'given 2 teams returns 2 games with numbers for names', ->
       expect(roundRobin(2)).to.eql { games: 1, schedule: [[1,2]], teams: [1,2] }
@@ -38,7 +38,7 @@ describe 'round robin', ->
 
   describe 'given team names', ->
     it 'given 1 team returns zero', ->
-      expect(roundRobin(['goodie'])).to.eql { games: 0, schedule: [] }
+      expect(roundRobin(['goodie'])).to.eql { games: 0, schedule: [], teams: ['goodie'] }
 
     it 'given 2 teams returns 2 games with correct names', ->
       expect(roundRobin(['a', 'b'])).to.eql { games: 1, schedule: [['a','b']], teams: ['a', 'b'] }
