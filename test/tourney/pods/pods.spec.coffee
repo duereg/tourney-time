@@ -7,7 +7,7 @@ chai.use require 'sinon-chai'
 
 pods = require 'tourney/pods'
 
-describe 'pods', ->
+describe 'tourney/pods', ->
   it 'given no params throws', ->
     expect(pods).to.throw "You must provide either the number of teams or a list of team names"
 

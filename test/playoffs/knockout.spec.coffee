@@ -7,7 +7,7 @@ chai.use require 'sinon-chai'
 
 knockout = require 'playoffs/knockout'
 
-describe 'knockout', ->
+describe 'playoffs/knockout', ->
   it 'given no teams returns zero', ->
     expect(knockout(0)).to.eq 0
 

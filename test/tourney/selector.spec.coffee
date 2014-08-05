@@ -7,7 +7,7 @@ chai.use require 'sinon-chai'
 
 selector = require 'tourney/selector'
 
-describe 'selector', ->
+describe 'tourney/selector', ->
   describe 'given number of teams less than 9', ->
     it 'returns object with type "round robin"', ->
       expect(selector(2).type).to.eq 'round robin'

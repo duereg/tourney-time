@@ -7,7 +7,7 @@ chai.use require 'sinon-chai'
 
 roundRobin = require 'tourney/round-robin'
 
-describe 'round robin', ->
+describe 'tourney/round-robin', ->
   it 'given no params throws', ->
     expect(roundRobin).to.throw "You must provide either the number of teams or a list of team names"
 
