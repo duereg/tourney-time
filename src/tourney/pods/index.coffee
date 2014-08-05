@@ -40,7 +40,7 @@ module.exports = (teams) ->
   podSchedule = generatePodSchedule pods
   divisionSchedule = generateDivisionSchedule divisions
 
-  console.log divisionSchedule
+  # console.log divisionSchedule
 
   # console.log _(podSchedule).reduce(((memo, pod) -> memo + pod.games), 0)
   # console.log teamsInDivision
