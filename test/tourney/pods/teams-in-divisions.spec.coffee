@@ -73,6 +73,9 @@ describe 'tourney/pods/teamsInDivisions', ->
     it 'given 1 team returns an empty array', ->
       expect(teamsInDivisions({'1': [1]})).to.eql []
 
+    it 'given 2 pods of 4 teams, returns an empty array', ->
+      expect(teamsInDivisions({'1': [1,2,3,4], '2': [5,6,7,8]})).to.eql []
+
     it 'given 9 teams for pods of 3 teams, returns 3 divisions worth of games', ->
       expect(teamsInDivisions({"1": [1,4,7], "2": [2,5,8], "3": [3,6,9]})).to.eql nineTeamDivisions
 

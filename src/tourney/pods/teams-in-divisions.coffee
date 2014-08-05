@@ -15,7 +15,7 @@ module.exports = (pods) ->
 
   numOfDivisions = _(podsArray).chain().map( (pod) -> pod?.length).max().value()
 
-  if numOfDivisions is -Infinity
+  if numOfDivisions is -Infinity or numPods < 3
     return divisions
 
   divisions[division] = [] for division in [0...numOfDivisions]
