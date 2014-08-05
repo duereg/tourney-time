@@ -32,7 +32,7 @@ module.exports = (teams) ->
   leftOverTeams = teams % teamsInPods
 
   #returns teams in groups of four on object
-  pods = getTeamsInPods names, numOfPods, leftOverTeams
+  pods = getTeamsInPods names, teamsInPods
 
   podSchedule = generatePodSchedule pods
 
