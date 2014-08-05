@@ -9,6 +9,10 @@ getTeamNamesAndNumber = require 'tourney/team-names-and-number'
 
 describe 'tourney/team-names-and-number', ->
   describe 'given number of teams', ->
+
+    it 'returns generated names and number of teams', ->
+      expect(getTeamNamesAndNumber(1)).to.eql {teams: 1, names: [1]}
+
     it 'returns generated names and number of teams', ->
       expect(getTeamNamesAndNumber(2)).to.eql {teams: 2, names: [1, 2]}
 

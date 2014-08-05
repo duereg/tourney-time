@@ -9,5 +9,4 @@ module.exports = (teams) ->
   schedule = _(robinSchedule(teams, names)).flatten(true)
   games = schedule.length
 
-  {games, schedule}
-
+  {games, schedule, teams: names}
