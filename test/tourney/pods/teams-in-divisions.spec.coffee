@@ -7,86 +7,59 @@ chai.use require 'sinon-chai'
 
 teamsInDivisions = require 'tourney/pods/teams-in-divisions'
 
+firstDivision = [
+    "Pod 1 1st place",
+    "Pod 2 1st place",
+    "Pod 3 1st place"
+  ]
+
+secondDivision = [
+    "Pod 1 2nd place",
+    "Pod 2 2nd place",
+    "Pod 3 2nd place"
+  ]
+
+thirdDivision = [
+    "Pod 1 3rd place",
+    "Pod 2 3rd place",
+    "Pod 3 3rd place",
+  ]
+
+partialFourthDivision = [
+  "Pod 1 4th place",
+  "Pod 2 4th place",
+]
+
+fourthDivision = partialFourthDivision.slice()
+fourthDivision.push("Pod 3 4th place")
+
+magicThirdDivision = thirdDivision.slice()
+magicThirdDivision.push("Pod 1 4th place")
+
 nineTeamDivisions = [
-    [
-      "Pod 1 1st place",
-      "Pod 2 1st place",
-      "Pod 3 1st place"
-    ],
-    [
-      "Pod 1 2nd place",
-      "Pod 2 2nd place",
-      "Pod 3 2nd place"
-    ],
-    [
-      "Pod 1 3rd place",
-      "Pod 2 3rd place",
-      "Pod 3 3rd place"
-    ],
+    firstDivision,
+    secondDivision,
+    thirdDivision
   ]
 
 tenTeamDivisions = [
-    [
-      "Pod 1 1st place",
-      "Pod 2 1st place",
-      "Pod 3 1st place"
-    ],
-    [
-      "Pod 1 2nd place",
-      "Pod 2 2nd place",
-      "Pod 3 2nd place"
-    ],
-    [
-      "Pod 1 3rd place",
-      "Pod 2 3rd place",
-      "Pod 3 3rd place",
-      "Pod 1 4th place"
-    ],
+    firstDivision,
+    secondDivision,
+    magicThirdDivision
   ]
 
 elevenTeamDivisions = [
-    [
-      "Pod 1 1st place",
-      "Pod 2 1st place",
-      "Pod 3 1st place"
-    ],
-    [
-      "Pod 1 2nd place",
-      "Pod 2 2nd place",
-      "Pod 3 2nd place"
-    ],
-    [
-      "Pod 1 3rd place",
-      "Pod 2 3rd place",
-      "Pod 3 3rd place"
-    ],
-    [
-      "Pod 1 4th place",
-      "Pod 2 4th place",
-    ]
+    firstDivision,
+    secondDivision,
+    thirdDivision,
+    partialFourthDivision
   ]
 
 twelveTeamDivisions = [
-    [
-      "Pod 1 1st place",
-      "Pod 2 1st place",
-      "Pod 3 1st place"
-    ],
-    [
-      "Pod 1 2nd place",
-      "Pod 2 2nd place",
-      "Pod 3 2nd place"
-    ],
-    [
-      "Pod 1 3rd place",
-      "Pod 2 3rd place",
-      "Pod 3 3rd place"
-    ],
-    [
-      "Pod 1 4th place",
-      "Pod 2 4th place",
-      "Pod 3 4th place",
-    ]
+    firstDivision,
+    secondDivision,
+    thirdDivision,
+    fourthDivision
   ]
 
 describe 'tourney/pods/teamsInDivisions', ->
