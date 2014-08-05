@@ -18,7 +18,7 @@ describe 'tourney/selector', ->
     it 'returns object containing a schedule', ->
       expect(selector(2).schedule).to.eql [[1,2]]
 
-  describe 'given number of teams less than 9', ->
+  describe 'given number of teams greater than 8', ->
     it 'returns object with type "round robin"', ->
       expect(selector(9).type).to.eq 'pods'
 
