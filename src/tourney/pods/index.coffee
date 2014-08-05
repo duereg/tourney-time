@@ -2,6 +2,8 @@ _ = require 'underscore'
 roundRobin = require '../round-robin'
 getTeamNamesAndNumber = require '../team-names-and-number'
 getTeamsInPods = require './teams-in-pods'
+getTeamsInDivisions = require './teams-in-divisions'
+generateDivisionSchedule = require './division-schedule'
 generatePodSchedule = require './pod-schedule'
 
 calculateDivisionGames = (teamsInDivision, numOfDivisions, leftOverTeams) ->
@@ -33,8 +35,12 @@ module.exports = (teams) ->
 
   #returns teams in groups of four on object
   pods = getTeamsInPods names, teamsInPods
+  divisions = getTeamsInDivisions pods
 
   podSchedule = generatePodSchedule pods
+  divisionSchedule = generateDivisionSchedule divisions
+
+  console.log divisionSchedule
 
   # console.log _(podSchedule).reduce(((memo, pod) -> memo + pod.games), 0)
   # console.log teamsInDivision

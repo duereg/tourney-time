@@ -8,7 +8,7 @@ suffix = (n) ->
 module.exports = (pods) ->
   throw new Error("You must provide pods to generate the divisions") unless arguments.length
 
-  divisionSchedule = []
+  divisions = []
 
   podsArray = _(pods).values()
   numPods = _(pods).keys()?.length
@@ -16,21 +16,21 @@ module.exports = (pods) ->
   numOfDivisions = _(podsArray).chain().map( (pod) -> pod?.length).max().value()
 
   if numOfDivisions is -Infinity
-    return divisionSchedule
+    return divisions
 
-  divisionSchedule[division] = [] for division in [0...numOfDivisions]
+  divisions[division] = [] for division in [0...numOfDivisions]
 
   for pod in [1..numPods]
     numTeamsPod = pods[pod].length
 
     for teamNum in [1..numTeamsPod]
-      divisionSchedule[teamNum - 1].push "Pod #{pod} #{teamNum}#{suffix teamNum} place"
+      divisions[teamNum - 1].push "Pod #{pod} #{teamNum}#{suffix teamNum} place"
 
-  lastDivision = divisionSchedule.pop()
+  lastDivision = divisions.pop()
 
   if lastDivision?.length is 1
-    divisionSchedule[divisionSchedule.length - 1]?.push lastDivision[0]
+    divisions[divisions.length - 1]?.push lastDivision[0]
   else
-    divisionSchedule.push lastDivision
+    divisions.push lastDivision
 
-  divisionSchedule
+  divisions
