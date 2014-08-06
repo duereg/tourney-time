@@ -6,12 +6,17 @@ istanbul = require 'gulp-istanbul'
 mocha = require 'gulp-mocha'
 rimraf = require 'rimraf'
 
+gulp.task 'clean', ->
+  rimraf.sync('lib')
+
 gulp.task 'coffee', ->
   gulp.src './src/**/*.coffee'
     .pipe coffee({bare: true}).on('error', gutil.log)
     .pipe gulp.dest './lib/'
 
-gulp.task 'test', ['coffee'], ->
+gulp.task 'build', ['clean', 'coffee']
+
+gulp.task 'test', ['build'], ->
   gulp.src ['lib/**/*.js']
     .pipe(istanbul()) # Covering files
     .on 'finish', ->
@@ -19,7 +24,4 @@ gulp.task 'test', ['coffee'], ->
         .pipe mocha reporter: 'spec', compilers: 'coffee:coffee-script'
         .pipe istanbul.writeReports() # Creating the reports after tests run
 
-gulp.task 'clean', ->
-  rimraf.sync('lib')
-
-gulp.task 'default', ['clean', 'coffee']
+gulp.task 'default', ['build']
