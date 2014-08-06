@@ -23,7 +23,7 @@ describe 'tourney/selector', ->
       expect(selector(9).type).to.eq 'pods'
 
     it 'returns object containing number of games', ->
-      expect(selector(9).games).to.eq 24
+      expect(selector(9).games).to.eq 22
 
     it 'returns object containing a schedule', ->
       expect(selector(9).schedule).to.be.ok

@@ -10,6 +10,19 @@ generateCrossoverSchedule = require './crossover-schedule'
 sumGames = (schedule) ->
   _(schedule).reduce(((memo, div) -> memo + div.games), 0)
 
+spreadSchedule = (schedule) ->
+  finalSchedule = []
+  game = 0
+  found = true
+
+  while found
+    games = _(schedule).chain().map((section) -> section.schedule[game]).compact().value()
+    found = games.length
+    finalSchedule = finalSchedule.concat games
+    game++
+
+  finalSchedule
+
 module.exports = (teams) ->
   {teams, names} = getTeamNamesAndNumber.apply(null, arguments)
 
@@ -25,19 +38,16 @@ module.exports = (teams) ->
   divisionSchedule = generateDivisionSchedule divisions
   crossoverSchedule = generateCrossoverSchedule divisions
 
-  # console.log crossoverSchedule
+  podGames = sumGames podSchedule #a bunch of mini round robins to determine divisions
+  divisionGames = sumGames divisionSchedule #round robins amongst the divisions
+  crossOverGames = crossoverSchedule.length #cross over games (top of lower division plays bottom of division above)
 
-  #a bunch of mini round robins to determine divisions
-  podGames = sumGames podSchedule
+  spreadPodSchedule = spreadSchedule podSchedule
+  spreadDivisionSchedule = spreadSchedule divisionSchedule
 
-  #round robins amongst the divisions
-  divisionGames = sumGames divisionSchedule
+  totalGames = podGames + divisionGames + crossOverGames
+  finalSchedule = spreadPodSchedule.concat(spreadDivisionSchedule, crossoverSchedule)
 
-  #cross over games (top of lower division plays bottom of division above)
-  crossOverGames = crossoverSchedule.length
-
-  console.log podGames, divisionGames, crossOverGames
-
-  {games: podGames + divisionGames + crossOverGames, schedule: [] }
+  {games: totalGames, schedule: finalSchedule }
 
 

@@ -11,7 +11,7 @@ generateDivisions = (numOfDivisions, numPods, pods) ->
     numTeamsPod = pods[pod].length
 
     for teamNum in [1..numTeamsPod]
-      divisions[teamNum - 1].push "Pod #{pod} #{teamNum}#{suffix teamNum} place"
+      divisions[teamNum - 1].push "#{teamNum}#{suffix teamNum} Pod #{pod}"
 
   divisions
 
@@ -33,7 +33,7 @@ module.exports = (pods) ->
 
   numOfDivisions = _(podsArray).chain().map( (pod) -> pod?.length).max().value()
 
-  unless numOfDivisions is -Infinity or numPods < 3
+  unless numOfDivisions is -Infinity or numPods < 2
     divisions = generateDivisions numOfDivisions, numPods, pods
     combineTinyDivisions divisions
 
