@@ -49,12 +49,20 @@ describe 'tourney-time', ->
             "type": "round robin"
         )
     describe 'given ten teams, with all options', ->
-      it 'generates correct output', ->
-        actual = tourneyTime _(defaultTourney).extend teams: 10
-        expect(actual).to.eql(
-          "playoffGames": 8
-          "timeNeededMinutes": 720,
-          "tourneySchedule":
-            "games": 27,
-            "type": "pods"
-        )
+      {playoffGames, timeNeededMinutes, tourneySchedule, schedule} = {}
+
+      beforeEach ->
+        {playoffGames, timeNeededMinutes, tourneySchedule, schedule} = tourneyTime _(defaultTourney).extend teams: 10
+
+      it 'generates 8 playoff games', ->
+        expect(playoffGames).to.eq 8
+
+      it 'generates 720 minutes needed', ->
+        expect(timeNeededMinutes).to.eq 720
+
+      it 'generates the correct type of tourney schedule', ->
+        expect(tourneySchedule).to.eql {games: 28, type: 'pods'}
+
+      it 'generates a schedule containing 14 rounds', ->
+        expect(schedule.length).to.eq 14
+

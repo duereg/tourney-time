@@ -46,6 +46,7 @@ module.exports = (teams) ->
   spreadDivisionSchedule = spreadSchedule divisionSchedule
 
   totalGames = podGames + divisionGames + crossOverGames
+
   finalSchedule = spreadPodSchedule.concat(spreadDivisionSchedule, crossoverSchedule)
 
   {games: totalGames, schedule: finalSchedule }
