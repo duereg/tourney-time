@@ -27,7 +27,7 @@ describe 'tourney/pods', ->
     it 'given 4 teams returns 6', ->
       expect(pods(4).games).to.eq 6
 
-    it 'given 8 teams return 26', ->
+    it 'given 8 teams return 22', ->
       expect(pods(8).games).to.eq 22
 
     it 'given 12 teams return 36', ->
