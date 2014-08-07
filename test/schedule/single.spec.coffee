@@ -16,6 +16,12 @@ describe 'schedule/single', ->
     areas = 1
     args = {tourneySchedule, playoffGames, areas}
 
+  it 'give no params, throws', ->
+    expect(standardSchedule).to.throw "Cannot read property 'tourneySchedule' of undefined"
+
+  it 'given a tourneySchedule param set to null, throws', ->
+    expect( () -> standardSchedule({tourneySchedule: null}) ).to.throw "You provide a tournament schedule to continue"
+
   it 'given no games to schedule returns []', ->
     expect(standardSchedule(args)).to.eql []
 

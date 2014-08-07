@@ -8,8 +8,11 @@ chai.use require 'sinon-chai'
 getTeamNamesAndNumber = require 'tourney/team-names-and-number'
 
 describe 'tourney/team-names-and-number', ->
-  describe 'given number of teams', ->
+  describe 'given null', ->
+    it 'returns empty names and null teams', ->
+      expect(getTeamNamesAndNumber(null)).to.eql {teams: 0, names: []}
 
+  describe 'given number of teams', ->
     it 'returns generated names and number of teams', ->
       expect(getTeamNamesAndNumber(1)).to.eql {teams: 1, names: [1]}
 

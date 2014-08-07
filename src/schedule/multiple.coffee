@@ -1,9 +1,11 @@
 _ = require 'underscore'
 
 module.exports = ({tourneySchedule, playoffSchedule, areas}) ->
+  throw new Error("You provide a tournament schedule to continue") unless tourneySchedule?
+
   balancedSchedule = []
 
-  if tourneySchedule?.schedule?
+  if tourneySchedule.schedule?
     for game in tourneySchedule.schedule
       if balancedSchedule.length
         round = balancedSchedule[balancedSchedule.length - 1]

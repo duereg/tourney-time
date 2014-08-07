@@ -21,7 +21,7 @@
   "scripts": {
     "test": "gulp test",
     "pretest": "gulp",
-    "posttest": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js; rm -rf coverage"
+    "posttest": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   },
   "dependencies": {
     "roundrobin": "1.0.2",

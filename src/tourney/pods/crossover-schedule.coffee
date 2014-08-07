@@ -1,10 +1,7 @@
 suffix = require 'util/suffix'
 
 calculateNumCrossoverGames = (numOfDivisions) ->
-  if numOfDivisions > 1
-    (numOfDivisions - 1) * 2
-  else
-    0
+  (numOfDivisions - 1) * 2
 
 module.exports = (divisions) ->
   throw new Error("You must provide divisions to generate the crossover games") unless arguments.length
@@ -15,9 +12,9 @@ module.exports = (divisions) ->
   if numOfDivisions > 1
     numCrossoverGames = calculateNumCrossoverGames numOfDivisions
 
-    crossOverGames[division] = [] for division in [0...numCrossoverGames]
+    crossOverGames[division] = [] for division in [0...numCrossoverGames] by 1
 
-    for division in [1...numOfDivisions]
+    for division in [1...numOfDivisions] by 1
       teamsInDivision = divisions[division - 1].length
       crossOverPosition = (division - 1) * 2
 

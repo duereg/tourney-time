@@ -19,6 +19,12 @@ describe 'schedule/multiple', ->
     beforeEach ->
       areas = 2
 
+    it 'give no params, throws', ->
+      expect(multiAreaSchedule).to.throw "Cannot read property 'tourneySchedule' of undefined"
+
+    it 'given a tourneySchedule param set to null, throws', ->
+      expect( () -> multiAreaSchedule({tourneySchedule: null}) ).to.throw "You provide a tournament schedule to continue"
+
     it 'given no games to schedule returns []', ->
       expect(multiAreaSchedule(args)).to.eql []
 

@@ -14,6 +14,38 @@ describe 'tourney-time', ->
     it 'throws an error', ->
       expect(()-> tourneyTime teams:0).to.throw "You must have at least two teams to continue"
 
+  describe 'with one playing area, 20 min games, and 5 minutes rest', ->
+    defaultTourney = {areas: 1, time: 20, rest: 5}
+
+    describe 'given two teams', ->
+      it 'generates correct output', ->
+        expect(tourneyTime _(defaultTourney).extend(teams: 2)).to.eql(
+          "playoffGames": 1
+          "timeNeededMinutes": 50,
+          "schedule": [[1,2]],
+          "tourneySchedule":
+            "games": 1,
+            "type": "round robin"
+        )
+
+    describe 'given ten teams, with all options', ->
+      {playoffGames, timeNeededMinutes, tourneySchedule, schedule} = {}
+
+      beforeEach ->
+        {playoffGames, timeNeededMinutes, tourneySchedule, schedule} = tourneyTime _(defaultTourney).extend teams: 10
+
+      it 'generates 8 playoff games', ->
+        expect(playoffGames).to.eq 8
+
+      it 'generates 720 minutes needed', ->
+        expect(timeNeededMinutes).to.eq 900
+
+      it 'generates the correct type of tourney schedule', ->
+        expect(tourneySchedule).to.eql {games: 28, type: 'pods'}
+
+      it 'generates a schedule containing 28 rounds', ->
+        expect(schedule.length).to.eq 28
+
   describe 'with two playing areas, 30 min games, and 10 min rest', ->
     defaultTourney = {areas: 2, time: 30, rest: 10}
 
@@ -48,6 +80,7 @@ describe 'tourney-time', ->
             "games": 6,
             "type": "round robin"
         )
+
     describe 'given ten teams, with all options', ->
       {playoffGames, timeNeededMinutes, tourneySchedule, schedule} = {}
 
