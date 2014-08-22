@@ -34,11 +34,11 @@ describe 'tourney-time', ->
       beforeEach ->
         {playoffGames, timeNeededMinutes, tourneySchedule, schedule} = tourneyTime _(defaultTourney).extend teams: 10
 
-      it 'generates 8 playoff games', ->
-        expect(playoffGames).to.eq 8
+      it 'generates 10 playoff games', ->
+        expect(playoffGames).to.eq 10
 
-      it 'generates 720 minutes needed', ->
-        expect(timeNeededMinutes).to.eq 900
+      it 'generates 950 minutes needed', ->
+        expect(timeNeededMinutes).to.eq 950
 
       it 'generates the correct type of tourney schedule', ->
         expect(tourneySchedule).to.eql {games: 28, type: 'pods'}
@@ -63,7 +63,7 @@ describe 'tourney-time', ->
     describe 'given three teams', ->
       it 'generates correct output', ->
         expect(tourneyTime _(defaultTourney).extend(teams: 3)).to.eql(
-          "playoffGames": 1
+          "playoffGames": 2
           schedule: [[[2,3]], [[1,3]], [[1,2]]],
           "timeNeededMinutes": 120,
           "tourneySchedule":
@@ -87,11 +87,11 @@ describe 'tourney-time', ->
       beforeEach ->
         {playoffGames, timeNeededMinutes, tourneySchedule, schedule} = tourneyTime _(defaultTourney).extend teams: 10
 
-      it 'generates 8 playoff games', ->
-        expect(playoffGames).to.eq 8
+      it 'generates 10 playoff games', ->
+        expect(playoffGames).to.eq 10
 
-      it 'generates 720 minutes needed', ->
-        expect(timeNeededMinutes).to.eq 720
+      it 'generates 760 minutes needed', ->
+        expect(timeNeededMinutes).to.eq 760
 
       it 'generates the correct type of tourney schedule', ->
         expect(tourneySchedule).to.eql {games: 28, type: 'pods'}

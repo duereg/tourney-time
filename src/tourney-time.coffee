@@ -1,5 +1,5 @@
 tourneyTypeSelector = require 'tourney/selector'
-playoffGamesCalculator = require 'playoffs/knockout'
+playoffGamesCalculator = require 'playoffs/duel'
 timeNeededCalculator = require 'timing/standard'
 scheduleGenerator = require 'schedule/generator'
 
@@ -9,11 +9,11 @@ module.exports = ({teams, time, rest, areas}) ->
   tourneySchedule = tourneyTypeSelector teams
   playoffGames = playoffGamesCalculator teams
 
-  timeNeeded = timeNeededCalculator {tourneyGames: tourneySchedule.games, playoffGames, gameTime: time, restTime: rest, areas}
+  timeNeeded = timeNeededCalculator {tourneyGames: tourneySchedule.games, playoffGames: playoffGames.length, gameTime: time, restTime: rest, areas}
 
-  schedule = scheduleGenerator {tourneySchedule, playoffGames, areas}
+  schedule = scheduleGenerator {tourneySchedule, playoffGames: playoffGames.length, areas}
 
   delete tourneySchedule.schedule
 
-  {tourneySchedule, playoffGames, timeNeededMinutes: timeNeeded, schedule}
+  {tourneySchedule, playoffGames: playoffGames.length, timeNeededMinutes: timeNeeded, schedule}
 
