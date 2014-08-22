@@ -7,6 +7,8 @@ chai.use require 'sinon-chai'
 
 duel = require 'playoffs/duel'
 
+emtptyTourney = {type: 'knockout', games: 0, schedule: []}
+
 fiveTeamSchedule = [
   {"id":312,"teams":["Seed 5","Seed 4"]}
   {"id":321,"teams":["Seed 1","Winner 312"]}
@@ -35,44 +37,44 @@ describe 'playoffs/duel', ->
   it 'given no params, throws', ->
     expect(duel).to.throw 'You must provide the number of teams to continue.'
 
-  it 'given no teams returns zero', ->
-    expect(duel(0)).to.eql []
+  it 'given no teams returns an empty tournament', ->
+    expect(duel(0)).to.eql emtptyTourney
 
-  it 'given 1 team returns zero', ->
-    expect(duel(1)).to.eql []
+  it 'given 1 team returns an empty tournament', ->
+    expect(duel(1)).to.eql emtptyTourney
 
   it 'given 2 teams returns 1 game', ->
-    expect(duel(2).length).to.eq 1
+    expect(duel(2).games).to.eq 1
 
   it 'given 2 teams returns the correct schedule', ->
-    expect(duel(2)).to.eql [{"id": 111, "teams": ["Seed 1", "Seed 2"]}]
+    expect(duel(2).schedule).to.eql [{"id": 111, "teams": ["Seed 1", "Seed 2"]}]
 
   it 'given 3 teams returns 2 games', ->
-    expect(duel(3).length).to.eq 2
+    expect(duel(3).games).to.eq 2
 
   it 'given 4 teams returns 4 games', ->
-    expect(duel(4).length).to.eql 4
+    expect(duel(4).games).to.eql 4
 
   it 'given 5 teams return 5 games', ->
-    expect(duel(5).length).to.eq 5
+    expect(duel(5).games).to.eq 5
 
   it 'given 5 teams returns the correct schedule', ->
-    expect(duel(5)).to.eql fiveTeamSchedule
+    expect(duel(5).schedule).to.eql fiveTeamSchedule
 
   it 'given 6 teams return 6 games', ->
-    expect(duel(6).length).to.eq 6
+    expect(duel(6).games).to.eq 6
 
   it 'given 8 teams return 8 games', ->
-    expect(duel(8).length).to.eql 8
+    expect(duel(8).games).to.eql 8
 
   it 'given 9 teams return 8 games', ->
-    expect(duel(9).length).to.eq 9
+    expect(duel(9).games).to.eq 9
 
   it 'given 12 teams return 12 games', ->
-    expect(duel(12).length).to.eq 12
+    expect(duel(12).games).to.eq 12
 
   it 'given 13 teams returns 13 games', ->
-    expect(duel(13).length).to.eq 13
+    expect(duel(13).games).to.eq 13
 
   it 'given 13 teams returns the correct schedule', ->
-    expect(duel(13)).to.eql thirteenTeamSchedule
+    expect(duel(13).schedule).to.eql thirteenTeamSchedule

@@ -23,16 +23,29 @@ describe 'schedule/multiple', ->
       expect(multiAreaSchedule).to.throw "Cannot read property 'tourneySchedule' of undefined"
 
     it 'given a tourneySchedule param set to null, throws', ->
-      expect( () -> multiAreaSchedule({tourneySchedule: null}) ).to.throw "You provide a tournament schedule to continue"
+      expect( () -> multiAreaSchedule({tourneySchedule: null}) ).to.throw "You must provide a tournament schedule to continue"
+
+    it 'given a playoffSchedule param set to null, throws', ->
+      expect( () -> multiAreaSchedule({tourneySchedule, playoffSchedule: null}) ).to.throw "You must provide a playoff schedule to continue"
 
     it 'given no games to schedule returns []', ->
       expect(multiAreaSchedule(args)).to.eql []
 
-    it 'given an empty schedule returns []', ->
-      args.tourneySchedule.schedule = []
-      expect(multiAreaSchedule(args)).to.eql []
+    describe 'given an empty tournament schedule', ->
+      beforeEach ->
+        args.tourneySchedule.schedule = []
 
-    describe 'given a one game schedule', ->
+      it 'returns []', ->
+        expect(multiAreaSchedule(args)).to.eql []
+
+      describe 'and an empty playoff schedule', ->
+        beforeEach ->
+          args.playoffSchedule.schedule = []
+
+        it 'returns []', ->
+          expect(multiAreaSchedule(args)).to.eql []
+
+    describe 'given a one game tournament schedule', ->
       beforeEach ->
         args.tourneySchedule.schedule = [[1,2]]
         args.tourneySchedule.games = 1
@@ -40,7 +53,15 @@ describe 'schedule/multiple', ->
       it 'returns the one game', ->
         expect(multiAreaSchedule(args)).to.eql [[[1,2]]]
 
-    describe 'given a three game schedule', ->
+      describe 'and a one game playoff schedule', ->
+        beforeEach ->
+          args.playoffSchedule.schedule = [[1,2]]
+          args.playoffSchedule.games = 1
+
+        it 'returns two games in two rounds', ->
+          expect(multiAreaSchedule(args)).to.eql [[[1,2]], [[1,2]]]
+
+    describe 'given a three game tournament schedule', ->
       beforeEach ->
         args.tourneySchedule.schedule = [[2,3], [1,3], [1,2]]
         args.tourneySchedule.games = 3
@@ -49,7 +70,15 @@ describe 'schedule/multiple', ->
         results = multiAreaSchedule(args)
         expect(results).to.eql [[[2,3]], [[1,3]], [[1,2]]]
 
-    describe 'given a six game schedule', ->
+      describe 'and a two game playoff schedule', ->
+        beforeEach ->
+          args.playoffSchedule.schedule = [[4,5], [6,7]]
+          args.playoffSchedule.games = 2
+
+        it 'returns five games in five rounds', ->
+          expect(multiAreaSchedule(args)).to.eql [[[2,3]], [[1,3]], [[1,2]], [[4,5], [6,7]]]
+
+    describe 'given a six game tournament schedule', ->
       beforeEach ->
         args.tourneySchedule.schedule = [[1,4],[2,3],[1,3],[4,2],[1,2],[3,4]]
         args.tourneySchedule.games = 3
@@ -57,3 +86,13 @@ describe 'schedule/multiple', ->
       it 'returns three rounds of games', ->
         results = multiAreaSchedule(args)
         expect(results).to.eql [[[1,4],[2,3]],[[1,3],[4,2]],[[1,2],[3,4]]]
+
+      describe 'and a four game playoff schedule', ->
+        beforeEach ->
+          args.playoffSchedule.schedule = [[1,4], [2,3], ['W1','W2'], ['L1','L2']]
+          args.playoffSchedule.games = 2
+
+        it 'returns ten games in seven rounds', ->
+          #[[[1,4],[2,3]],[[1,3],[4,2]],[[1,2],[3,4]],[[1,4],[2,3]],[['W1','W2'],['L1','L2']]]
+          expect(multiAreaSchedule(args)).to.eql [[[1,4],[2,3]],[[1,3],[4,2]],[[1,2],[3,4]],[[1,4],[2,3]],[["W1","W2"],["L1","L2"]]]
+
