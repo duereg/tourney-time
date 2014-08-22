@@ -3,32 +3,43 @@
 crossoverSchedule = require 'tourney/pods/crossover-schedule'
 
 firstDivision = [
-    "Pod 1 1st place",
-    "Pod 2 1st place",
-    "Pod 3 1st place"
-  ]
+  "1st Pod 1",
+  "1st Pod 2",
+  "1st Pod 3"
+]
 
 secondDivision = [
-    "Pod 1 2nd place",
-    "Pod 2 2nd place",
-    "Pod 3 2nd place"
-  ]
+  "2nd Pod 1",
+  "2nd Pod 2",
+  "2nd Pod 3"
+]
 
 thirdDivision = [
-    "Pod 1 3rd place",
-    "Pod 2 3rd place",
-    "Pod 3 3rd place",
-  ]
+  "3rd Pod 1",
+  "3rd Pod 2",
+  "3rd Pod 3",
+]
 
 partialFourthDivision = [
-  "Pod 1 4th place",
-  "Pod 2 4th place",
+  "4th Pod 1",
+  "4th Pod 2",
 ]
 
 oneDivision = [firstDivision]
 twoDivisions = [firstDivision, secondDivision]
 threeDivisions = [firstDivision, secondDivision, thirdDivision]
 fourDivisions = [firstDivision, secondDivision, thirdDivision, fourDivisions]
+
+twoDivisionSchedule = [
+  {
+    "id": "Div 1/2 <-1->"
+    "teams": ["2nd Div 1", "2nd Div 2"]
+  }
+  {
+    "id": "Div 1/2 <-2->"
+    "teams": ["3rd Div 1", "1st Div 2"]
+  }
+]
 
 describe 'tourney/pods/crossoverSchedule', ->
   it 'given no params throws', ->
@@ -41,8 +52,14 @@ describe 'tourney/pods/crossoverSchedule', ->
     it 'given 1 division returns an empty array', ->
       expect(crossoverSchedule(oneDivision)).to.eql []
 
-    it 'given 2 divisions, returns two games', ->
-      expect(crossoverSchedule(twoDivisions).length).to.eq 2
+    describe 'given 2 divisions', ->
+      schedule = null
+
+      beforeEach ->
+        schedule = crossoverSchedule(twoDivisions)
+
+      it 'generates the correct schedule', ->
+        expect(schedule).to.eql twoDivisionSchedule
 
     it 'given 3 divisions, returns four games', ->
       expect(crossoverSchedule(threeDivisions).length).to.eq 4

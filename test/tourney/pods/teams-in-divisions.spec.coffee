@@ -3,33 +3,33 @@
 teamsInDivisions = require 'tourney/pods/teams-in-divisions'
 
 firstDivision = [
-    "1st : Pod 1",
-    "1st : Pod 2",
-    "1st : Pod 3"
+    "1st Pod 1",
+    "1st Pod 2",
+    "1st Pod 3"
   ]
 
 secondDivision = [
-    "2nd : Pod 1",
-    "2nd : Pod 2",
-    "2nd : Pod 3"
+    "2nd Pod 1",
+    "2nd Pod 2",
+    "2nd Pod 3"
   ]
 
 thirdDivision = [
-    "3rd : Pod 1",
-    "3rd : Pod 2",
-    "3rd : Pod 3",
+    "3rd Pod 1",
+    "3rd Pod 2",
+    "3rd Pod 3",
   ]
 
 partialFourthDivision = [
-  "4th : Pod 1",
-  "4th : Pod 2",
+  "4th Pod 1",
+  "4th Pod 2",
 ]
 
 fourthDivision = partialFourthDivision.slice()
-fourthDivision.push("4th : Pod 3")
+fourthDivision.push("4th Pod 3")
 
 magicThirdDivision = thirdDivision.slice()
-magicThirdDivision.push("4th : Pod 1")
+magicThirdDivision.push("4th Pod 1")
 
 nineTeamDivisions = [
     firstDivision,

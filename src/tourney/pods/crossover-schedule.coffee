@@ -21,14 +21,14 @@ module.exports = (divisions) ->
       gameOne = crossOverGames[crossOverPosition]
       gameTwo = crossOverGames[crossOverPosition + 1]
 
-      gameOne.id = "Division #{division}/#{division + 1} crossover 1"
-      gameTwo.id = "Division #{division}/#{division + 1} crossover 2"
+      gameOne.id = "Div #{division}/#{division + 1} <-1->"
+      gameTwo.id = "Div #{division}/#{division + 1} <-2->"
 
-      gameOne.teams.push "Division #{division} #{teamsInDivision - 1}#{suffix(teamsInDivision - 1)} place"
-      gameOne.teams.push "Division #{division + 1} 2nd place"
+      gameOne.teams.push "#{teamsInDivision - 1}#{suffix(teamsInDivision - 1)} Div #{division}"
+      gameOne.teams.push "2nd Div #{division + 1}"
 
-      gameTwo.teams.push "Division #{division} #{teamsInDivision}#{suffix(teamsInDivision)} place"
-      gameTwo.teams.push "Division #{division + 1} 1st place"
+      gameTwo.teams.push "#{teamsInDivision}#{suffix(teamsInDivision)} Div #{division}"
+      gameTwo.teams.push "1st Div #{division + 1}"
 
   crossOverGames
 

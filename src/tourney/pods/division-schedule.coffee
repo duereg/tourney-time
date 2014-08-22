@@ -9,7 +9,7 @@ module.exports = (divisions) ->
     divisionSchedule = roundRobin teamsInDivisions
     divisionSchedule.division = index + 1
 
-    _(divisionSchedule.schedule).forEach (game) -> game.id = "Division #{index + 1} Game #{game.id}"
+    _(divisionSchedule.schedule).forEach (game) -> game.id = "Div #{index + 1} Game #{game.id}"
 
     divisionsSchedule.push divisionSchedule
 

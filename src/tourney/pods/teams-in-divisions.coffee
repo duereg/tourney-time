@@ -11,7 +11,7 @@ generateDivisions = (numOfDivisions, numPods, pods) ->
     numTeamsPod = pods[pod].length
 
     for teamNum in [1..numTeamsPod] by 1
-      divisions[teamNum - 1].push "#{teamNum}#{suffix teamNum} : Pod #{pod}"
+      divisions[teamNum - 1].push "#{teamNum}#{suffix teamNum} Pod #{pod}"
 
   divisions
 

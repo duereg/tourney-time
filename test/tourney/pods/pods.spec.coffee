@@ -49,10 +49,16 @@ describe 'tourney/pods', ->
       expect(schedule[0].id).to.eql "Pod 1 Game 1"
       expect(schedule[1].id).to.eql "Pod 2 Game 1"
 
+    it 'has games for each division', ->
+      expect(schedule.indexOf (game) -> game.id is "Div 1 Game 1").to.be.ok
+      expect(schedule.indexOf (game) -> game.id is "Div 2 Game 1").to.be.ok
+      expect(schedule.indexOf (game) -> game.id is "Div 3 Game 1").to.be.ok
+      expect(schedule.indexOf (game) -> game.id is "Div 4 Game 1").to.be.ok
+
     it 'has crossover games for each division', ->
-      expect(_(schedule).find (game) -> game.id is "Division 1/2 crossover 1").to.be.ok
-      expect(_(schedule).find (game) -> game.id is "Division 2/3 crossover 1").to.be.ok
-      expect(_(schedule).find (game) -> game.id is "Division 3/4 crossover 1").to.be.ok
+      expect(schedule.indexOf (game) -> game.id is "Div 1/2 <--1-->").to.be.ok
+      expect(schedule.indexOf (game) -> game.id is "Div 2/3 <--1-->").to.be.ok
+      expect(schedule.indexOf (game) -> game.id is "Div 3/4 <--1-->").to.be.ok
 
   it 'given 12 teams returns 36 games', ->
     expect(pods(12).games).to.eq 36

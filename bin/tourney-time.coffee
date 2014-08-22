@@ -28,4 +28,4 @@ console.log """For #{teams} teams
                for #{tourneySchedule.games + playoffSchedule.games} total games
                which will take #{totalTime} """
 
-console.log JSON.stringify schedule, undefined, 1 if schedule?.length
+console.log schedule.map JSON.stringify if schedule?.length
