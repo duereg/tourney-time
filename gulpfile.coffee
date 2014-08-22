@@ -14,7 +14,11 @@ gulp.task 'coffee', ->
     .pipe coffee({bare: true}).on('error', gutil.log)
     .pipe gulp.dest './lib/'
 
-gulp.task 'build', ['clean', 'coffee']
+gulp.task 'js', ->
+  gulp.src './src/**/*.js'
+    .pipe gulp.dest './lib/'
+
+gulp.task 'build', ['clean', 'js', 'coffee']
 
 gulp.task 'test', ['build'], ->
   gulp.src ['lib/**/*.js']
