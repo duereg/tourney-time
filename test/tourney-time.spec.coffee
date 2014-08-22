@@ -15,7 +15,7 @@ describe 'tourney-time', ->
       it 'generates correct output', ->
         expect(tourneyTime _(defaultTourney).extend(teams: 2)).to.eql(
           "timeNeededMinutes": 50,
-          "schedule": [[1,2], {"id": 111, "teams": ["Seed 1", "Seed 2"]}],
+          "schedule": [{id:1,teams:[1,2]}, {id: 111, teams: ["Seed 1", "Seed 2"]}],
           "tourneySchedule":
             "games": 1,
             "type": "round robin"
@@ -49,7 +49,7 @@ describe 'tourney-time', ->
       it 'generates correct output', ->
         expect(tourneyTime _(defaultTourney).extend(teams: 2)).to.eql(
           "timeNeededMinutes": 80,
-          "schedule": [[[1,2]],[{"id": 111, "teams": ["Seed 1","Seed 2"]}]],
+          "schedule": [[{id:1,teams:[1,2]}],[{id: 111, teams: ["Seed 1","Seed 2"]}]],
           "tourneySchedule":
             "games": 1,
             "type": "round robin"
@@ -61,7 +61,11 @@ describe 'tourney-time', ->
     describe 'given three teams', ->
       it 'generates correct output', ->
         expect(tourneyTime _(defaultTourney).extend(teams: 3)).to.eql(
-          "schedule": [[[2,3]], [[1,3]], [[1,2]], [{ "id": 212, "teams": ["Seed 3","Seed 2"]}, {"id": 221, "teams": ["Seed 1","Winner 212"]}]],
+          "schedule": [
+            [{id:1,teams:[2,3]},{id:2,teams:[1,3]}]
+            [{id:3,teams:[1,2]}]
+            [{id:212,teams:["Seed 3","Seed 2"]},{id: 221,teams:["Seed 1","Winner 212"]}]
+          ],
           "timeNeededMinutes": 120,
           "tourneySchedule":
             "games": 3,

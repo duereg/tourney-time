@@ -1,9 +1,16 @@
+_ = require 'underscore'
+
 roundRobin = require '../round-robin'
 
 module.exports = (pods) ->
-  podSchedule = []
+  podsSchedule = []
 
   for key, teamsInPod of pods
-    podSchedule.push roundRobin teamsInPod
+    podSchedule = roundRobin teamsInPod
+    podSchedule.pod = key
 
-  podSchedule
+    _(podSchedule.schedule).forEach (game) -> game.id = "Pod #{key} Game #{game.id}"
+
+    podsSchedule.push podSchedule
+
+  podsSchedule

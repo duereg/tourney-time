@@ -12,17 +12,23 @@ module.exports = (divisions) ->
   if numOfDivisions > 1
     numCrossoverGames = calculateNumCrossoverGames numOfDivisions
 
-    crossOverGames[division] = [] for division in [0...numCrossoverGames] by 1
+    crossOverGames[division] = {teams: []} for division in [0...numCrossoverGames] by 1
 
     for division in [1...numOfDivisions] by 1
       teamsInDivision = divisions[division - 1].length
       crossOverPosition = (division - 1) * 2
 
-      crossOverGames[crossOverPosition].push "Division #{division} #{teamsInDivision - 1}#{suffix(teamsInDivision - 1)} place"
-      crossOverGames[crossOverPosition].push "Division #{division + 1} 2nd place"
+      gameOne = crossOverGames[crossOverPosition]
+      gameTwo = crossOverGames[crossOverPosition + 1]
 
-      crossOverGames[crossOverPosition + 1].push "Division #{division} #{teamsInDivision}#{suffix(teamsInDivision)} place"
-      crossOverGames[crossOverPosition + 1].push "Division #{division + 1} 1st place"
+      gameOne.id = "Division #{division}/#{division + 1} crossover 1"
+      gameTwo.id = "Division #{division}/#{division + 1} crossover 2"
+
+      gameOne.teams.push "Division #{division} #{teamsInDivision - 1}#{suffix(teamsInDivision - 1)} place"
+      gameOne.teams.push "Division #{division + 1} 2nd place"
+
+      gameTwo.teams.push "Division #{division} #{teamsInDivision}#{suffix(teamsInDivision)} place"
+      gameTwo.teams.push "Division #{division + 1} 1st place"
 
   crossOverGames
 
