@@ -1,4 +1,4 @@
-require '../spec-helper'
+{expect} = require '../spec-helper'
 
 duel = require 'playoffs/duel'
 

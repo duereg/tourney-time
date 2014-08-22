@@ -1,4 +1,4 @@
-require '../spec-helper'
+{expect} = require '../spec-helper'
 
 roundRobin = require 'tourney/round-robin'
 

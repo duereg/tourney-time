@@ -1,4 +1,4 @@
-require '../../spec-helper'
+{expect} = require '../../spec-helper'
 
 teamsInDivisions = require 'tourney/pods/teams-in-divisions'
 

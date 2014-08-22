@@ -1,4 +1,4 @@
-require '../spec-helper'
+{expect} = require '../spec-helper'
 
 standardSchedule = require 'schedule/single'
 

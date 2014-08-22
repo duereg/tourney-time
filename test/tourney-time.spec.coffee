@@ -1,4 +1,4 @@
-require './spec-helper'
+{expect} = require './spec-helper'
 _ = require 'underscore'
 
 tourneyTime = require '../lib/tourney-time'

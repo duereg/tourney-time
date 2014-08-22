@@ -1,4 +1,4 @@
-require '../spec-helper'
+{expect} = require '../spec-helper'
 
 getTeamNamesAndNumber = require 'tourney/team-names-and-number'
 
