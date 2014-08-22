@@ -1,9 +1,4 @@
-require 'coffee-errors'
-
-chai = require 'chai'
-sinon = require 'sinon'
-expect = chai.expect
-chai.use require 'sinon-chai'
+require '../spec-helper'
 
 roundRobin = require 'tourney/round-robin'
 

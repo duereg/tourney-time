@@ -1,13 +1,7 @@
-require 'coffee-errors'
+require './spec-helper'
 _ = require 'underscore'
 
-chai = require 'chai'
-sinon = require 'sinon'
-# using compiled JavaScript file here to be sure module works
 tourneyTime = require '../lib/tourney-time'
-
-expect = chai.expect
-chai.use require 'sinon-chai'
 
 describe 'tourney-time', ->
   describe 'given one team', ->
