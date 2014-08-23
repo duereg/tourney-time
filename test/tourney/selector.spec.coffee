@@ -11,7 +11,7 @@ describe 'tourney/selector', ->
       expect(selector(2).games).to.eq 1
 
     it 'returns object containing a schedule', ->
-      expect(selector(2).schedule).to.eql [{id:1,teams:[1,2]}]
+      expect(selector(2).schedule).to.eql [{id:1,teams:[2,1]}]
 
   describe 'given number of teams greater than 8', ->
     it 'returns object with type "round robin"', ->

@@ -24,7 +24,7 @@
     "posttest": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   },
   "dependencies": {
-    "roundrobin": "1.0.2",
+    "roundrobin": "duereg/roundrobin",
     "yargs": "^1.3.1"
   },
   "devDependencies": {

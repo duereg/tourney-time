@@ -23,7 +23,7 @@ describe 'tourney/round-robin', ->
         expect(games).to.eq 1
 
       it 'returns correct schedule', ->
-        expect(schedule).to.eql [{id:1,teams:[1,2]}]
+        expect(schedule).to.eql [{id:1,teams:[2,1]}]
 
       it 'returns correct teams', ->
         expect(teams).to.eql [1,2]
@@ -38,7 +38,7 @@ describe 'tourney/round-robin', ->
         expect(games).to.eq 3
 
       it 'returns correct schedule', ->
-        expect(schedule).to.eql [{id:1,teams:[2,3]},{id:2,teams:[1,3]},{id:3,teams:[1,2]}]
+        expect(schedule).to.eql [{id:1,teams:[3,2]},{id:2,teams:[1,3]},{id:3,teams:[2,1]}]
 
       it 'returns correct teams', ->
         expect(teams).to.eql [1,2,3]
@@ -60,7 +60,7 @@ describe 'tourney/round-robin', ->
       expect(roundRobin(['goodie'])).to.eql { games: 0, schedule: [], teams: ['goodie'] }
 
     it 'given 2 teams returns 2 games with correct names', ->
-      expect(roundRobin(['a', 'b'])).to.eql { games: 1, schedule: [{id:1, teams: ['a','b']}], teams: ['a', 'b'] }
+      expect(roundRobin(['a', 'b'])).to.eql { games: 1, schedule: [{id:1, teams: ['b','a']}], teams: ['a', 'b'] }
 
     describe 'given 3 teams', ->
       {games, schedule, teams} = {}
@@ -72,7 +72,7 @@ describe 'tourney/round-robin', ->
         expect(games).to.eq 3
 
       it 'returns correct schedule', ->
-        expect(schedule).to.eql [{id:1, teams: ['b','c']}, {id:2, teams: ['a','c']}, {id:3, teams: ['a','b']}]
+        expect(schedule).to.eql [{id:1, teams: ['c','b']}, {id:2, teams: ['a','c']}, {id:3, teams: ['b','a']}]
 
       it 'returns correct teams', ->
         expect(teams).to.eql ['a', 'b', 'c']

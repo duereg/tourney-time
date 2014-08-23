@@ -16,14 +16,14 @@ describe 'tourney/pods', ->
   it 'given 2 teams returns 2 games with numbers for names', ->
     expect(pods(2)).to.eql
       games: 1
-      schedule: [{id:"Pod 1 Game 1", teams:[1,2]}]
+      schedule: [{id:"Pod 1 Game 1", teams:[2,1]}]
       divisions: []
       pods: {"1": [1,2]}
 
   it 'given 3 teams returns 3 games with numbers for names', ->
     expect(pods(3)).to.eql
       games: 3
-      schedule: [{id:"Pod 1 Game 1",teams:[2,3]},{id:"Pod 1 Game 2",teams:[1,3]},{id:"Pod 1 Game 3",teams:[1,2]}]
+      schedule: [{id:"Pod 1 Game 1",teams:[3,2]},{id:"Pod 1 Game 2",teams:[1,3]},{id:"Pod 1 Game 3",teams:[2,1]}]
       divisions: []
       pods: {"1": [1,2,3]}
 
