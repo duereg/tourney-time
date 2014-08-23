@@ -19,6 +19,7 @@ describe 'tourney-time', ->
           "tourneySchedule":
             "games": 1,
             "type": "round robin"
+            "areas": 1,
           "playoffSchedule":
             "games": 1
             "type": "knockout"
@@ -34,7 +35,7 @@ describe 'tourney-time', ->
         expect(timeNeededMinutes).to.eq 950
 
       it 'generates the correct type of tourney schedule', ->
-        expect(tourneySchedule).to.eql {games: 28, type: 'pods'}
+        expect(tourneySchedule).to.eql {games: 28, type: 'pods', areas: 1}
 
       it 'generates a 10 game playoff schedule', ->
         expect(playoffSchedule).to.eql {games: 10, type: 'knockout'}
@@ -51,6 +52,7 @@ describe 'tourney-time', ->
           "timeNeededMinutes": 80,
           "schedule": [[{id:1,teams:[2,1]}],[{id: 111, teams: ["Seed 1","Seed 2"]}]],
           "tourneySchedule":
+            "areas": 1,
             "games": 1,
             "type": "round robin"
           "playoffSchedule":
@@ -68,6 +70,7 @@ describe 'tourney-time', ->
           ],
           "timeNeededMinutes": 120,
           "tourneySchedule":
+            "areas": 1,
             "games": 3,
             "type": "round robin"
           "playoffSchedule":
@@ -87,7 +90,7 @@ describe 'tourney-time', ->
         expect(timeNeededMinutes).to.eq 200
 
       it 'generates the 6 game tourney schedule', ->
-        expect(tourneySchedule).to.eql {games: 6, type: 'round robin'}
+        expect(tourneySchedule).to.eql {games: 6, type: 'round robin', areas: 2}
 
       it 'generates a schedule containing 5 rounds', ->
         expect(schedule.length).to.eq 5
@@ -105,7 +108,7 @@ describe 'tourney-time', ->
         expect(timeNeededMinutes).to.eq 760
 
       it 'generates a 28 game tourney schedule', ->
-        expect(tourneySchedule).to.eql {games: 28, type: 'pods'}
+        expect(tourneySchedule).to.eql {games: 28, type: 'pods', areas: 2}
 
       it 'generates a schedule containing 19 rounds', ->
         expect(schedule.length).to.eq 19

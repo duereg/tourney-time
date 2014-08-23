@@ -22,7 +22,7 @@ totalTime += "#{minutes} minutes" if minutes
 console.log """For #{teams} teams
                Playing #{time} minute games
                with #{rest} minute breaks in between games
-               on #{areas} playing area(s)
+               on #{tourneySchedule.areas} playing area(s)
                you'll play a #{tourneySchedule.type} tournament and a #{playoffSchedule.type} playoffs
                with #{tourneySchedule.games} tourney games and #{playoffSchedule.games} playoff games
                for #{tourneySchedule.games + playoffSchedule.games} total games
