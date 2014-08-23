@@ -6,9 +6,14 @@ getTeamNamesAndNumber = require './team-names-and-number'
 module.exports = (teams) ->
   {teams, names} = getTeamNamesAndNumber.apply(null, arguments)
 
-  schedule = _(robinSchedule(teams, names)).flatten(true)
-  games = schedule.length
+  unflattenedSchedule = robinSchedule(teams, names)
 
-  schedule = _(schedule).map (teams, index) -> { id: index + 1, teams}
+  addedRounds = _(unflattenedSchedule).map (round, roundIndex) ->
+    _(round).map (teams, gameIndex) ->
+      daRound = roundIndex + 1
+      {teams, round: daRound, id: parseInt(daRound.toString() + gameIndex.toString())}
+
+  schedule = _(addedRounds).flatten(true)
+  games = schedule.length
 
   {games, schedule, teams: names}
