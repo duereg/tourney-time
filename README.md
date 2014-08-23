@@ -41,6 +41,7 @@ Options:
 * [Fair Grouping for Tournaments](https://github.com/clux/group)
 * [Single/Double Elimination Tournaments](https://github.com/clux/duel)
 * [Group Stage Tournaments](https://github.com/clux/groupstage)
+* [Notes on Balancing Round Robin Implementations](http://okasaki.blogspot.com/2009/11/round-robin-tournament-scheduling.html)
 
 ## License
 
