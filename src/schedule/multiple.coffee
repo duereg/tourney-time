@@ -3,14 +3,16 @@ _ = require 'underscore'
 scheduleBalancer = (thingToSchedule, areas) ->
   balancedSchedule = []
 
+  currentRound = 1
+
   for game in thingToSchedule.schedule
     if balancedSchedule.length
       round = balancedSchedule[balancedSchedule.length - 1]
 
       if round.length < areas
-        hasTeam = _(round).chain().flatten().intersection(game).value().length
+        hasTeam = _(round).chain().map((round) -> round.teams).flatten().intersection(game.teams).value().length
 
-        if hasTeam
+        if hasTeam or currentRound isnt game.round
           balancedSchedule.push [game]
         else
           round.push game
@@ -19,6 +21,8 @@ scheduleBalancer = (thingToSchedule, areas) ->
 
     else
       balancedSchedule.push [game]
+
+    currentRound = game.round
 
   balancedSchedule
 

@@ -12,14 +12,14 @@ sumGames = (schedule) ->
 
 spreadSchedule = (schedule) ->
   finalSchedule = []
-  game = 0
-  found = true
+  round = 0
 
-  while found
-    games = _(schedule).chain().map((section) -> section.schedule[game]).compact().value()
-    found = games.length
-    finalSchedule = finalSchedule.concat games
-    game++
+  finalSchedule = _(schedule)
+    .chain()
+    .map (section) -> section.schedule
+    .flatten()
+    .sortBy (game) -> game.round
+    .value()
 
   finalSchedule
 

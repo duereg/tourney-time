@@ -16,7 +16,7 @@ describe 'tourney/selector', ->
       expect(results.games).to.eq 1
 
     it 'returns object containing a schedule', ->
-      expect(results.schedule).to.eql [{id:1,teams:[2,1]}]
+      expect(results.schedule).to.eql [{id:10,round:1,teams:[2,1]}]
 
     it 'returns object containing number of areas', ->
       expect(results.areas).to.eq 1

@@ -16,14 +16,14 @@ describe 'tourney/pods', ->
   it 'given 2 teams returns 2 games with numbers for names', ->
     expect(pods(2)).to.eql
       games: 1
-      schedule: [{id:"Pod 1 Game 1", teams:[2,1]}]
+      schedule: [{id:"Pod 1 Game 10", round:1,teams:[2,1]}]
       divisions: []
       pods: {"1": [1,2]}
 
   it 'given 3 teams returns 3 games with numbers for names', ->
     expect(pods(3)).to.eql
       games: 3
-      schedule: [{id:"Pod 1 Game 1",teams:[3,2]},{id:"Pod 1 Game 2",teams:[1,3]},{id:"Pod 1 Game 3",teams:[2,1]}]
+      schedule: [{id:"Pod 1 Game 10",round:1,teams:[3,2]},{id:"Pod 1 Game 20",round:2,teams:[1,3]},{id:"Pod 1 Game 30",round:3,teams:[2,1]}]
       divisions: []
       pods: {"1": [1,2,3]}
 
@@ -46,8 +46,8 @@ describe 'tourney/pods', ->
       expect(divisions.length).to.eq 4
 
     it 'splits the tournament into two pods', ->
-      expect(schedule[0].id).to.eql "Pod 1 Game 1"
-      expect(schedule[1].id).to.eql "Pod 2 Game 1"
+      expect(schedule.indexOf (game) -> game.id is "Pod 1 Game 10").to.be.ok
+      expect(schedule.indexOf (game) -> game.id is "Pod 2 Game 10").to.be.ok
 
     it 'has games for each division', ->
       expect(schedule.indexOf (game) -> game.id is "Div 1 Game 1").to.be.ok
