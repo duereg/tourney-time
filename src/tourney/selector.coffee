@@ -7,4 +7,6 @@ module.exports = (teams, areas) ->
     {type: 'pods', games: tourney.games, schedule: tourney.schedule, areas}
   else
     tourney = roundRobin(teams)
-    {type: 'round robin', games: tourney.games, schedule: tourney.schedule, areas: Math.floor(teams/2)}
+    areaLimit = Math.floor(teams / 2)
+    areas = areaLimit if areas > areaLimit
+    {type: 'round robin', games: tourney.games, schedule: tourney.schedule, areas}

@@ -40,7 +40,7 @@ describe 'tourney/selector', ->
 
     describe 'and number of areas > teams / 4 but <= teams / 2', ->
       beforeEach ->
-        results = selector(10, 5)
+        results = selector(10, 4)
 
       it 'returns object with type "round robin"', ->
         expect(results.type).to.eq 'round robin'
@@ -52,7 +52,7 @@ describe 'tourney/selector', ->
         expect(results.schedule).to.be.ok
 
       it 'returns object containing number of areas', ->
-        expect(results.areas).to.eq 5
+        expect(results.areas).to.eq 4
 
     describe 'and number of areas > teams / 2', ->
       beforeEach ->
