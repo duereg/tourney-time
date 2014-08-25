@@ -3,12 +3,22 @@
 argv = require('yargs')
   .usage('Usage: $0 --teams [num] --time [num] --rest [num] --areas [num]')
   .demand(['teams'])
-  .default('time', 33)
-  .default('rest', 7)
-  .default('areas', 1)
-  .alias('t', 'time')
-  .alias('r', 'rest')
-  .alias('a', 'areas')
+  .describe('teams', 'number of players/teams competing')
+  .options('t', {
+    alias : 'time',
+    default : 33,
+    describe : 'time in minutes for each tourney game'
+  })
+  .options('r', {
+    alias : 'rest',
+    default : 7,
+    describe : 'time in minutes between each tourney game'
+  })
+  .options('a', {
+    alias : 'areas',
+    default : 1,
+    describe : 'number of playing areas available'
+  })
   .argv
 
 {teams, time, rest, areas} = argv
