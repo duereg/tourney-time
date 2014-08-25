@@ -9,7 +9,7 @@ describe 'tourney-time', ->
       expect(()-> tourneyTime teams:0).to.throw "You must have at least two teams to continue"
 
   describe 'with one playing area, 20 min games, and 5 minutes rest', ->
-    defaultTourney = {areas: 1, time: 20, rest: 5}
+    defaultTourney = {areas: 1, time: 20, rest: 5, playoffTime: 20, playoffRest: 5}
 
     describe 'given two teams', ->
       it 'generates correct output', ->
@@ -44,7 +44,7 @@ describe 'tourney-time', ->
         expect(schedule.length).to.eq 38
 
   describe 'with two playing areas, 30 min games, and 10 min rest', ->
-    defaultTourney = {areas: 2, time: 30, rest: 10}
+    defaultTourney = {areas: 2, time: 30, rest: 10, playoffTime: 30, playoffRest: 10}
 
     describe 'given two teams', ->
       it 'generates correct output', ->
