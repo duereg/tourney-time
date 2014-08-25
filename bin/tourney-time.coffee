@@ -6,6 +6,9 @@ argv = require('yargs')
   .default('time', 33)
   .default('rest', 7)
   .default('areas', 1)
+  .alias('t', 'time')
+  .alias('r', 'rest')
+  .alias('a', 'areas')
   .argv
 
 {teams, time, rest, areas} = argv
