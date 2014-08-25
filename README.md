@@ -14,13 +14,13 @@
 ## Usage Example
 
 ```shell
-  Usage: tourney-time -teams [num] -time [num] -rest [num] -areas [num]
+Usage: ./bin/tourney-time.coffee --teams [num] --time [num] --rest [num] --areas [num]
 
 Options:
-  --teams  [required]
-  --time   [default: 33]
-  --rest   [default: 7]
-  --areas  [default: 1]
+  --teams      number of players/teams competing          [required]
+  -t, --time   time in minutes for each tourney game      [default: 33]
+  -r, --rest   time in minutes between each tourney game  [default: 7]
+  -a, --areas  number of playing areas available          [default: 1]
 ```
 
 ```shell
