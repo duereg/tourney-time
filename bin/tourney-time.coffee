@@ -1,7 +1,7 @@
 #!/usr/bin/env coffee
 
 argv = require('yargs')
-  .usage('Usage: $0 --teams [num] --time [num] --rest [num] --areas [num]')
+  .usage('Usage: $0 --teams [num] -t [num] -r [num] -a [num] -p [num] -o [num]')
   .demand(['teams'])
   .describe('teams', 'number of players/teams competing')
   .options('t', {
