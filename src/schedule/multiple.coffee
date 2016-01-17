@@ -10,7 +10,13 @@ scheduleBalancer = (thingToSchedule, areas) ->
       round = balancedSchedule[balancedSchedule.length - 1]
 
       if round.length < areas
-        hasTeam = _(round).chain().map(round -> round.teams).flatten().intersection(game.teams).value().length
+        hasTeam = _(round)
+          .chain()
+          .map((aRound) -> aRound.teams)
+          .flatten()
+          .intersection(game.teams)
+          .value()
+          .length
 
         if hasTeam or currentRound isnt game.round
           balancedSchedule.push [game]
