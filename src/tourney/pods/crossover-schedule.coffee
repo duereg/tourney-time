@@ -1,4 +1,4 @@
-suffix = require 'util/suffix'
+suffix = require 'helpers/suffix'
 
 calculateNumCrossoverGames = (numOfDivisions) ->
   (numOfDivisions - 1) * 2

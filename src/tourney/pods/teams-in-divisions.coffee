@@ -1,6 +1,7 @@
-roundRobin = require '../round-robin'
 _ = require 'underscore'
-suffix = require 'util/suffix'
+
+roundRobin = require '../round-robin'
+suffix = require 'helpers/suffix'
 
 generateDivisions = (numOfDivisions, numPods, pods) ->
   divisions = []
