@@ -7,7 +7,7 @@
   "bugs": "https://github.com/duereg/tourney-time/issues",
   "author": {
     "name": "Matt",
-    "email": "matt@mattblair.co",
+    "email": "",
     "url": "https://github.com/duereg"
   },
   "bin": {
@@ -32,9 +32,9 @@
   "devDependencies": {
     "chai": "^3.4.1",
     "coffee-errors": "^0.8.6",
-    "coffee-script": "^1.10.0",
+    "coffee-script": "^1.12.7",
     "coveralls": "^2.11.1",
-    "gulp": "^3.9.0",
+    "gulp": "^3.9.1",
     "gulp-coffee": "^2.1.1",
     "gulp-coffee-istanbul": "^0.9.1",
     "gulp-mocha": "^2.0.0",
