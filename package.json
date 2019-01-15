@@ -27,23 +27,23 @@
   },
   "dependencies": {
     "roundrobin": "duereg/roundrobin",
-    "yargs": "^4.8.1"
+    "yargs": "^12.0.5"
   },
   "devDependencies": {
-    "chai": "^3.4.1",
+    "chai": "^4.2.0",
     "coffee-errors": "^0.8.6",
     "coffee-script": "^1.12.7",
-    "coveralls": "^2.11.1",
+    "coveralls": "^3.0.2",
     "gulp": "^3.9.1",
     "gulp-coffee": "^2.1.1",
     "gulp-coffee-istanbul": "^0.9.1",
     "gulp-mocha": "^2.0.0",
-    "gulp-util": "^3.0.1",
-    "rimraf": "^2.2.8",
-    "sinon": "^1.10.3",
-    "sinon-chai": "^2.5.0",
+    "gulp-util": "^3.0.8",
+    "rimraf": "^2.6.3",
+    "sinon": "^7.2.2",
+    "sinon-chai": "^3.3.0",
     "traceur": "0.0.111",
-    "underscore": "^1.6.0"
+    "underscore": "^1.9.1"
   },
   "engines": {
     "node": ">=4.2.0",
