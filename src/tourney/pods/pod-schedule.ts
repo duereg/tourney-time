@@ -1,0 +1,37 @@
+import _ from 'underscore';
+import roundRobin from '../round-robin'; // Adjusted path
+import { Game, Schedule } from '../../tourney-time'; // Adjust path as needed, define types
+
+// Assuming pods is an object where keys are pod identifiers (string)
+// and values are arrays of teams (e.g., string[]).
+// roundRobin returns a Schedule object.
+// Need to define Team type if it's more complex than string.
+type Team = string; // Placeholder, adjust if Team is an object
+
+interface PodSchedule extends Schedule {
+  pod?: string;
+}
+
+interface PodsInput {
+  [key: string]: Team[];
+}
+
+export default (pods: PodsInput): PodSchedule[] => {
+  const podsSchedule: PodSchedule[] = [];
+
+  for (const key in pods) {
+    if (Object.prototype.hasOwnProperty.call(pods, key)) {
+      const teamsInPod = pods[key];
+      const podScheduleResult: PodSchedule = roundRobin(teamsInPod);
+      podScheduleResult.pod = key;
+
+      _(podScheduleResult.schedule).forEach((game: Game) => { // Assuming game is of type Game
+        game.id = `Pod ${key} Game ${game.id}`;
+      });
+
+      podsSchedule.push(podScheduleResult);
+    }
+  }
+
+  return podsSchedule;
+};
