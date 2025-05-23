@@ -7,7 +7,6 @@
   "bugs": "https://github.com/duereg/tourney-time/issues",
   "author": {
     "name": "Matt",
-    "email": "",
     "url": "https://github.com/duereg"
   },
   "bin": {
@@ -21,7 +20,6 @@
   "scripts": {
     "test": "gulp test",
     "pretest": "gulp",
-    "postinstall": "npm run symlink",
     "nosymlink": "rm node_modules/{playoffs,schedule,timing,tourney,helpers}",
     "symlink": "cd node_modules && ln -nsf ../lib/playoffs && ln -nsf ../lib/schedule && ln -nsf ../lib/timing && ln -nsf ../lib/tourney && ln -nsf ../lib/helpers && cd .."
   },
