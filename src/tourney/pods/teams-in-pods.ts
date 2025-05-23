@@ -6,9 +6,14 @@ interface TeamsInPodsResult {
   [podKey: string]: TeamName[];
 }
 
-export default (names: TeamName[], teamsInPodsCount: number): TeamsInPodsResult => {
+export default (
+  names: TeamName[],
+  teamsInPodsCount: number,
+): TeamsInPodsResult => {
   if (arguments.length !== 2) {
-    throw new Error('You must provide the names of the teams and the number of teams per pod');
+    throw new Error(
+      'You must provide the names of the teams and the number of teams per pod',
+    );
   }
 
   const teams = names.length;
@@ -20,22 +25,24 @@ export default (names: TeamName[], teamsInPodsCount: number): TeamsInPodsResult 
   // The CoffeeScript _(names).groupBy logic distributes teams into pods.
   // If there are leftover teams, it creates numOfPodsBase + 1 "effective" pods for distribution.
   // Otherwise, it uses numOfPodsBase.
-  const effectiveNumOfPods = leftOverTeams > 0 ? numOfPodsBase + 1 : numOfPodsBase;
+  const effectiveNumOfPods =
+    leftOverTeams > 0 ? numOfPodsBase + 1 : numOfPodsBase;
 
   // Ensure effectiveNumOfPods is at least 1 to avoid issues with modulo by zero if names is empty
   // or teamsInPodsCount is greater than names.length.
   // Although, if names is empty, groupBy will return {} anyway.
   // If teamsInPodsCount is 0, it would lead to division by zero; needs guard or different logic.
   if (teamsInPodsCount <= 0) {
-      // Or handle as an error, depending on desired behavior for invalid input.
-      return {};
+    // Or handle as an error, depending on desired behavior for invalid input.
+    return {};
   }
 
-
-  const teamsAssignedToPods: TeamsInPodsResult = _(names).groupBy((name, index) => {
-    if (effectiveNumOfPods === 0) return '1'; // Avoid modulo by zero, put all in pod '1' if no pods
-    return String(Math.floor(index % effectiveNumOfPods) + 1); // Pod keys are "1", "2", ...
-  });
+  const teamsAssignedToPods: TeamsInPodsResult = _(names).groupBy(
+    (name, index) => {
+      if (effectiveNumOfPods === 0) return '1'; // Avoid modulo by zero, put all in pod '1' if no pods
+      return String(Math.floor(index % effectiveNumOfPods) + 1); // Pod keys are "1", "2", ...
+    },
+  );
 
   // The previous logic in CoffeeScript for `teamsInPods = _(names).groupBy ...` directly returns
   // the object where keys are pod numbers (1-indexed) and values are arrays of names.

@@ -8,7 +8,11 @@ interface PodsInput {
   [key: string]: TeamName[]; // Pods are objects with keys (pod numbers/IDs) and arrays of team names
 }
 
-const generateDivisions = (numOfDivisions: number, numPods: number, pods: PodsInput): TeamName[][] => {
+const generateDivisions = (
+  numOfDivisions: number,
+  numPods: number,
+  pods: PodsInput,
+): TeamName[][] => {
   const divisions: TeamName[][] = [];
 
   for (let i = 0; i < numOfDivisions; i++) {
@@ -26,8 +30,11 @@ const generateDivisions = (numOfDivisions: number, numPods: number, pods: PodsIn
     for (let teamIdxInPod = 0; teamIdxInPod < numTeamsInPod; teamIdxInPod++) {
       // CoffeeScript was 1-indexed for teamNum (1..numTeamsPod)
       // TS is 0-indexed, so division index is teamIdxInPod
-      if (divisions[teamIdxInPod]) { // Ensure division exists
-        divisions[teamIdxInPod].push(`${teamIdxInPod + 1}${suffix(teamIdxInPod + 1)} Pod ${podKey}`);
+      if (divisions[teamIdxInPod]) {
+        // Ensure division exists
+        divisions[teamIdxInPod].push(
+          `${teamIdxInPod + 1}${suffix(teamIdxInPod + 1)} Pod ${podKey}`,
+        );
       }
     }
   }
@@ -51,7 +58,8 @@ const combineTinyDivisions = (divisions: TeamName[][]): TeamName[][] => {
 };
 
 export default (pods: PodsInput): TeamName[][] => {
-  if (arguments.length === 0) { // Or check if pods is undefined or empty
+  if (arguments.length === 0) {
+    // Or check if pods is undefined or empty
     throw new Error('You must provide pods to generate the divisions');
   }
 
@@ -70,8 +78,9 @@ export default (pods: PodsInput): TeamName[][] => {
   // Check if numOfDivisions is -Infinity (empty podsArray) or if there's only one pod (no divisions needed)
   if (numOfDivisions !== -Infinity && numPods >= 2) {
     divisions = generateDivisions(numOfDivisions, numPods, pods);
-    if (divisions.length > 0) { // only combine if there are divisions
-        combineTinyDivisions(divisions);
+    if (divisions.length > 0) {
+      // only combine if there are divisions
+      combineTinyDivisions(divisions);
     }
   }
 

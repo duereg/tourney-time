@@ -1,7 +1,11 @@
 import { expect } from './spec-helper'; // Adjusted path for spec-helper
 import _ from 'underscore';
 import tourneyTime from '@lib/tourney-time'; // Using path alias for the main module
-import { Game, Schedule as TourneyScheduleType, TourneyTimeOptions } from '@lib/tourney-time'; // Assuming types
+import {
+  Game,
+  Schedule as TourneyScheduleType,
+  TourneyTimeOptions,
+} from '@lib/tourney-time'; // Assuming types
 
 interface TestTourneyTimeOptions extends Partial<TourneyTimeOptions> {
   teams: number; // teams is always required for these tests
@@ -17,14 +21,13 @@ interface TourneyTimeResult {
   playoffSchedule: TourneyScheduleType;
 }
 
-
 describe('tourney-time', () => {
   describe('given one team', () => {
     it('throws an error', () => {
       // tourneyTime expects an object with a teams property.
-      expect(() => tourneyTime({ teams: 0 } as TestTourneyTimeOptions)).to.throw(
-        'You must have at least two teams to continue',
-      );
+      expect(() =>
+        tourneyTime({ teams: 0 } as TestTourneyTimeOptions),
+      ).to.throw('You must have at least two teams to continue');
     });
   });
 
@@ -32,19 +35,21 @@ describe('tourney-time', () => {
     const defaultTourney: Partial<TestTourneyTimeOptions> = {
       areas: 1,
       time: 20, // gameTime
-      rest: 5,  // restTime
+      rest: 5, // restTime
       playoffTime: 20,
       playoffRest: 5, // playoffRestTime
     };
 
     describe('given two teams', () => {
       it('generates correct output', () => {
-        const options: TestTourneyTimeOptions = _.extend({}, defaultTourney, { teams: 2 });
+        const options: TestTourneyTimeOptions = _.extend({}, defaultTourney, {
+          teams: 2,
+        });
         const result: TourneyTimeResult = tourneyTime(options);
 
         // For 1 area, schedule should be Game[]
         expect(result.timeNeededMinutes).to.eql(50); // (1 RR game * 20) + (1 PO game * 20) + (1 rest * 5) + (1 PO rest * 5) ??
-                                                    // RR: 1 game * (20+5) = 25. PO: 1 game * (20+5) = 25. Total = 50. Correct.
+        // RR: 1 game * (20+5) = 25. PO: 1 game * (20+5) = 25. Total = 50. Correct.
         expect(result.schedule).to.eql([
           { id: 10, round: 1, teams: [2, 1] as any }, // RR game
           { id: 111, round: 1, teams: ['Seed 1', 'Seed 2'] }, // PO game
@@ -65,7 +70,9 @@ describe('tourney-time', () => {
       let result: TourneyTimeResult;
 
       beforeEach(() => {
-        const options: TestTourneyTimeOptions = _.extend({}, defaultTourney, { teams: 10 });
+        const options: TestTourneyTimeOptions = _.extend({}, defaultTourney, {
+          teams: 10,
+        });
         result = tourneyTime(options);
       });
 
@@ -93,7 +100,11 @@ describe('tourney-time', () => {
       });
 
       it('generates the correct type of tourney schedule', () => {
-        expect(result.tourneySchedule).to.eql({ games: 28, type: 'pods', areas: 1 });
+        expect(result.tourneySchedule).to.eql({
+          games: 28,
+          type: 'pods',
+          areas: 1,
+        });
       });
 
       it('generates a 10 game playoff schedule', () => {
@@ -101,7 +112,8 @@ describe('tourney-time', () => {
         expect(result.playoffSchedule).to.eql({ games: 10, type: 'knockout' });
       });
 
-      it('generates a schedule containing 38 games', () => { // Changed from rounds to games
+      it('generates a schedule containing 38 games', () => {
+        // Changed from rounds to games
         expect(result.schedule.length).to.eq(38);
       });
     });
@@ -118,7 +130,9 @@ describe('tourney-time', () => {
 
     describe('given two teams', () => {
       it('generates correct output', () => {
-        const options: TestTourneyTimeOptions = _.extend({}, defaultTourney, { teams: 2 });
+        const options: TestTourneyTimeOptions = _.extend({}, defaultTourney, {
+          teams: 2,
+        });
         const result: TourneyTimeResult = tourneyTime(options);
         // Schedule for 2 areas is Game[][]
         // Tourney: 1 game. PO: 1 game.
@@ -143,7 +157,9 @@ describe('tourney-time', () => {
 
     describe('given three teams', () => {
       it('generates correct output', () => {
-        const options: TestTourneyTimeOptions = _.extend({}, defaultTourney, { teams: 3 });
+        const options: TestTourneyTimeOptions = _.extend({}, defaultTourney, {
+          teams: 3,
+        });
         const result: TourneyTimeResult = tourneyTime(options);
         // RR for 3 teams = 3 games. PO for 3 teams = 2 games. Total 5 games.
         // RR schedule (3 games, 2 areas):
@@ -170,7 +186,7 @@ describe('tourney-time', () => {
           [{ id: 20, round: 2, teams: [1, 3] as any }], // RR G2
           [{ id: 30, round: 3, teams: [2, 1] as any }], // RR G3
           [{ id: 212, round: 1, teams: ['Seed 3', 'Seed 2'] }], // PO G1
-          [{ id: 221, round: 2, teams: ['Seed 1', 'Winner 212'] }],// PO G2
+          [{ id: 221, round: 2, teams: ['Seed 1', 'Winner 212'] }], // PO G2
         ]);
         expect(result.tourneySchedule).to.eql({
           areas: 1, // Reduced because 3 games < 2 areas * X rounds implies not fully using 2 areas always
@@ -188,7 +204,9 @@ describe('tourney-time', () => {
       let result: TourneyTimeResult;
 
       beforeEach(() => {
-        const options: TestTourneyTimeOptions = _.extend({}, defaultTourney, { teams: 4 });
+        const options: TestTourneyTimeOptions = _.extend({}, defaultTourney, {
+          teams: 4,
+        });
         result = tourneyTime(options);
       });
 
@@ -206,10 +224,15 @@ describe('tourney-time', () => {
       });
 
       it('generates the 6 game tourney schedule', () => {
-        expect(result.tourneySchedule).to.eql({ games: 6, type: 'round robin', areas: 2 });
+        expect(result.tourneySchedule).to.eql({
+          games: 6,
+          type: 'round robin',
+          areas: 2,
+        });
       });
 
-      it('generates a schedule containing 5 effective rounds', () => { // schedule is Game[][]
+      it('generates a schedule containing 5 effective rounds', () => {
+        // schedule is Game[][]
         // RR 6 games on 2 areas: 3 "rounds" from multiAreaSchedule
         // PO 4 games on 2 areas: 2 "rounds" from multiAreaSchedule
         // Total 3+2 = 5 effective rounds in the schedule array.
@@ -221,7 +244,9 @@ describe('tourney-time', () => {
       let result: TourneyTimeResult;
 
       beforeEach(() => {
-        const options: TestTourneyTimeOptions = _.extend({}, defaultTourney, { teams: 10 });
+        const options: TestTourneyTimeOptions = _.extend({}, defaultTourney, {
+          teams: 10,
+        });
         result = tourneyTime(options);
       });
 
@@ -239,7 +264,11 @@ describe('tourney-time', () => {
       });
 
       it('generates a 28 game tourney schedule', () => {
-        expect(result.tourneySchedule).to.eql({ games: 28, type: 'pods', areas: 2 });
+        expect(result.tourneySchedule).to.eql({
+          games: 28,
+          type: 'pods',
+          areas: 2,
+        });
       });
 
       it('generates a schedule containing 19 effective rounds', () => {

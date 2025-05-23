@@ -8,9 +8,7 @@ interface Argv {
   [key: string]: unknown;
 }
 
-const argv = yargs
-  .usage('Usage: $0 --teams [num]')
-  .demandOption(['teams'])
+const argv = yargs.usage('Usage: $0 --teams [num]').demandOption(['teams'])
   .argv as Argv;
 
 class Pair {
@@ -63,7 +61,8 @@ class Round {
       let team1: number;
       let team2: number;
 
-      if (this.teams % 2 !== 0) { // Odd number of teams, one gets a bye
+      if (this.teams % 2 !== 0) {
+        // Odd number of teams, one gets a bye
         // This part needs careful translation of the original intent if byes are implicit.
         // The original code `(round + teams - i - 1) % (teams - 1) + 2`
         // and `(round + i - 2) % (teams - 1) + 2` needs to be understood in context of byes.
@@ -81,33 +80,37 @@ class Round {
         // The actual number of participants in the pairing is N.
         // The +1 and +2 adjustments are likely to keep team numbers 1-based.
 
-        const activeTeams = this.teams % 2 === 0 ? this.teams : this.teams -1; // Number of teams actually playing in the schedule if one gets a bye.
-                                                                    // Or, the algorithm might implicitly handle it if `this.teams` is odd.
+        const activeTeams = this.teams % 2 === 0 ? this.teams : this.teams - 1; // Number of teams actually playing in the schedule if one gets a bye.
+        // Or, the algorithm might implicitly handle it if `this.teams` is odd.
 
         // Sticking to a direct translation of the CoffeeScript logic:
         if (i === 1) {
           team1 = 1;
           // `(round + teams - i - 1)` becomes `(this.round + this.teams - 1 - 1)`
           // `(teams - 1)` is the modulus base. `+ 2` adjusts the result.
-          team2 = ((this.round + this.teams - 1 - 1 -1) % (this.teams - 1)) + 2; // Coffee seems to be 1-indexed for round.
-                                                                            // (val - 1) % mod + 1 for 1-indexed modulo
+          team2 =
+            ((this.round + this.teams - 1 - 1 - 1) % (this.teams - 1)) + 2; // Coffee seems to be 1-indexed for round.
+          // (val - 1) % mod + 1 for 1-indexed modulo
         } else {
-          team1 = ((this.round + i - 2 -1) % (this.teams - 1)) + 2;
-          team2 = ((this.round + this.teams - i - 1 -1) % (this.teams - 1)) + 2;
+          team1 = ((this.round + i - 2 - 1) % (this.teams - 1)) + 2;
+          team2 =
+            ((this.round + this.teams - i - 1 - 1) % (this.teams - 1)) + 2;
         }
-         // The original coffee script was:
-         // if i is 1
-         //   @pairs.push(new Pair(1, (round + teams - i - 1) % (teams - 1) + 2, round))
-         // else
-         //   @pairs.push(new Pair((round + i - 2) % (teams - 1) + 2, (round + teams - i - 1) % (teams - 1) + 2, round))
-         // My previous translation was off by 1 in the modulo input.
-         // Corrected:
+        // The original coffee script was:
+        // if i is 1
+        //   @pairs.push(new Pair(1, (round + teams - i - 1) % (teams - 1) + 2, round))
+        // else
+        //   @pairs.push(new Pair((round + i - 2) % (teams - 1) + 2, (round + teams - i - 1) % (teams - 1) + 2, round))
+        // My previous translation was off by 1 in the modulo input.
+        // Corrected:
         if (i === 1) {
-            team1 = 1;
-            team2 = ( ( (this.round-1) + (this.teams-1) - i ) % (this.teams - 1) ) + 2;
+          team1 = 1;
+          team2 =
+            ((this.round - 1 + (this.teams - 1) - i) % (this.teams - 1)) + 2;
         } else {
-            team1 = ( ( (this.round-1) + i - 2 ) % (this.teams - 1) ) + 2;
-            team2 = ( ( (this.round-1) + (this.teams-1) - i ) % (this.teams - 1) ) + 2;
+          team1 = ((this.round - 1 + i - 2) % (this.teams - 1)) + 2;
+          team2 =
+            ((this.round - 1 + (this.teams - 1) - i) % (this.teams - 1)) + 2;
         }
         // If teams is odd, team `this.teams` gets a bye.
         // The pairs are for team 1 to team `this.teams -1`.
@@ -143,11 +146,13 @@ class Round {
         // This seems to be a specific algorithm. I will translate it as literally as possible.
         // The `round` in CoffeeScript is 1-indexed.
         if (i === 1) {
-            team1 = 1;
-            team2 = ((this.round + this.teams - i - 1 -1) % (this.teams - 1)) + 2;
+          team1 = 1;
+          team2 =
+            ((this.round + this.teams - i - 1 - 1) % (this.teams - 1)) + 2;
         } else {
-            team1 = (((this.round + i - 2 -1)) % (this.teams - 1)) + 2;
-            team2 = (((this.round + this.teams - i - 1 -1)) % (this.teams - 1)) + 2;
+          team1 = ((this.round + i - 2 - 1) % (this.teams - 1)) + 2;
+          team2 =
+            ((this.round + this.teams - i - 1 - 1) % (this.teams - 1)) + 2;
         }
       }
       this.pairs.push(new Pair(team1, team2, this.round));
@@ -188,7 +193,7 @@ console.log(games);
 
 // Check for overlaps in consecutive games (simple check, not a full validation)
 for (let i = 0; i < games.length - 1; i++) {
-  if (games[i+1] && _.intersection(games[i], games[i+1]).length) {
-    console.log("this balancer overlaps!"); // This message implies issues with the scheduling logic itself
+  if (games[i + 1] && _.intersection(games[i], games[i + 1]).length) {
+    console.log('this balancer overlaps!'); // This message implies issues with the scheduling logic itself
   }
 }

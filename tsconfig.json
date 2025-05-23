@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "ES2018",
+    "module": "commonjs",
+    "lib": ["ES2018", "DOM"],
+    "declaration": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "jsx": "react-jsx", // Changed from "react" to "react-jsx" for modern JSX transform
+    "baseUrl": ".",
+    "paths": {
+      "@lib/*": ["src/*"], // For library modules
+      "@bin/*": ["bin/*"], // For CLI tools, if ever imported by UI (unlikely)
+      "@tests/*": ["test/*"] // For tests, if needed (unlikely for UI)
+    }
+  },
+  "include": [
+    "src/**/*",
+    "bin/**/*", // If CLI tools need to be compiled by tsc (usually not for parcel builds)
+    "test/**/*" // If tests were to be compiled by tsc
+  ],
+  "exclude": ["node_modules", "dist", "docs"] // Exclude build/output directories
+}

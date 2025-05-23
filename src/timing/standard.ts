@@ -24,7 +24,10 @@ const calculateStandardTiming = ({
   const tourneyAreaLength = calcAreaLength(tourneyGames);
   const playoffAreaLength = calcAreaLength(playoffGames);
 
-  return tourneyAreaLength * (gameTime + restTime) + playoffAreaLength * (playoffTime + playoffRest);
+  return (
+    tourneyAreaLength * (gameTime + restTime) +
+    playoffAreaLength * (playoffTime + playoffRest)
+  );
 };
 
 export default calculateStandardTiming;

@@ -8,7 +8,11 @@ interface GeneratorOptions {
   areas: number;
 }
 
-export default ({ tourneySchedule, playoffSchedule, areas }: GeneratorOptions) => {
+export default ({
+  tourneySchedule,
+  playoffSchedule,
+  areas,
+}: GeneratorOptions) => {
   if (areas === 1) {
     return singleArea({ tourneySchedule, playoffSchedule });
   } else {

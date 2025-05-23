@@ -47,25 +47,25 @@ const argv = yargs
     default: 12,
     describe: 'time in minutes between each playoff game',
     type: 'number',
-  })
-  .argv as Argv;
+  }).argv as Argv;
 
 const { teams, time, rest, areas, playoffTime, playoffRest } = argv;
 
 // Pass the relevant properties from argv to tourneyTime
-const { timeNeededMinutes, tourneySchedule, playoffSchedule, schedule } = tourneyTime({
-  teams,
-  gameTime: time, // map alias to expected property name
-  restTime: rest, // map alias to expected property name
-  areas,
-  playoffTime,
-  playoffRestTime: playoffRest, // map alias to expected property name
-});
+const { timeNeededMinutes, tourneySchedule, playoffSchedule, schedule } =
+  tourneyTime({
+    teams,
+    gameTime: time, // map alias to expected property name
+    restTime: rest, // map alias to expected property name
+    areas,
+    playoffTime,
+    playoffRestTime: playoffRest, // map alias to expected property name
+  });
 
 const hours = Math.floor(timeNeededMinutes / 60);
 const minutes = timeNeededMinutes % 60;
 
-let totalTime = "";
+let totalTime = '';
 if (hours) {
   totalTime += `${hours} hours`;
 }

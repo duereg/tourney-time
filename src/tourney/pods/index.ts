@@ -48,13 +48,18 @@ const spreadSchedule = (schedule: ScheduleSection[]): Game[] => {
 // The original CoffeeScript used `arguments` which is not directly available in the same way in TS arrow functions
 // or when destructuring. Assuming `teams` was the primary first argument.
 // If other arguments were expected, this function signature and logic might need adjustment.
-export default (teamsArg: Team[] | number | { [key: string]: any }): { // Loosening type for teamsArg
+export default (
+  teamsArg: Team[] | number | { [key: string]: any },
+): {
+  // Loosening type for teamsArg
   games: number;
   schedule: Game[];
   divisions: DivisionsReturn;
   pods: PodsReturn;
 } => {
-  const { teams, names }: TeamNamesAndNumberReturn = getTeamNamesAndNumber(teamsArg as any); // Cast to any to satisfy getTeamNamesAndNumber
+  const { teams, names }: TeamNamesAndNumberReturn = getTeamNamesAndNumber(
+    teamsArg as any,
+  ); // Cast to any to satisfy getTeamNamesAndNumber
 
   // How should you calculate how many pods you should have?
   const teamsInPods = 4;
@@ -65,7 +70,8 @@ export default (teamsArg: Team[] | number | { [key: string]: any }): { // Loosen
   const divisions: DivisionsReturn = generateDivisions(pods);
 
   const podSchedule: ScheduleSection[] = generatePodSchedule(pods);
-  const divisionSchedule: ScheduleSection[] = generateDivisionSchedule(divisions);
+  const divisionSchedule: ScheduleSection[] =
+    generateDivisionSchedule(divisions);
   const crossoverSchedule: Game[] = generateCrossoverSchedule(divisions);
 
   const podGames = sumGames(podSchedule); // a bunch of mini round robins to determine divisions
@@ -77,7 +83,10 @@ export default (teamsArg: Team[] | number | { [key: string]: any }): { // Loosen
 
   const totalGames = podGames + divisionGames + crossOverGames;
 
-  const finalSchedule = spreadPodSchedule.concat(spreadDivisionSchedule, crossoverSchedule);
+  const finalSchedule = spreadPodSchedule.concat(
+    spreadDivisionSchedule,
+    crossoverSchedule,
+  );
 
   return { games: totalGames, schedule: finalSchedule, divisions, pods };
 };

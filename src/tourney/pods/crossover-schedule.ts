@@ -22,7 +22,9 @@ const calculateNumCrossoverGames = (numOfDivisions: number): number => {
 
 export default (divisions: Division[]): Game[] => {
   if (arguments.length === 0) {
-    throw new Error('You must provide divisions to generate the crossover games');
+    throw new Error(
+      'You must provide divisions to generate the crossover games',
+    );
   }
 
   const crossOverGames: Game[] = [];
@@ -46,10 +48,14 @@ export default (divisions: Division[]): Game[] => {
       gameTwo.id = `Div ${divisionIdx}/${divisionIdx + 1} <-2->`;
 
       // Ensure suffix is called correctly
-      gameOne.teams.push(`${teamsInPreviousDivision - 1}${suffix(teamsInPreviousDivision - 1)} Div ${divisionIdx}`);
+      gameOne.teams.push(
+        `${teamsInPreviousDivision - 1}${suffix(teamsInPreviousDivision - 1)} Div ${divisionIdx}`,
+      );
       gameOne.teams.push(`2nd Div ${divisionIdx + 1}`);
 
-      gameTwo.teams.push(`${teamsInPreviousDivision}${suffix(teamsInPreviousDivision)} Div ${divisionIdx}`);
+      gameTwo.teams.push(
+        `${teamsInPreviousDivision}${suffix(teamsInPreviousDivision)} Div ${divisionIdx}`,
+      );
       gameTwo.teams.push(`1st Div ${divisionIdx + 1}`);
     }
   }

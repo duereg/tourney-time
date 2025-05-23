@@ -5,7 +5,10 @@ interface SingleOptions {
   playoffSchedule?: PlayoffSchedule;
 }
 
-export default ({ tourneySchedule, playoffSchedule }: SingleOptions): Game[] => {
+export default ({
+  tourneySchedule,
+  playoffSchedule,
+}: SingleOptions): Game[] => {
   if (!tourneySchedule) {
     throw new Error('You must provide a tournament schedule to continue');
   }

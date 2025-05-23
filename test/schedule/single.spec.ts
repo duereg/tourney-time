@@ -28,19 +28,29 @@ describe('schedule/single', () => {
 
   it('give no params, throws', () => {
     // Original test implies calling standardSchedule() which is standardSchedule(undefined)
-    expect(() => standardSchedule(undefined as any)).to.throw("Cannot read property 'tourneySchedule' of undefined");
+    expect(() => standardSchedule(undefined as any)).to.throw(
+      "Cannot read property 'tourneySchedule' of undefined",
+    );
   });
 
   it('given a tourneySchedule param set to null, throws', () => {
-    expect(() => standardSchedule({ tourneySchedule: null as any, playoffSchedule, areas })).to.throw(
-      'You must provide a tournament schedule to continue',
-    );
+    expect(() =>
+      standardSchedule({
+        tourneySchedule: null as any,
+        playoffSchedule,
+        areas,
+      }),
+    ).to.throw('You must provide a tournament schedule to continue');
   });
 
   it('given a playoffSchedule param set to null, throws', () => {
-    expect(() => standardSchedule({ tourneySchedule, playoffSchedule: null as any, areas })).to.throw(
-      'You must provide a playoff schedule to continue',
-    );
+    expect(() =>
+      standardSchedule({
+        tourneySchedule,
+        playoffSchedule: null as any,
+        areas,
+      }),
+    ).to.throw('You must provide a playoff schedule to continue');
   });
 
   it('given no games to schedule returns []', () => {
@@ -127,7 +137,9 @@ describe('schedule/single', () => {
       });
 
       it('returns five games', () => {
-        expect(standardSchedule(args)).to.eql(gamesTourney.concat(gamesPlayoff));
+        expect(standardSchedule(args)).to.eql(
+          gamesTourney.concat(gamesPlayoff),
+        );
       });
     });
   });

@@ -4,12 +4,22 @@
 [![Dependency status](https://david-dm.org/duereg/tourney-time.svg)](https://david-dm.org/duereg/tourney-time)
 [![devDependency Status](https://david-dm.org/duereg/tourney-time/dev-status.svg)](https://david-dm.org/duereg/tourney-time#info=devDependencies)
 [![Coverage Status](https://img.shields.io/coveralls/duereg/tourney-time.svg)](https://coveralls.io/r/duereg/tourney-time)
+
 <!--
 [![NPM](https://nodei.co/npm/tourney-time.svg)](https://npmjs.org/package/tourney-time)
  -->
+
 ## Installation
 
     npm install tourney-time
+
+## Web UI
+
+A web-based user interface for this tool is available, allowing you to easily calculate tournament schedules and times without using the command line.
+
+Access the online tool here: [Tourney Time UI](https://duereg.github.io/tourney-time/)
+
+_(Note: This UI is built and deployed via GitHub Pages from the `docs/` directory of this repository.)_
 
 ## Usage Example
 
@@ -35,15 +45,15 @@ Options:
 
 ## References
 
-* [Round Robin Scheduling](http://en.wikipedia.org/wiki/Round-robin_tournament#Scheduling_algorithm)
-* [Round Robin Cyclic Algorithm](http://www.devenezia.com/javascript/article.php/RoundRobin1.html)
-* [Round Robin in C](http://www.math.niu.edu/~rusin/known-math/97/roundrobin)
-* [Swiss System Tournament](http://en.wikipedia.org/wiki/Swiss_system_tournament)
-* [Static Tournament Implementations](https://github.com/clux/tournament)
-* [Fair Grouping for Tournaments](https://github.com/clux/group)
-* [Single/Double Elimination Tournaments](https://github.com/clux/duel)
-* [Group Stage Tournaments](https://github.com/clux/groupstage)
-* [Notes on Balancing Round Robin Implementations](http://okasaki.blogspot.com/2009/11/round-robin-tournament-scheduling.html)
+- [Round Robin Scheduling](http://en.wikipedia.org/wiki/Round-robin_tournament#Scheduling_algorithm)
+- [Round Robin Cyclic Algorithm](http://www.devenezia.com/javascript/article.php/RoundRobin1.html)
+- [Round Robin in C](http://www.math.niu.edu/~rusin/known-math/97/roundrobin)
+- [Swiss System Tournament](http://en.wikipedia.org/wiki/Swiss_system_tournament)
+- [Static Tournament Implementations](https://github.com/clux/tournament)
+- [Fair Grouping for Tournaments](https://github.com/clux/group)
+- [Single/Double Elimination Tournaments](https://github.com/clux/duel)
+- [Group Stage Tournaments](https://github.com/clux/groupstage)
+- [Notes on Balancing Round Robin Implementations](http://okasaki.blogspot.com/2009/11/round-robin-tournament-scheduling.html)
 
 ## License
 

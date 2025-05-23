@@ -25,7 +25,8 @@ export default (pods: PodsInput): PodSchedule[] => {
       const podScheduleResult: PodSchedule = roundRobin(teamsInPod);
       podScheduleResult.pod = key;
 
-      _(podScheduleResult.schedule).forEach((game: Game) => { // Assuming game is of type Game
+      _(podScheduleResult.schedule).forEach((game: Game) => {
+        // Assuming game is of type Game
         game.id = `Pod ${key} Game ${game.id}`;
       });
 

@@ -12,7 +12,9 @@ interface PodsResult {
 
 describe('tourney/pods', () => {
   it('given no params throws', () => {
-    expect(() => (pods as any)()).to.throw("You must provide either the number of teams or a list of team names");
+    expect(() => (pods as any)()).to.throw(
+      'You must provide either the number of teams or a list of team names',
+    );
   });
 
   it('given no teams returns zero', () => {
@@ -21,16 +23,23 @@ describe('tourney/pods', () => {
 
   it('given 1 team returns zero', () => {
     // For 1 team, it forms a pod with that one team. No games.
-    expect(pods(1)).to.eql({ games: 0, schedule: [], divisions: [], pods: { "1": [1] } });
+    expect(pods(1)).to.eql({
+      games: 0,
+      schedule: [],
+      divisions: [],
+      pods: { '1': [1] },
+    });
   });
 
   it('given 2 teams returns 1 game with numbers for names', () => {
     // For 2 teams, they are in one pod, play 1 game.
     const result = pods(2);
     expect(result.games).to.eq(1);
-    expect(result.schedule).to.eql([{ id: "Pod 1 Game 10", round: 1, teams: [2, 1] as any }]);
+    expect(result.schedule).to.eql([
+      { id: 'Pod 1 Game 10', round: 1, teams: [2, 1] as any },
+    ]);
     expect(result.divisions).to.eql([]);
-    expect(result.pods).to.eql({ "1": [1, 2] });
+    expect(result.pods).to.eql({ '1': [1, 2] });
   });
 
   it('given 3 teams returns 3 games with numbers for names', () => {
@@ -38,12 +47,12 @@ describe('tourney/pods', () => {
     const result = pods(3);
     expect(result.games).to.eq(3);
     expect(result.schedule).to.eql([
-      { id: "Pod 1 Game 10", round: 1, teams: [3, 2] as any },
-      { id: "Pod 1 Game 20", round: 2, teams: [1, 3] as any },
-      { id: "Pod 1 Game 30", round: 3, teams: [2, 1] as any },
+      { id: 'Pod 1 Game 10', round: 1, teams: [3, 2] as any },
+      { id: 'Pod 1 Game 20', round: 2, teams: [1, 3] as any },
+      { id: 'Pod 1 Game 30', round: 3, teams: [2, 1] as any },
     ]);
     expect(result.divisions).to.eql([]);
-    expect(result.pods).to.eql({ "1": [1, 2, 3] });
+    expect(result.pods).to.eql({ '1': [1, 2, 3] });
   });
 
   it('given 4 teams returns 6 games', () => {
@@ -80,26 +89,26 @@ describe('tourney/pods', () => {
     });
 
     const findGameById = (schedule: Game[], idSubstring: string) => {
-      return schedule.find(game => game.id && game.id.includes(idSubstring));
+      return schedule.find((game) => game.id && game.id.includes(idSubstring));
     };
 
     it('splits the tournament into two pods', () => {
       // Original test used schedule.indexOf which doesn't work with objects directly.
-      expect(findGameById(result.schedule, "Pod 1 Game 10")).to.be.ok;
-      expect(findGameById(result.schedule, "Pod 2 Game 10")).to.be.ok;
+      expect(findGameById(result.schedule, 'Pod 1 Game 10')).to.be.ok;
+      expect(findGameById(result.schedule, 'Pod 2 Game 10')).to.be.ok;
     });
 
     it('has games for each division', () => {
-      expect(findGameById(result.schedule, "Div 1 Game 1")).to.be.ok;
-      expect(findGameById(result.schedule, "Div 2 Game 1")).to.be.ok;
-      expect(findGameById(result.schedule, "Div 3 Game 1")).to.be.ok;
-      expect(findGameById(result.schedule, "Div 4 Game 1")).to.be.ok;
+      expect(findGameById(result.schedule, 'Div 1 Game 1')).to.be.ok;
+      expect(findGameById(result.schedule, 'Div 2 Game 1')).to.be.ok;
+      expect(findGameById(result.schedule, 'Div 3 Game 1')).to.be.ok;
+      expect(findGameById(result.schedule, 'Div 4 Game 1')).to.be.ok;
     });
 
     it('has crossover games for each division', () => {
-      expect(findGameById(result.schedule, "Div 1/2 <--1-->")).to.be.ok; // Note: Original test has double arrow <--1-->, ensure it matches actual ID
-      expect(findGameById(result.schedule, "Div 2/3 <--1-->")).to.be.ok;
-      expect(findGameById(result.schedule, "Div 3/4 <--1-->")).to.be.ok;
+      expect(findGameById(result.schedule, 'Div 1/2 <--1-->')).to.be.ok; // Note: Original test has double arrow <--1-->, ensure it matches actual ID
+      expect(findGameById(result.schedule, 'Div 2/3 <--1-->')).to.be.ok;
+      expect(findGameById(result.schedule, 'Div 3/4 <--1-->')).to.be.ok;
     });
   });
 
@@ -123,7 +132,8 @@ describe('tourney/pods', () => {
     expect(pods(12).games).to.eq(36);
   });
 
-  it('given 16 teams returns 54 games', () => { // Original test has 48, but calculation suggests 54
+  it('given 16 teams returns 54 games', () => {
+    // Original test has 48, but calculation suggests 54
     // 16 teams -> 4 pods of 4. Each pod: 6 games. Total pod games = 24.
     // Divisions: 4 divisions.
     // Div 1: 1P1, 1P2, 1P3, 1P4 (6 games)

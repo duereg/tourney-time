@@ -28,7 +28,9 @@ describe('tourney/selector', () => {
     it('returns object containing a schedule', () => {
       // For 2 teams, 1 area, it's a round robin.
       // Schedule for roundRobin(2) is [{id:10,round:1,teams:[2,1]}]
-      expect(results?.schedule).to.eql([{ id: 10, round: 1, teams: [2, 1] as any }]);
+      expect(results?.schedule).to.eql([
+        { id: 10, round: 1, teams: [2, 1] as any },
+      ]);
     });
 
     it('returns object containing number of areas', () => {

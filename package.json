@@ -10,39 +10,59 @@
     "url": "https://github.com/duereg"
   },
   "bin": {
-    "tourney-time": "./bin/tourney-time.coffee"
+    "tourney-time": "./dist/bin/tourney-time.js"
   },
-  "main": "./lib/tourney-time.js",
+  "main": "dist/tourney-time.js",
+  "types": "dist/tourney-time.d.ts",
+  "files": [
+    "dist",
+    "bin",
+    "README.md",
+    "LICENSE"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/duereg/tourney-time.git"
   },
   "scripts": {
-    "test": "gulp test",
-    "pretest": "gulp",
-    "nosymlink": "rm node_modules/{playoffs,schedule,timing,tourney,helpers}",
-    "symlink": "cd node_modules && ln -nsf ../lib/playoffs && ln -nsf ../lib/schedule && ln -nsf ../lib/timing && ln -nsf ../lib/tourney && ln -nsf ../lib/helpers && cd .."
+    "test": "mocha --opts test/mocha.opts test/**/*.spec.ts",
+    "build": "tsc",
+    "start:ui": "parcel src/ui/index.html --dist-dir dist/ui",
+    "build:ui": "parcel build src/ui/index.html --dist-dir docs --public-url ./",
+    "lint": "eslint \"src/**/*.{ts,tsx}\" \"bin/**/*.ts\" \"test/**/*.ts\"",
+    "lint:fix": "eslint --fix \"src/**/*.{ts,tsx}\" \"bin/**/*.ts\" \"test/**/*.ts\"",
+    "format": "prettier --write \"src/**/*.{ts,tsx}\" \"bin/**/*.ts\" \"test/**/*.ts\" \"README.md\" \"*.json\""
   },
   "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "roundrobin": "duereg/roundrobin",
-    "yargs": "^12.0.5"
+    "yargs": "^17.7.2"
   },
   "devDependencies": {
-    "chai": "^4.2.0",
+    "globals": "^15.8.0",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.32.1",
+    "eslint": "^9.27.0",
+    "prettier": "^3.5.3",
+    "@typescript-eslint/parser": "^8.32.1",
+    "@typescript-eslint/eslint-plugin": "^8.32.1",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "parcel": "^2.12.0",
+    "@types/mocha": "^10.0.10",
+    "chai": "^5.2.0",
     "coffee-errors": "^0.8.6",
     "coffee-script": "^1.12.7",
     "coveralls": "^3.0.2",
     "decaffeinate": "^8.1.4",
-    "gulp": "^3.9.1",
-    "gulp-coffee": "^2.1.1",
-    "gulp-coffee-istanbul": "^0.9.1",
-    "gulp-mocha": "^2.0.0",
-    "gulp-util": "^3.0.8",
+    "mocha": "^11.4.0",
     "rimraf": "^2.6.3",
-    "sinon": "^7.2.2",
+    "sinon": "^20.0.0",
     "sinon-chai": "^3.3.0",
     "traceur": "0.0.111",
-    "underscore": "^1.9.1"
+    "underscore": "^1.13.7"
   },
   "engines": {
     "node": ">=4.2.0",

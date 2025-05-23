@@ -31,7 +31,9 @@ const thirteenTeamSchedule: Game[] = [
 describe('playoffs/duel', () => {
   it('given no params, throws', () => {
     // Need to cast duel to any for this kind of throw test if it's not expecting to be called with no args
-    expect(() => (duel as any)()).to.throw('You must provide the number of teams to continue.');
+    expect(() => (duel as any)()).to.throw(
+      'You must provide the number of teams to continue.',
+    );
   });
 
   it('given 0 teams returns an empty tournament', () => {
@@ -47,7 +49,9 @@ describe('playoffs/duel', () => {
   });
 
   it('given 2 teams returns the correct schedule', () => {
-    expect(duel(2).schedule).to.eql([{ id: 111, round: 1, teams: ['Seed 1', 'Seed 2'] }]);
+    expect(duel(2).schedule).to.eql([
+      { id: 111, round: 1, teams: ['Seed 1', 'Seed 2'] },
+    ]);
   });
 
   it('given 3 teams returns 2 games', () => {
@@ -84,7 +88,8 @@ describe('playoffs/duel', () => {
     expect(duel(8).games).to.eql(8);
   });
 
-  it('given 9 teams return 9 games', () => { // Corrected typo from "return 8 games" to "return 9 games" based on pattern
+  it('given 9 teams return 9 games', () => {
+    // Corrected typo from "return 8 games" to "return 9 games" based on pattern
     expect(duel(9).games).to.eq(9);
   });
 

@@ -36,7 +36,9 @@ describe('tourney/round-robin', () => {
       });
 
       it('returns correct schedule', () => {
-        expect(result.schedule).to.eql([{ id: 10, round: 1, teams: [2, 1] as any }]);
+        expect(result.schedule).to.eql([
+          { id: 10, round: 1, teams: [2, 1] as any },
+        ]);
       });
 
       it('returns correct teams', () => {
@@ -76,7 +78,8 @@ describe('tourney/round-robin', () => {
       expect(roundRobin(8).games).to.eql(28);
     });
 
-    it('given 12 teams returns 66 games', () => { // Corrected expectation from 28 to 66
+    it('given 12 teams returns 66 games', () => {
+      // Corrected expectation from 28 to 66
       expect(roundRobin(12).games).to.eql(66);
     });
 
@@ -87,10 +90,15 @@ describe('tourney/round-robin', () => {
 
   describe('given team names', () => {
     it('given 1 team returns zero', () => {
-      expect(roundRobin(['goodie'])).to.eql({ games: 0, schedule: [], teams: ['goodie'] });
+      expect(roundRobin(['goodie'])).to.eql({
+        games: 0,
+        schedule: [],
+        teams: ['goodie'],
+      });
     });
 
-    it('given 2 teams returns 1 game with correct names', () => { // Corrected games from 2 to 1
+    it('given 2 teams returns 1 game with correct names', () => {
+      // Corrected games from 2 to 1
       expect(roundRobin(['a', 'b'])).to.eql({
         games: 1,
         schedule: [{ id: 10, round: 1, teams: ['b', 'a'] }],

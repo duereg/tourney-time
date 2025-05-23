@@ -18,7 +18,8 @@ export default (divisions: Team[][]): DivisionSchedule[] => {
     const divisionSchedule: DivisionSchedule = roundRobin(teamsInDivision);
     divisionSchedule.division = index + 1;
 
-    _(divisionSchedule.schedule).forEach((game: Game) => { // Assuming game is of type Game
+    _(divisionSchedule.schedule).forEach((game: Game) => {
+      // Assuming game is of type Game
       game.id = `Div ${index + 1} Game ${game.id}`;
     });
 

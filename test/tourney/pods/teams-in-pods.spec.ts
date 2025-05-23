@@ -53,9 +53,9 @@ describe('tourney/pods/teams-in-pods', () => {
       // "3": [3, 6, 9]
       const teamNames = Array.from({ length: 10 }, (_, i) => i + 1); // Creates [1, 2, ..., 10]
       const expectedPods: PodsOutput = {
-        "1": [1, 4, 7, 10],
-        "2": [2, 5, 8],
-        "3": [3, 6, 9],
+        '1': [1, 4, 7, 10],
+        '2': [2, 5, 8],
+        '3': [3, 6, 9],
       };
       expect(teamsInPods(teamNames, 4)).to.eql(expectedPods);
     });
