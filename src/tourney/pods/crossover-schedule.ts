@@ -1,27 +1,20 @@
 import suffix from '@lib/helpers/suffix'; // Using path alias
+import { Game } from '../../tourney-time'; // Import global Game type
 
-interface Team {
-  // Define based on expected structure, if known, otherwise use 'any'
-  [key: string]: any;
-}
-
-interface Division {
-  length: number;
-  // Add other properties if divisions are more complex than arrays of teams
-  [index: number]: Team[]; // Assuming divisions are arrays of arrays of teams or similar
-}
-
-interface Game {
-  id?: string;
-  teams: string[];
-}
+// interface Team can be removed if not used after Division interface is removed
+// interface Division can be removed as we change parameter type to string[][]
 
 const calculateNumCrossoverGames = (numOfDivisions: number): number => {
   return (numOfDivisions - 1) * 2;
 };
 
-export default (divisions: Division[]): Game[] => {
-  if (arguments.length === 0) {
+// Changed parameter type from Division[] to string[][]
+export default (divisions: string[][]): Game[] => {
+  // Check if divisions is undefined, null, or empty.
+  // Note: TypeScript's type system would ideally enforce that 'divisions' is always provided
+  // unless its type is explicitly 'Division[] | undefined' or 'divisions?: Division[]'.
+  // This check is to mimic the original CoffeeScript's runtime check.
+  if (!divisions || divisions.length === 0) {
     throw new Error(
       'You must provide divisions to generate the crossover games',
     );
@@ -34,7 +27,8 @@ export default (divisions: Division[]): Game[] => {
     const numCrossoverGames = calculateNumCrossoverGames(numOfDivisions);
 
     for (let i = 0; i < numCrossoverGames; i++) {
-      crossOverGames[i] = { teams: [] };
+      // Initialize with round property and a temporary id
+      crossOverGames[i] = { id: `crossover-${i}`, teams: [], round: 0 }; // Placeholder round and id for crossover games
     }
 
     for (let divisionIdx = 1; divisionIdx < numOfDivisions; divisionIdx++) {

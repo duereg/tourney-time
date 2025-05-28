@@ -1,0 +1,8 @@
+{
+  "spec": "dist/test/**/*.spec.js",
+  "reporter": "spec",
+  "ui": "bdd",
+  "timeout": 20000,
+  "require": "dist/test/spec-helper.js",
+  "node-option": ["enable-source-maps"]
+}

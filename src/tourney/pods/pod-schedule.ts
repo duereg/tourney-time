@@ -9,7 +9,10 @@ import { Game, Schedule } from '../../tourney-time'; // Adjust path as needed, d
 type Team = string; // Placeholder, adjust if Team is an object
 
 interface PodSchedule extends Schedule {
+  title: string; // Added title
   pod?: string;
+  schedule: Game[]; // Ensured non-optional
+  teams: Team[]; // Added teams from rrResult
 }
 
 interface PodsInput {
@@ -22,8 +25,16 @@ export default (pods: PodsInput): PodSchedule[] => {
   for (const key in pods) {
     if (Object.prototype.hasOwnProperty.call(pods, key)) {
       const teamsInPod = pods[key];
-      const podScheduleResult: PodSchedule = roundRobin(teamsInPod);
-      podScheduleResult.pod = key;
+      const rrResult = roundRobin(teamsInPod); // This is RoundRobinResult<string>
+      const podScheduleResult: PodSchedule = {
+        // games, teams, schedule are from rrResult
+        // type is from global Schedule, but we make it specific 'pod'
+        ...rrResult, 
+        title: `Pod ${key}`, // Added title
+        type: 'pod', 
+        pod: key,
+        schedule: rrResult.schedule || [], 
+      };
 
       _(podScheduleResult.schedule).forEach((game: Game) => {
         // Assuming game is of type Game

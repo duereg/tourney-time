@@ -86,5 +86,7 @@ console.log(`For ${teams} teams
                which will take ${totalTime} `);
 
 if (schedule?.length) {
-  console.log(schedule.map((game: Game) => JSON.stringify(game)));
+  // Flatten the schedule array in case it's Game[][]
+  const flatSchedule: Game[] = Array.isArray(schedule[0]) ? (schedule as Game[][]).flat() : (schedule as Game[]);
+  console.log(flatSchedule.map((game: Game) => JSON.stringify(game)));
 }

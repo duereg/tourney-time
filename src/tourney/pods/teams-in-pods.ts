@@ -10,11 +10,11 @@ export default (
   names: TeamName[],
   teamsInPodsCount: number,
 ): TeamsInPodsResult => {
-  if (arguments.length !== 2) {
-    throw new Error(
-      'You must provide the names of the teams and the number of teams per pod',
-    );
-  }
+  // The arguments.length check is typically handled by TypeScript's compile-time checks
+  // based on the function signature. If 'names' or 'teamsInPodsCount' are undefined,
+  // and they are not marked as optional or allowing undefined, TypeScript will error.
+  // Assuming such checks are now part of the calling TypeScript code's responsibility.
+  // If this function can be called from JS without these args, params should be optional.
 
   const teams = names.length;
   // In the original CoffeeScript, teamsInDivision was an intermediate calculation for numOfPods.

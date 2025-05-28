@@ -25,7 +25,7 @@
     "url": "https://github.com/duereg/tourney-time.git"
   },
   "scripts": {
-    "test": "mocha --opts test/mocha.opts test/**/*.spec.ts",
+    "test": "rimraf dist && tsc -p tsconfig.json && mocha --config .mocharc.json",
     "build": "tsc",
     "start:ui": "parcel src/ui/index.html --dist-dir dist/ui",
     "build:ui": "parcel build src/ui/index.html --dist-dir docs --public-url ./",
@@ -62,7 +62,17 @@
     "sinon": "^20.0.0",
     "sinon-chai": "^3.3.0",
     "traceur": "0.0.111",
-    "underscore": "^1.13.7"
+    "underscore": "^1.13.7",
+    "tsconfig-paths": "*",
+    "ts-node": "*",
+    "@types/chai": "*",
+    "@types/sinon": "*",
+    "@types/sinon-chai": "*",
+    "@swc/core": "*",
+    "@types/yargs": "*",
+    "@types/underscore": "*",
+    "@types/react": "*",
+    "@types/react-dom": "*"
   },
   "engines": {
     "node": ">=4.2.0",

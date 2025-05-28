@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import { TourneySchedule, PlayoffSchedule, Game } from '../tourney-time'; // Assuming types are defined
+import { Schedule as TourneySchedule, Schedule as PlayoffSchedule, Game } from '../tourney-time'; // Assuming types are defined
 
 interface ScheduleBalancerInput {
   schedule: Game[];
@@ -61,15 +61,16 @@ export default ({
 
   let balancedSchedule: Game[][] = [];
 
-  if (tourneySchedule.schedule) {
-    balancedSchedule = scheduleBalancer(tourneySchedule, areas);
-  }
+  // Pass an object conforming to ScheduleBalancerInput,
+  // providing an empty array if the schedule property is undefined.
+  balancedSchedule = scheduleBalancer(
+    { schedule: tourneySchedule.schedule || [] },
+    areas,
+  );
 
-  if (playoffSchedule.schedule) {
-    balancedSchedule = balancedSchedule.concat(
-      scheduleBalancer(playoffSchedule, areas),
-    );
-  }
+  balancedSchedule = balancedSchedule.concat(
+    scheduleBalancer({ schedule: playoffSchedule.schedule || [] }, areas),
+  );
 
   return balancedSchedule;
 };

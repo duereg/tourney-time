@@ -21,15 +21,14 @@ interface PodsReturn {
   [key: string]: any; // Placeholder
 }
 
-interface DivisionsReturn {
-  // Define based on what generateDivisions returns
-  [key: string]: any; // Placeholder
-}
+type DivisionsReturn = string[][]; // Corrected type for what generateDivisions returns
 
 interface ScheduleSection {
+  title: string; // Added as per plan
   games: number;
-  schedule: Game[];
-  // Add other properties if they exist
+  schedule: Game[]; // Ensure Game is the global type from tourney-time
+  type?: string; // Added as per plan
+  // Add other properties if they exist, or remove this comment
 }
 
 const sumGames = (schedule: ScheduleSection[]): number => {

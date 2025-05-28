@@ -58,7 +58,9 @@ const combineTinyDivisions = (divisions: TeamName[][]): TeamName[][] => {
 };
 
 export default (pods: PodsInput): TeamName[][] => {
-  if (arguments.length === 0) {
+  // Check if pods is undefined, null, or empty.
+  // Similar to crossover-schedule, this mimics a runtime check.
+  if (!pods || Object.keys(pods).length === 0) {
     // Or check if pods is undefined or empty
     throw new Error('You must provide pods to generate the divisions');
   }

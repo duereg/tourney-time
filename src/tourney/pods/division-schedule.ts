@@ -8,15 +8,26 @@ import { Game, Schedule } from '../../tourney-time'; // Adjust path as needed, d
 type Team = string; // Placeholder, adjust if Team is an object
 
 interface DivisionSchedule extends Schedule {
+  title: string; // Added title
   division?: number;
+  schedule: Game[]; // Ensured non-optional
+  teams: Team[]; // Added teams from rrResult
 }
 
 export default (divisions: Team[][]): DivisionSchedule[] => {
   const divisionsSchedule: DivisionSchedule[] = [];
 
   divisions.forEach((teamsInDivision, index) => {
-    const divisionSchedule: DivisionSchedule = roundRobin(teamsInDivision);
-    divisionSchedule.division = index + 1;
+    const rrResult = roundRobin(teamsInDivision); // This is RoundRobinResult<string>
+    const divisionSchedule: DivisionSchedule = {
+      // games, teams, schedule are from rrResult
+      // type is from global Schedule, but we make it specific 'division'
+      ...rrResult,
+      title: `Division ${index + 1}`, // Added title
+      type: 'division',
+      division: index + 1,
+      schedule: rrResult.schedule || [],
+    };
 
     _(divisionSchedule.schedule).forEach((game: Game) => {
       // Assuming game is of type Game
