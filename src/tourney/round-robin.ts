@@ -21,7 +21,7 @@ function roundRobin<T extends string | number>(
   teams: number,
   names: T[] = [],
   sort = true, // Original default
-  config?: RoundRobinConfig<T>
+  config?: RoundRobinConfig<T>,
 ): RoundRobinResult<T> {
   if (teams < 2) {
     let resolvedNames: T[];
@@ -32,48 +32,58 @@ function roundRobin<T extends string | number>(
       } else {
         resolvedNames = [1] as any as T[]; // Default for roundRobin(1)
       }
-    } else { // teams === 0
+    } else {
+      // teams === 0
       resolvedNames = [];
     }
     return {
       schedule: [],
       games: 0,
       teams: resolvedNames,
-      type: 'round robin'
+      type: 'round robin',
     };
   }
 
-  const actualNames = names.length === teams ? names : _.range(1, teams + 1) as any as T[];
+  const actualNames =
+    names.length === teams ? names : (_.range(1, teams + 1) as any as T[]);
 
   // duereg/roundrobin returns T[][][] (rounds -> pairings -> teams)
   const rawSchedule: T[][][] = robinSchedule(teams, actualNames);
 
   // Map to Game objects - keeping types loose initially to replicate original issue
-  const unflattenedSchedule: any[][] = _.map(rawSchedule, (round: T[][], rNumber: number) => {
-    return _.map(round, (matchup: T[], mNumber: number) => {
-      // Ensure matchup has at least two teams for a valid game
-      if (matchup && matchup.length >= 2) {
-        return {
-          id: `g${rNumber}-${mNumber}`, // Example ID
-          round: rNumber + 1,
-          teams: [matchup[0], matchup[1]] // Takes the first two teams
-        };
-      }
-      return null; // Or handle incomplete matchups/byes appropriately
-    });
-  });
+  const unflattenedSchedule: any[][] = _.map(
+    rawSchedule,
+    (round: T[][], rNumber: number) => {
+      return _.map(round, (matchup: T[], mNumber: number) => {
+        // Ensure matchup has at least two teams for a valid game
+        if (matchup && matchup.length >= 2) {
+          return {
+            id: `g${rNumber}-${mNumber}`, // Example ID
+            round: rNumber + 1,
+            teams: [matchup[0], matchup[1]], // Takes the first two teams
+          };
+        }
+        return null; // Or handle incomplete matchups/byes appropriately
+      });
+    },
+  );
 
   // Filter out nulls (from byes/incomplete matchups) and ensure round numbers
-  const addedRounds: Game[][] = _.map(unflattenedSchedule, (round: any[], rNumber: number): Game[] => {
-    const validGamesInRound = _.filter(round, game => game !== null);
-    return _.map(validGamesInRound, (game: any): Game => {
-      return {
-        id: game.id || `g${rNumber}-${(game.teams && game.teams.join ? game.teams.join('') : Math.random())}`,
-        round: rNumber + 1, // Set round number consistently
-        teams: game.teams || [],
-      } as Game; // Cast to Game
-    });
-  });
+  const addedRounds: Game[][] = _.map(
+    unflattenedSchedule,
+    (round: any[], rNumber: number): Game[] => {
+      const validGamesInRound = _.filter(round, (game) => game !== null);
+      return _.map(validGamesInRound, (game: any): Game => {
+        return {
+          id:
+            game.id ||
+            `g${rNumber}-${game.teams && game.teams.join ? game.teams.join('') : Math.random()}`,
+          round: rNumber + 1, // Set round number consistently
+          teams: game.teams || [],
+        } as Game; // Cast to Game
+      });
+    },
+  );
 
   const scheduleFlat: Game[] = _(addedRounds).flatten(true);
 

@@ -10,10 +10,11 @@ interface TeamInfo {
 
 describe('tourney/team-names-and-number', () => {
   describe('given null', () => {
-    it('throws an error', () => { // Updated test description
+    it('throws an error', () => {
+      // Updated test description
       // The function, when given null, should throw an error.
       expect(() => getTeamNamesAndNumber(null as any)).to.throw(
-        'You must provide either the number of teams or a list of team names'
+        'You must provide either the number of teams or a list of team names',
       );
     });
   });
