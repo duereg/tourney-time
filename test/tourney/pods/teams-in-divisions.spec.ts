@@ -4,7 +4,8 @@ import teamsInDivisions from '@lib/tourney/pods/teams-in-divisions'; // Using pa
 // Define types for better clarity
 type TeamName = string;
 type Division = TeamName[];
-type PodsInput = { [key: string]: (number | string)[] }; // Pods are objects with keys and arrays of team names/numbers
+// PodsInput should match the expectation of the module it's testing (string[])
+type PodsInput = { [key: string]: string[] };
 
 const firstDivisionExpected: Division = ['1st Pod 1', '1st Pod 2', '1st Pod 3'];
 
@@ -57,11 +58,10 @@ const twelveTeamDivisionsResult: Division[] = [
 ];
 
 describe('tourney/pods/teamsInDivisions', () => {
-  it('given no params throws', () => {
+  it('given no params returns empty array', () => { // Updated description
     // Cast to any because the function expects arguments
-    expect(() => (teamsInDivisions as any)()).to.throw(
-      'You must provide pods to generate the divisions',
-    );
+    // Now returns [] instead of throwing due to source code change
+    expect((teamsInDivisions as any)()).to.eql([]);
   });
 
   describe('given number of teams', () => {
@@ -71,31 +71,31 @@ describe('tourney/pods/teamsInDivisions', () => {
 
     it('given 1 team in 1 pod returns an empty array (no divisions made from a single pod)', () => {
       // The function expects pods, and if only one pod, no inter-pod divisions are formed.
-      expect(teamsInDivisions({ '1': [1] })).to.eql([]);
+      expect(teamsInDivisions({ '1': ["1"] })).to.eql([]);
     });
 
     it('given 2 pods of 4 teams, returns four divisions', () => {
-      const pods: PodsInput = { '1': [1, 2, 3, 4], '2': [5, 6, 7, 8] };
+      const pods: PodsInput = { '1': ["1", "2", "3", "4"], '2': ["5", "6", "7", "8"] };
       // Each pod has 4 teams, so there will be up to 4 "ranks" (1st, 2nd, 3rd, 4th)
       // These ranks form the divisions. So, 4 divisions are expected.
       expect(teamsInDivisions(pods).length).to.eq(4);
     });
 
     it('given 9 teams for pods of 3 teams (3 pods), returns 3 divisions', () => {
-      // Pods: {"1": [1,4,7], "2": [2,5,8], "3": [3,6,9]}
+      // Pods: {"1": ["1","4","7"], "2": ["2","5","8"], "3": ["3","6","9"]}
       // Div1: 1st P1, 1st P2, 1st P3
       // Div2: 2nd P1, 2nd P2, 2nd P3
       // Div3: 3rd P1, 3rd P2, 3rd P3
       const pods: PodsInput = {
-        '1': [1, 4, 7],
-        '2': [2, 5, 8],
-        '3': [3, 6, 9],
+        '1': ["1", "4", "7"],
+        '2': ["2", "5", "8"],
+        '3': ["3", "6", "9"],
       };
       expect(teamsInDivisions(pods)).to.eql(nineTeamDivisionsResult);
     });
 
     it('given 10 teams for pods of 4 teams (effectively 3 pods due to distribution), returns 3 divisions', () => {
-      // Pods: {"1": [1,4,7,10], "2": [2,5,8], "3": [3,6,9]} (Pod 1 has 4 teams, others 3)
+      // Pods: {"1": ["1","4","7","10"], "2": ["2","5","8"], "3": ["3","6","9"]} (Pod 1 has 4 teams, others 3)
       // Max teams in any pod is 4.
       // Div1: 1st P1, 1st P2, 1st P3
       // Div2: 2nd P1, 2nd P2, 2nd P3
@@ -103,38 +103,38 @@ describe('tourney/pods/teamsInDivisions', () => {
       // Div4 (tiny): 4th P1  -- this gets merged into Div3
       // So, tenTeamDivisionsResult should reflect this merge.
       const pods: PodsInput = {
-        '1': [1, 4, 7, 10],
-        '2': [2, 5, 8],
-        '3': [3, 6, 9],
+        '1': ["1", "4", "7", "10"],
+        '2': ["2", "5", "8"],
+        '3': ["3", "6", "9"],
       };
       expect(teamsInDivisions(pods)).to.eql(tenTeamDivisionsResult);
     });
 
     it('given 11 teams for pods of 4 teams (effectively 3 pods), returns 4 divisions', () => {
-      // Pods: {"1": [1,4,7,10], "2": [2,5,8,11], "3": [3,6,9]} (Pods 1 & 2 have 4, Pod 3 has 3)
+      // Pods: {"1": ["1","4","7","10"], "2": ["2","5","8","11"], "3": ["3","6","9"]} (Pods 1 & 2 have 4, Pod 3 has 3)
       // Max teams in any pod is 4.
       // Div1: 1st P1, 1st P2, 1st P3
       // Div2: 2nd P1, 2nd P2, 2nd P3
       // Div3: 3rd P1, 3rd P2, 3rd P3
       // Div4: 4th P1, 4th P2 (no merge as it's not a single team division)
       const pods: PodsInput = {
-        '1': [1, 4, 7, 10],
-        '2': [2, 5, 8, 11],
-        '3': [3, 6, 9],
+        '1': ["1", "4", "7", "10"],
+        '2': ["2", "5", "8", "11"],
+        '3': ["3", "6", "9"],
       };
       expect(teamsInDivisions(pods)).to.eql(elevenTeamDivisionsResult);
     });
 
     it('given 12 teams for pods of 4 teams (3 pods), returns 4 divisions', () => {
-      // Pods: {"1": [1,4,7,10], "2": [2,5,8,11], "3": [3,6,9,12]} (All 3 pods have 4 teams)
+      // Pods: {"1": ["1","4","7","10"], "2": ["2","5","8","11"], "3": ["3","6","9","12"]} (All 3 pods have 4 teams)
       // Div1: 1st P1, 1st P2, 1st P3
       // Div2: 2nd P1, 2nd P2, 2nd P3
       // Div3: 3rd P1, 3rd P2, 3rd P3
       // Div4: 4th P1, 4th P2, 4th P3
       const pods: PodsInput = {
-        '1': [1, 4, 7, 10],
-        '2': [2, 5, 8, 11],
-        '3': [3, 6, 9, 12],
+        '1': ["1", "4", "7", "10"],
+        '2': ["2", "5", "8", "11"],
+        '3': ["3", "6", "9", "12"],
       };
       expect(teamsInDivisions(pods)).to.eql(twelveTeamDivisionsResult);
     });

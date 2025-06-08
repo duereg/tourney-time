@@ -60,6 +60,24 @@ export default (
     teamsArg as any,
   ); // Cast to any to satisfy getTeamNamesAndNumber
 
+  if (teams < 2) {
+    // For 0 or 1 team, pod structure is minimal or empty, no meaningful games.
+    // generatePods with 1 name and teamsInPods=1 (or any number) should produce {'1': [name]}
+    // If teamsInPods is fixed (e.g. 4), generatePods([name], 4) -> {'1': [name]}
+    // The tests for pods(0) and pods(1) expect specific structures.
+    // pods(0) -> { games: 0, schedule: [], divisions: [], pods: {} }
+    // pods(1) -> (from test output) was erroring at crossover, but implies pods were generated.
+    // Let's align with test expectations after sub-functions are robust.
+    // For now, a simple guard:
+    const defaultPods = teams === 1 ? generatePods(names, 1) : {}; // generatePods should handle names=[]
+    return {
+      games: 0,
+      schedule: [],
+      divisions: [],
+      pods: defaultPods,
+    };
+  }
+
   // How should you calculate how many pods you should have?
   const teamsInPods = 4;
   const numOfPods = Math.floor(teams / teamsInPods);

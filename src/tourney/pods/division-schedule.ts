@@ -18,7 +18,8 @@ export default (divisions: Team[][]): DivisionSchedule[] => {
   const divisionsSchedule: DivisionSchedule[] = [];
 
   divisions.forEach((teamsInDivision, index) => {
-    const rrResult = roundRobin(teamsInDivision); // This is RoundRobinResult<string>
+    // Pass team count as first arg, then names array. Assuming sort=false.
+    const rrResult = roundRobin<Team>(teamsInDivision.length, teamsInDivision, false);
     const divisionSchedule: DivisionSchedule = {
       // games, teams, schedule are from rrResult
       // type is from global Schedule, but we make it specific 'division'

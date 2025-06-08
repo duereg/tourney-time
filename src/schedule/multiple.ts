@@ -41,7 +41,7 @@ const scheduleBalancer = (
   return balancedSchedule;
 };
 
-interface MultipleOptions {
+export interface MultipleOptions {
   tourneySchedule?: TourneySchedule;
   playoffSchedule?: PlayoffSchedule;
   areas: number;

@@ -36,20 +36,21 @@ const fourDivisionsSet: Division[] = [
 const twoDivisionScheduleResult: Game[] = [
   {
     id: 'Div 1/2 <-1->',
+    round: 1, // Added missing round property
     teams: ['2nd Div 1', '2nd Div 2'],
   },
   {
     id: 'Div 1/2 <-2->',
+    round: 1, // Added missing round property
     teams: ['3rd Div 1', '1st Div 2'],
   },
 ];
 
 describe('tourney/pods/crossoverSchedule', () => {
-  it('given no params throws', () => {
+  it('given no params returns empty array', () => { // Updated description
     // Cast to any because the function expects arguments
-    expect(() => (crossoverSchedule as any)()).to.throw(
-      'You must provide divisions to generate the crossover games',
-    );
+    // Now returns [] instead of throwing due to source code change
+    expect((crossoverSchedule as any)()).to.eql([]);
   });
 
   describe('given divisions', () => {

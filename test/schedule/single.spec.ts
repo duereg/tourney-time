@@ -10,26 +10,26 @@ interface TestSchedule extends TourneyScheduleType {
 interface Args {
   tourneySchedule: TestSchedule;
   playoffSchedule: TestSchedule;
-  areas?: number; // areas is optional in the original tests for single
+  // areas?: number; // areas is not used by singleAreaSchedule
 }
 
 describe('schedule/single', () => {
   let tourneySchedule: TestSchedule;
   let playoffSchedule: TestSchedule;
-  let areas: number | undefined;
+  // let areas: number | undefined; // Not needed if not in Args
   let args: Args;
 
   beforeEach(() => {
     tourneySchedule = { type: 'round robin', games: 0, schedule: [] }; // Initialize schedule
     playoffSchedule = { type: 'knockout', games: 0, schedule: [] }; // Initialize schedule
-    areas = 1; // Default for single area schedule
-    args = { tourneySchedule, playoffSchedule, areas };
+    // areas = 1; // Default for single area schedule - not needed for standardSchedule
+    args = { tourneySchedule, playoffSchedule };
   });
 
   it('give no params, throws', () => {
     // Original test implies calling standardSchedule() which is standardSchedule(undefined)
     expect(() => standardSchedule(undefined as any)).to.throw(
-      "Cannot read property 'tourneySchedule' of undefined",
+      "Cannot destructure property 'tourneySchedule' of 'undefined' as it is undefined.",
     );
   });
 
@@ -38,7 +38,7 @@ describe('schedule/single', () => {
       standardSchedule({
         tourneySchedule: null as any,
         playoffSchedule,
-        areas,
+        // areas, // Removed as it's not part of SingleOptions
       }),
     ).to.throw('You must provide a tournament schedule to continue');
   });
@@ -48,7 +48,7 @@ describe('schedule/single', () => {
       standardSchedule({
         tourneySchedule,
         playoffSchedule: null as any,
-        areas,
+        // areas, // Removed as it's not part of SingleOptions
       }),
     ).to.throw('You must provide a playoff schedule to continue');
   });

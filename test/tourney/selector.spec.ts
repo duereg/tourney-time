@@ -27,9 +27,9 @@ describe('tourney/selector', () => {
 
     it('returns object containing a schedule', () => {
       // For 2 teams, 1 area, it's a round robin.
-      // Schedule for roundRobin(2) is [{id:10,round:1,teams:[2,1]}]
+      // Schedule for roundRobin(2) is now [{id:'g0-0',round:1,teams:[2,1]}]
       expect(results?.schedule).to.eql([
-        { id: 10, round: 1, teams: [2, 1] as any },
+        { id: 'g0-0', round: 1, teams: [2, 1] as any }, // Updated ID
       ]);
     });
 
@@ -75,7 +75,7 @@ describe('tourney/selector', () => {
 
       it('returns object containing a schedule', () => {
         expect(results?.schedule).to.be.ok; // .ok checks for truthy value
-        expect(results?.schedule.length).to.eq(22); // Number of games
+        expect(results!.schedule!.length).to.eq(22); // Number of games
       });
 
       it('returns object containing number of areas', () => {
@@ -102,7 +102,7 @@ describe('tourney/selector', () => {
 
       it('returns object containing a schedule', () => {
         expect(results?.schedule).to.be.ok;
-        expect(results?.schedule.length).to.eq(45);
+        expect(results!.schedule!.length).to.eq(45);
       });
 
       it('returns object containing number of areas', () => {

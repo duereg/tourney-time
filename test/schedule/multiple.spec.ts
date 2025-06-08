@@ -1,5 +1,5 @@
 import { expect } from '../spec-helper';
-import multiAreaSchedule from '@lib/schedule/multiple'; // Using path alias
+import multiAreaSchedule, { MultipleOptions } from '@lib/schedule/multiple'; // Using path alias
 import { Game, Schedule as TourneyScheduleType } from '@lib/tourney-time'; // Assuming types
 
 // Define a more specific type for the schedule objects used in these tests
@@ -86,7 +86,7 @@ describe('schedule/multiple', () => {
       // The original test `expect(multiAreaSchedule).to.throw "Cannot read property 'tourneySchedule' of undefined"`
       // implies calling it with `multiAreaSchedule()` which is `multiAreaSchedule(undefined)`.
       expect(() => multiAreaSchedule(undefined as any)).to.throw(
-        "Cannot read property 'tourneySchedule' of undefined",
+        "Cannot destructure property 'tourneySchedule' of 'undefined' as it is undefined.",
       );
     });
 
@@ -95,7 +95,7 @@ describe('schedule/multiple', () => {
         multiAreaSchedule({
           tourneySchedule: null as any,
           playoffSchedule,
-          areas,
+          areas: areas!, // Explicitly assert areas is not undefined
         }),
       ).to.throw('You must provide a tournament schedule to continue');
     });
@@ -105,7 +105,7 @@ describe('schedule/multiple', () => {
         multiAreaSchedule({
           tourneySchedule,
           playoffSchedule: null as any,
-          areas,
+          areas: areas!, // Explicitly assert areas is not undefined
         }),
       ).to.throw('You must provide a playoff schedule to continue');
     });
@@ -114,7 +114,9 @@ describe('schedule/multiple', () => {
       // Ensure schedules are empty for this case
       args.tourneySchedule.schedule = [];
       args.playoffSchedule.schedule = [];
-      expect(multiAreaSchedule(args)).to.eql([]);
+      args.tourneySchedule.schedule = [];
+      args.playoffSchedule.schedule = [];
+      expect(multiAreaSchedule(args as MultipleOptions)).to.eql([]);
     });
 
     describe('given an empty tournament schedule', () => {
@@ -124,7 +126,7 @@ describe('schedule/multiple', () => {
       });
 
       it('returns []', () => {
-        expect(multiAreaSchedule(args)).to.eql([]);
+        expect(multiAreaSchedule(args as MultipleOptions)).to.eql([]);
       });
 
       describe('and an empty playoff schedule', () => {
@@ -134,7 +136,7 @@ describe('schedule/multiple', () => {
         });
 
         it('returns []', () => {
-          expect(multiAreaSchedule(args)).to.eql([]);
+          expect(multiAreaSchedule(args as MultipleOptions)).to.eql([]);
         });
       });
     });
@@ -148,7 +150,7 @@ describe('schedule/multiple', () => {
       });
 
       it('returns the one game', () => {
-        expect(multiAreaSchedule(args)).to.eql([singleGameSchedule]);
+        expect(multiAreaSchedule(args as MultipleOptions)).to.eql([singleGameSchedule]);
       });
 
       describe('and a one game playoff schedule', () => {
@@ -158,7 +160,7 @@ describe('schedule/multiple', () => {
         });
 
         it('returns two games in two rounds', () => {
-          expect(multiAreaSchedule(args)).to.eql([
+          expect(multiAreaSchedule(args as MultipleOptions)).to.eql([
             singleGameSchedule,
             singleGameSchedule,
           ]);
@@ -175,7 +177,7 @@ describe('schedule/multiple', () => {
       });
 
       it('returns three rounds of games, as a team cannot play twice in the same round', () => {
-        const results = multiAreaSchedule(args);
+        const results = multiAreaSchedule(args as MultipleOptions);
         expect(results).to.eql(threeGameResults);
       });
 
@@ -189,7 +191,7 @@ describe('schedule/multiple', () => {
         });
 
         it('returns five games in five rounds', () => {
-          expect(multiAreaSchedule(args)).to.eql(
+          expect(multiAreaSchedule(args as MultipleOptions)).to.eql(
             threeGameResults.concat([
               [{ id: 40, round: 1, teams: [3, 2] as any }],
               [{ id: 50, round: 1, teams: [1, 3] as any }],
@@ -209,7 +211,7 @@ describe('schedule/multiple', () => {
 
         it('returns five games in five rounds', () => {
           // Corrected expectation based on logic
-          expect(multiAreaSchedule(args)).to.eql(
+          expect(multiAreaSchedule(args as MultipleOptions)).to.eql(
             threeGameResults.concat([
               [{ id: 40, round: 1, teams: [3, 2] as any }],
               [{ id: 50, round: 2, teams: [4, 1] as any }],
@@ -228,7 +230,7 @@ describe('schedule/multiple', () => {
       });
 
       it('returns three rounds of games', () => {
-        const results = multiAreaSchedule(args);
+        const results = multiAreaSchedule(args as MultipleOptions);
         expect(results).to.eql(sixGameResults);
       });
 
@@ -240,7 +242,7 @@ describe('schedule/multiple', () => {
 
         it('returns five rounds total (3 from tourney, 2 from playoff)', () => {
           // Corrected description based on data shapes
-          expect(multiAreaSchedule(args)).to.eql(
+          expect(multiAreaSchedule(args as MultipleOptions)).to.eql(
             sixGameResults.concat(fourGameResults),
           );
         });

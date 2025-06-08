@@ -25,15 +25,16 @@ export default (pods: PodsInput): PodSchedule[] => {
   for (const key in pods) {
     if (Object.prototype.hasOwnProperty.call(pods, key)) {
       const teamsInPod = pods[key];
-      const rrResult = roundRobin(teamsInPod); // This is RoundRobinResult<string>
+      // Pass team count as first arg, then names array. Assuming sort=false.
+      const rrResult = roundRobin<Team>(teamsInPod.length, teamsInPod, false);
       const podScheduleResult: PodSchedule = {
         // games, teams, schedule are from rrResult
         // type is from global Schedule, but we make it specific 'pod'
-        ...rrResult, 
+        ...rrResult,
         title: `Pod ${key}`, // Added title
-        type: 'pod', 
+        type: 'pod',
         pod: key,
-        schedule: rrResult.schedule || [], 
+        schedule: rrResult.schedule || [],
       };
 
       _(podScheduleResult.schedule).forEach((game: Game) => {

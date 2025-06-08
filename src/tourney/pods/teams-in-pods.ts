@@ -10,6 +10,9 @@ export default (
   names: TeamName[],
   teamsInPodsCount: number,
 ): TeamsInPodsResult => {
+  if (names === undefined || teamsInPodsCount === undefined || !Array.isArray(names)) {
+    throw new Error('Invalid arguments for teamsInPods: required parameters are missing or invalid.');
+  }
   // The arguments.length check is typically handled by TypeScript's compile-time checks
   // based on the function signature. If 'names' or 'teamsInPodsCount' are undefined,
   // and they are not marked as optional or allowing undefined, TypeScript will error.

@@ -14,10 +14,8 @@ export default (divisions: string[][]): Game[] => {
   // Note: TypeScript's type system would ideally enforce that 'divisions' is always provided
   // unless its type is explicitly 'Division[] | undefined' or 'divisions?: Division[]'.
   // This check is to mimic the original CoffeeScript's runtime check.
-  if (!divisions || divisions.length === 0) {
-    throw new Error(
-      'You must provide divisions to generate the crossover games',
-    );
+  if (!divisions || divisions.length < 2) { // Crossover games only make sense with at least 2 divisions
+    return []; // Return empty array if not enough divisions for crossover
   }
 
   const crossOverGames: Game[] = [];
@@ -28,7 +26,7 @@ export default (divisions: string[][]): Game[] => {
 
     for (let i = 0; i < numCrossoverGames; i++) {
       // Initialize with round property and a temporary id
-      crossOverGames[i] = { id: `crossover-${i}`, teams: [], round: 0 }; // Placeholder round and id for crossover games
+      crossOverGames[i] = { id: `crossover-${i}`, teams: [], round: 1 }; // Set round to 1
     }
 
     for (let divisionIdx = 1; divisionIdx < numOfDivisions; divisionIdx++) {
