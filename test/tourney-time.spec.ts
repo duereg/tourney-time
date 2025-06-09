@@ -132,7 +132,7 @@ describe('tourney-time', () => {
             { id: 'b2-5', round: 3, teams: [3], isByeMatch: true },
             { id: 211, round: 1, teams: ['Seed 1'], isByeMatch: true },
             { id: 212, round: 1, teams: ['Seed 3', 'Seed 2'] },
-            { id: 221, round: 2, teams: ['Seed 1', 'Winner WB 212'] } // Ensured WB is present
+            { id: 221, round: 2, teams: ['Seed 1', 'Winner 212'] }
         ];
         expect(result.schedule).to.have.deep.members(expectedScheduleGames);
 
