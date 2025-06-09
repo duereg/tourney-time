@@ -1,6 +1,5 @@
 #!/usr/bin/env ts-node
 
-import _ from 'underscore';
 import yargs from 'yargs';
 
 interface Argv {
@@ -118,18 +117,13 @@ class Tournament {
 
 const tourney = new Tournament(argv.teams);
 
-const games: number[][] = _(tourney.rounds)
-  .chain()
-  .map((round) => round.pairs)
-  .flatten()
-  .map((pair) => [pair.one, pair.two])
-  .value();
+const games: number[][] = tourney.rounds.flatMap(round => round.pairs.map(pair => [pair.one, pair.two]));
 
 console.log(games);
 
 // Check for overlaps in consecutive games (simple check, not a full validation)
 for (let i = 0; i < games.length - 1; i++) {
-  if (games[i + 1] && _.intersection(games[i], games[i + 1]).length) {
+  if (games[i + 1] && games[i].filter(team => games[i + 1].includes(team)).length) {
     console.log('this balancer overlaps!'); // This message implies issues with the scheduling logic itself
   }
 }

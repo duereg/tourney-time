@@ -1,5 +1,4 @@
 import { expect } from './spec-helper'; // Adjusted path for spec-helper
-import _ from 'underscore';
 import tourneyTime from '@lib/tourney-time'; // Using path alias for the main module
 import {
   Game,
@@ -42,9 +41,7 @@ describe('tourney-time', () => {
 
     describe('given two teams', () => {
       it('generates correct output', () => {
-        const options: TestTourneyTimeOptions = _.extend({}, defaultTourney, {
-          teams: 2,
-        });
+        const options: TestTourneyTimeOptions = { ...defaultTourney, teams: 2 };
         const result: TourneyTimeResult = tourneyTime(options);
 
         // For 1 area, schedule should be Game[]
@@ -70,9 +67,7 @@ describe('tourney-time', () => {
       let result: TourneyTimeResult;
 
       beforeEach(() => {
-        const options: TestTourneyTimeOptions = _.extend({}, defaultTourney, {
-          teams: 10,
-        });
+        const options: TestTourneyTimeOptions = { ...defaultTourney, teams: 10 };
         result = tourneyTime(options);
       });
 
@@ -130,9 +125,7 @@ describe('tourney-time', () => {
 
     describe('given two teams', () => {
       it('generates correct output', () => {
-        const options: TestTourneyTimeOptions = _.extend({}, defaultTourney, {
-          teams: 2,
-        });
+        const options: TestTourneyTimeOptions = { ...defaultTourney, teams: 2 };
         const result: TourneyTimeResult = tourneyTime(options);
         // Schedule for 2 areas is Game[][]
         // Tourney: 1 game. PO: 1 game.
@@ -157,9 +150,7 @@ describe('tourney-time', () => {
 
     describe('given three teams', () => {
       it('generates correct output', () => {
-        const options: TestTourneyTimeOptions = _.extend({}, defaultTourney, {
-          teams: 3,
-        });
+        const options: TestTourneyTimeOptions = { ...defaultTourney, teams: 3 };
         const result: TourneyTimeResult = tourneyTime(options);
 
         expect(result.timeNeededMinutes).to.eql(200);
@@ -186,9 +177,7 @@ describe('tourney-time', () => {
       let result: TourneyTimeResult;
 
       beforeEach(() => {
-        const options: TestTourneyTimeOptions = _.extend({}, defaultTourney, {
-          teams: 4,
-        });
+        const options: TestTourneyTimeOptions = { ...defaultTourney, teams: 4 };
         result = tourneyTime(options);
       });
 
@@ -226,9 +215,7 @@ describe('tourney-time', () => {
       let result: TourneyTimeResult;
 
       beforeEach(() => {
-        const options: TestTourneyTimeOptions = _.extend({}, defaultTourney, {
-          teams: 10,
-        });
+        const options: TestTourneyTimeOptions = { ...defaultTourney, teams: 10 };
         result = tourneyTime(options);
       });
 

@@ -1,4 +1,4 @@
-import robinScheduleModule from 'roundrobin';
+import roundrobinImported from 'roundrobin';
 import { Game, TourneyTimeOptions } from '../tourney-time'; // Adjusted import
 
 // Interface for the config object (matching original structure if possible)
@@ -47,7 +47,16 @@ function roundRobin<T extends string | number>(
     names.length === teams ? names : (Array.from({ length: teams }, (_, i) => i + 1) as any as T[]);
 
   type RoundRobinSchedulerType = (teams: number, names?: T[]) => T[][][];
-  const actualScheduler = (robinScheduleModule as any).default as RoundRobinSchedulerType;
+  let actualScheduler: RoundRobinSchedulerType;
+
+  if (typeof roundrobinImported === 'function') {
+    actualScheduler = roundrobinImported as RoundRobinSchedulerType; // For Node.js/CLI
+  } else if (roundrobinImported && typeof (roundrobinImported as any).default === 'function') {
+    actualScheduler = (roundrobinImported as any).default as RoundRobinSchedulerType; // For Browser/esm.sh
+  } else {
+    throw new Error('Roundrobin scheduler could not be loaded correctly.');
+  }
+
   // duereg/roundrobin returns T[][][] (rounds -> pairings -> teams)
   const rawSchedule: T[][][] = actualScheduler(teams, actualNames);
 
