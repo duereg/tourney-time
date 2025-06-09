@@ -3,3 +3,5 @@ npm-debug.log
 .coveralls.yml
 coverage
 dist/
+docs/
+.parcel-cache/

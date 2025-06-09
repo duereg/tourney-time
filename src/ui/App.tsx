@@ -4,7 +4,7 @@ import ResultsDisplay from './components/ResultsDisplay';
 import tourneyTime, {
   TourneyTimeOptions,
   TourneyTimeResult,
-} from '@lib/tourney-time'; // Adjust path if necessary
+} from '../tourney-time'; // Adjust path if necessary
 
 const App: React.FC = () => {
   // State for the results and any potential errors

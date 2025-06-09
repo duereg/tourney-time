@@ -1,4 +1,4 @@
-import suffix from '@lib/helpers/suffix'; // Using path alias
+import suffix from '../../helpers/suffix'; // Using path alias
 import { Game } from '../../tourney-time'; // Import global Game type
 
 // interface Team can be removed if not used after Division interface is removed
