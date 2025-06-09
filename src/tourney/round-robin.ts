@@ -1,6 +1,4 @@
-import * as underscoreNS from 'underscore';
-const _ = (underscoreNS.default || underscoreNS) as _.UnderscoreStatic;
-import * as robinScheduleNS from 'roundrobin';
+import robinScheduleModule from 'roundrobin';
 import { Game, TourneyTimeOptions } from '../tourney-time'; // Adjusted import
 
 // Interface for the config object (matching original structure if possible)
@@ -46,18 +44,17 @@ function roundRobin<T extends string | number>(
   }
 
   const actualNames =
-    names.length === teams ? names : (_.range(1, teams + 1) as any as T[]);
+    names.length === teams ? names : (Array.from({ length: teams }, (_, i) => i + 1) as any as T[]);
 
   type RoundRobinSchedulerType = (teams: number, names?: T[]) => T[][][];
-  const actualScheduler = (robinScheduleNS.default || robinScheduleNS) as RoundRobinSchedulerType;
+  const actualScheduler = (robinScheduleModule as any).default as RoundRobinSchedulerType;
   // duereg/roundrobin returns T[][][] (rounds -> pairings -> teams)
   const rawSchedule: T[][][] = actualScheduler(teams, actualNames);
 
   // Map to Game objects - keeping types loose initially to replicate original issue
-  const unflattenedSchedule: any[][] = _.map(
-    rawSchedule,
+  const unflattenedSchedule: any[][] = rawSchedule.map(
     (round: T[][], rNumber: number) => {
-      return _.map(round, (matchup: T[], mNumber: number) => {
+      return round.map((matchup: T[], mNumber: number) => {
         // Ensure matchup has at least two teams for a valid game
         if (matchup && matchup.length >= 2) {
           return {
@@ -72,11 +69,10 @@ function roundRobin<T extends string | number>(
   );
 
   // Filter out nulls (from byes/incomplete matchups) and ensure round numbers
-  const addedRounds: Game[][] = _.map(
-    unflattenedSchedule,
+  const addedRounds: Game[][] = unflattenedSchedule.map(
     (round: any[], rNumber: number): Game[] => {
-      const validGamesInRound = _.filter(round, (game) => game !== null);
-      return _.map(validGamesInRound, (game: any): Game => {
+      const validGamesInRound = round.filter((game) => game !== null);
+      return validGamesInRound.map((game: any): Game => {
         return {
           id:
             game.id ||
@@ -88,7 +84,7 @@ function roundRobin<T extends string | number>(
     },
   );
 
-  const scheduleFlat: Game[] = _(addedRounds).flatten(true);
+  const scheduleFlat: Game[] = addedRounds.flat(1);
 
   // This is the line that often caused the TS2345 error (approx. line 47 in original)
   const games: number = scheduleFlat.length;
