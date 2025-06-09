@@ -77,9 +77,13 @@ describe('tourney/selector', () => {
         expect(results?.games).to.eq(22); // Actual games
       });
 
-      it('returns object containing a schedule', () => {
-        expect(results?.schedule).to.be.ok; // .ok checks for truthy value
-        expect(results!.schedule!.length).to.eq(40); // Total schedule items
+      describe('returns object containing a schedule', () => {
+        it('should have a schedule property that is ok', () => {
+          expect(results?.schedule).to.be.ok; // .ok checks for truthy value
+        });
+        it('should have a schedule with 40 items', () => {
+          expect(results!.schedule!.length).to.eq(40); // Total schedule items
+        });
       });
 
       it('returns object containing number of areas', () => {
@@ -104,9 +108,13 @@ describe('tourney/selector', () => {
         expect(results?.games).to.eq(45);
       });
 
-      it('returns object containing a schedule', () => {
-        expect(results?.schedule).to.be.ok;
-        expect(results!.schedule!.length).to.eq(45);
+      describe('returns object containing a schedule', () => {
+        it('should have a schedule property that is ok', () => {
+          expect(results?.schedule).to.be.ok;
+        });
+        it('should have a schedule with 45 items', () => {
+          expect(results!.schedule!.length).to.eq(45);
+        });
       });
 
       it('returns object containing number of areas', () => {
@@ -124,11 +132,17 @@ describe('tourney/selector', () => {
         results = selector(10, 10);
       });
 
-      it('reduces number of areas to teams / 2', () => {
-        expect(results?.areas).to.eq(5);
-        // It should still be round robin type
-        expect(results?.type).to.eq('round robin');
-        expect(results?.games).to.eq(45); // Games for roundRobin(10)
+      describe('reduces number of areas to teams / 2', () => {
+        it('should set areas to 5', () => {
+          expect(results?.areas).to.eq(5);
+        });
+        it('should set type to round robin', () => {
+          // It should still be round robin type
+          expect(results?.type).to.eq('round robin');
+        });
+        it('should set games to 45', () => {
+          expect(results?.games).to.eq(45); // Games for roundRobin(10)
+        });
       });
     });
   });

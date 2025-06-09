@@ -30,37 +30,72 @@ describe('tourney/pods', () => {
     });
   });
 
-  it('given 2 teams returns 1 game with numbers for names', () => {
-    // For 2 teams, they are in one pod, play 1 game.
-    const result = pods(2);
-    expect(result.games).to.eq(1);
-    expect(result.schedule).to.eql([
-      { id: 'Pod 1 Game g0-0', round: 1, teams: [2, 1] as any }, // Updated ID
-    ]);
-    expect(result.divisions).to.eql([]);
-    expect(result.pods).to.eql({ '1': [1, 2] });
+  describe('given 2 teams returns 1 game with numbers for names', () => {
+    let result: PodsResult;
+    beforeEach(() => {
+      // For 2 teams, they are in one pod, play 1 game.
+      result = pods(2);
+    });
+
+    it('should return 1 game', () => {
+      expect(result.games).to.eq(1);
+    });
+
+    it('should return the correct schedule', () => {
+      expect(result.schedule).to.eql([
+        { id: 'Pod 1 Game g0-0', round: 1, teams: [2, 1] as any }, // Updated ID
+      ]);
+    });
+
+    it('should return no divisions', () => {
+      expect(result.divisions).to.eql([]);
+    });
+
+    it('should return one pod with both teams', () => {
+      expect(result.pods).to.eql({ '1': [1, 2] });
+    });
   });
 
-  it('given 3 teams returns 3 games with numbers for names', () => {
-    // For 3 teams, one pod, RR(3) = 3 actual games. Schedule items = 6.
-    const result = pods(3);
-    expect(result.games).to.eq(3); // Actual games
-    const expectedSchedule: Game[] = [
-      { id: 'Pod 1 Game g0-0', round: 1, teams: [3, 2] as any },
-      { id: 'Pod 1 Game b0-3', round: 1, teams: [1], isByeMatch: true },
-      { id: 'Pod 1 Game g1-0', round: 2, teams: [1, 3] as any },
-      { id: 'Pod 1 Game b1-4', round: 2, teams: [2], isByeMatch: true },
-      { id: 'Pod 1 Game g2-0', round: 3, teams: [2, 1] as any },
-      { id: 'Pod 1 Game b2-5', round: 3, teams: [3], isByeMatch: true }
-    ];
-    // The schedule might be sorted differently by round, then by original order.
-    // Let's check for presence of all expected games.
-    expect(result.schedule.length).to.equal(expectedSchedule.length);
-    for (const game of expectedSchedule) {
-      expect(result.schedule).to.deep.include(game);
-    }
-    expect(result.divisions).to.eql([]);
-    expect(result.pods).to.eql({ '1': [1, 2, 3] });
+  describe('given 3 teams returns 3 games with numbers for names', () => {
+    let result: PodsResult;
+    let expectedSchedule: Game[];
+
+    beforeEach(() => {
+      // For 3 teams, one pod, RR(3) = 3 actual games. Schedule items = 6.
+      result = pods(3);
+      expectedSchedule = [
+        { id: 'Pod 1 Game g0-0', round: 1, teams: [3, 2] as any },
+        { id: 'Pod 1 Game b0-3', round: 1, teams: [1], isByeMatch: true },
+        { id: 'Pod 1 Game g1-0', round: 2, teams: [1, 3] as any },
+        { id: 'Pod 1 Game b1-4', round: 2, teams: [2], isByeMatch: true },
+        { id: 'Pod 1 Game g2-0', round: 3, teams: [2, 1] as any },
+        { id: 'Pod 1 Game b2-5', round: 3, teams: [3], isByeMatch: true }
+      ];
+    });
+
+    it('should return 3 actual games', () => {
+      expect(result.games).to.eq(3);
+    });
+
+    it('should have the correct number of schedule items', () => {
+      // The schedule might be sorted differently by round, then by original order.
+      expect(result.schedule.length).to.equal(expectedSchedule.length);
+    });
+
+    it('should include all expected games in the schedule', () => {
+      // Let's check for presence of all expected games.
+      for (const game of expectedSchedule) {
+        expect(result.schedule).to.deep.include(game);
+      }
+    });
+
+    it('should return no divisions', () => {
+      expect(result.divisions).to.eql([]);
+    });
+
+    it('should return one pod with all three teams', () => {
+      expect(result.pods).to.eql({ '1': [1, 2, 3] });
+    });
   });
 
   it('given 4 teams returns 6 games', () => {

@@ -71,23 +71,41 @@ describe('tourney/round-robin', () => {
         expect(result.games).to.eq(3);
       });
 
-      it('returns correct schedule with byes (total 6 items)', () => {
-        expect(result.schedule.length).to.eq(6);
-        const schedule = result.schedule;
-        const actualGames = schedule.filter(g => !g.isByeMatch);
-        const byeGames = schedule.filter(g => g.isByeMatch === true);
+      describe('returns correct schedule with byes (total 6 items)', () => {
+        let schedule: Game[];
+        let actualGames: Game[];
+        let byeGames: Game[];
+        let teamsWithByes: (number | string)[];
 
-        expect(actualGames.length).to.equal(3);
-        expect(byeGames.length).to.equal(3);
+        beforeEach(() => {
+          schedule = result.schedule;
+          actualGames = schedule.filter(g => !g.isByeMatch);
+          byeGames = schedule.filter(g => g.isByeMatch === true);
+          teamsWithByes = byeGames.map(g => g.teams[0]);
+        });
 
-        // Check that each team gets a bye
-        const teamsWithByes = byeGames.map(g => g.teams[0]);
-        expect(teamsWithByes).to.have.members([1, 2, 3]);
+        it('should have 6 items in the schedule', () => {
+          expect(schedule.length).to.eq(6);
+        });
 
-        // Check basic properties of actual games
-        actualGames.forEach(g => {
-          expect(g.teams.length).to.equal(2);
-          expect(g.id).to.match(/^g\d+-\d+$/);
+        it('should have 3 actual games', () => {
+          expect(actualGames.length).to.equal(3);
+        });
+
+        it('should have 3 bye games', () => {
+          expect(byeGames.length).to.equal(3);
+        });
+
+        it('should ensure each team (1, 2, 3) gets a bye', () => {
+          expect(teamsWithByes).to.have.members([1, 2, 3]);
+        });
+
+        it('should have correct properties for actual games', () => {
+          // Check basic properties of actual games
+          actualGames.forEach(g => {
+            expect(g.teams.length).to.equal(2);
+            expect(g.id).to.match(/^g\d+-\d+$/);
+          });
         });
       });
 
@@ -148,14 +166,31 @@ describe('tourney/round-robin', () => {
         expect(result.games).to.eq(3);
       });
 
-      it('returns correct schedule with byes (named teams, total 6 items)', () => {
-        expect(result.schedule.length).to.eq(6);
-        const schedule = result.schedule;
-         // Looser check due to complexity of predicting exact IDs and round progression from library
-        expect(schedule.filter(g => !g.isByeMatch).length).to.equal(3);
-        const byeGames = schedule.filter(g => g.isByeMatch === true);
-        expect(byeGames.length).to.equal(3);
-        expect(byeGames.map(g => g.teams[0])).to.have.members(['a','b','c']);
+      describe('returns correct schedule with byes (named teams, total 6 items)', () => {
+        let schedule: Game[];
+        let byeGames: Game[];
+
+        beforeEach(() => {
+          schedule = result.schedule;
+          byeGames = schedule.filter(g => g.isByeMatch === true);
+        });
+
+        it('should have 6 items in the schedule', () => {
+          expect(schedule.length).to.eq(6);
+        });
+
+        it('should have 3 actual games', () => {
+          // Looser check due to complexity of predicting exact IDs and round progression from library
+          expect(schedule.filter(g => !g.isByeMatch).length).to.equal(3);
+        });
+
+        it('should have 3 bye games', () => {
+          expect(byeGames.length).to.equal(3);
+        });
+
+        it('should ensure each team (a, b, c) gets a bye', () => {
+          expect(byeGames.map(g => g.teams[0])).to.have.members(['a','b','c']);
+        });
       });
 
       it('returns correct teams', () => {
@@ -165,8 +200,21 @@ describe('tourney/round-robin', () => {
   });
 
   describe('Bye Handling in Round Robin', () => {
-    it('given 3 teams (odd number), includes bye matches', () => {
-      const result = roundRobin(3);
+    describe('given 3 teams (odd number), includes bye matches', () => {
+      let result: RoundRobinResult<number>;
+      let schedule: Game[];
+      let byeMatches: Game[];
+      let actualGames: Game[];
+      let teamsWithByes: (number | string)[];
+
+      beforeEach(() => {
+        result = roundRobin(3);
+        schedule = result.schedule;
+        byeMatches = schedule.filter(m => m.isByeMatch === true);
+        actualGames = schedule.filter(m => !m.isByeMatch);
+        teamsWithByes = byeMatches.map(m => m.teams[0]);
+      });
+
       // For 3 teams, each round one team has a bye. 3 rounds total.
       // Total pairings (including byes) = 3 rounds * (3 teams / 2 pairings_per_round_approx) = ~4.5
       // Actual: (3 choose 2) = 3 games. Plus 3 byes.
@@ -175,52 +223,83 @@ describe('tourney/round-robin', () => {
       // Round 2: [T1, T3], [T2] (bye)
       // Round 3: [T2, T1], [T3] (bye)
 
-      const schedule = result.schedule;
-      const byeMatches = schedule.filter(m => m.isByeMatch === true);
-      const actualGames = schedule.filter(m => !m.isByeMatch);
+      it('should have 3 actual games', () => {
+        expect(actualGames.length).to.equal(3); // (3 choose 2) games
+      });
 
-      expect(actualGames.length).to.equal(3); // (3 choose 2) games
-      expect(byeMatches.length).to.equal(3); // 3 teams, each gets one bye
+      it('should have 3 bye matches', () => {
+        expect(byeMatches.length).to.equal(3); // 3 teams, each gets one bye
+      });
 
-      expect(result.games).to.equal(3); // Actual games
-      expect(result.schedule.length).to.equal(6); // Total items in schedule
+      it('should report 3 actual games in the result', () => {
+        expect(result.games).to.equal(3);
+      });
 
-      // Check properties of a bye match
-      expect(byeMatches[0].teams.length).to.equal(1);
-      expect(byeMatches[0].isByeMatch).to.be.true;
-      expect(byeMatches[0].id).to.match(/^b\d+-\d+$/); // e.g., b0-1 or similar
+      it('should have 6 total items in the schedule', () => {
+        expect(result.schedule.length).to.equal(6);
+      });
 
-      // Ensure all teams get a bye
-      const teamsWithByes = byeMatches.map(m => m.teams[0]);
-      expect(teamsWithByes).to.include(1);
-      expect(teamsWithByes).to.include(2);
-      expect(teamsWithByes).to.include(3);
+      it('should have correct properties for bye matches', () => {
+        // Check properties of a bye match
+        expect(byeMatches[0].teams.length).to.equal(1);
+        expect(byeMatches[0].isByeMatch).to.be.true;
+        expect(byeMatches[0].id).to.match(/^b\d+-\d+$/); // e.g., b0-1 or similar
+      });
+
+      it('should ensure all teams (1, 2, 3) get a bye', () => {
+        expect(teamsWithByes).to.include(1);
+        expect(teamsWithByes).to.include(2);
+        expect(teamsWithByes).to.include(3);
+      });
     });
 
-    it('given 5 teams (odd number) with names, includes bye matches', () => {
+    describe('given 5 teams (odd number) with names, includes bye matches', () => {
       const names = ['A', 'B', 'C', 'D', 'E'];
-      const result = roundRobin(names.length, names);
+      let result: RoundRobinResult<string>;
+      let schedule: Game[];
+      let byeMatches: Game[];
+      let actualGames: Game[];
+      let teamsWithByes: (number | string)[];
+
+      beforeEach(() => {
+        result = roundRobin(names.length, names);
+        schedule = result.schedule;
+        byeMatches = schedule.filter(m => m.isByeMatch === true);
+        actualGames = schedule.filter(m => !m.isByeMatch);
+        teamsWithByes = byeMatches.map(m => m.teams[0]);
+      });
+
       // For 5 teams: (5 choose 2) = 10 games.
       // 5 rounds, each round one team has a bye. So 5 bye matches.
       // Total items in schedule = 10 games + 5 byes = 15.
 
-      const schedule = result.schedule;
-      const byeMatches = schedule.filter(m => m.isByeMatch === true);
-      const actualGames = schedule.filter(m => !m.isByeMatch);
+      it('should have 10 actual games', () => {
+        expect(actualGames.length).to.equal(10);
+      });
 
-      expect(actualGames.length).to.equal(10);
-      expect(byeMatches.length).to.equal(5);
-      expect(result.games).to.equal(10); // Actual games
-      expect(result.schedule.length).to.equal(15); // Total items in schedule
+      it('should have 5 bye matches', () => {
+        expect(byeMatches.length).to.equal(5);
+      });
 
-      expect(byeMatches[0].teams.length).to.equal(1);
-      expect(byeMatches[0].isByeMatch).to.be.true;
-      expect(byeMatches[0].id).to.match(/^b\d+-\d+$/);
+      it('should report 10 actual games in the result', () => {
+        expect(result.games).to.equal(10);
+      });
 
-      const teamsWithByes = byeMatches.map(m => m.teams[0]);
-      for (const name of names) {
-        expect(teamsWithByes).to.include(name);
-      }
+      it('should have 15 total items in the schedule', () => {
+        expect(result.schedule.length).to.equal(15);
+      });
+
+      it('should have correct properties for bye matches', () => {
+        expect(byeMatches[0].teams.length).to.equal(1);
+        expect(byeMatches[0].isByeMatch).to.be.true;
+        expect(byeMatches[0].id).to.match(/^b\d+-\d+$/);
+      });
+
+      it('should ensure all named teams get a bye', () => {
+        for (const name of names) {
+          expect(teamsWithByes).to.include(name);
+        }
+      });
     });
   });
 });
