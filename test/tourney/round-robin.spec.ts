@@ -74,7 +74,6 @@ describe('tourney/round-robin', () => {
       it('returns correct schedule with byes (total 6 items)', () => {
         expect(result.schedule.length).to.eq(6);
         const schedule = result.schedule;
-        const schedule = result.schedule;
         const actualGames = schedule.filter(g => !g.isByeMatch);
         const byeGames = schedule.filter(g => g.isByeMatch === true);
 
@@ -151,7 +150,6 @@ describe('tourney/round-robin', () => {
 
       it('returns correct schedule with byes (named teams, total 6 items)', () => {
         expect(result.schedule.length).to.eq(6);
-        const schedule = result.schedule;
         const schedule = result.schedule;
          // Looser check due to complexity of predicting exact IDs and round progression from library
         expect(schedule.filter(g => !g.isByeMatch).length).to.equal(3);
