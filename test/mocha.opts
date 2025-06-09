@@ -1,5 +1,7 @@
---compilers coffee:coffee-script/register
 --recursive
 --reporter spec
 --ui bdd
 --timeout 20000
+--require tsconfig-paths/register
+--require ts-node/register
+--require test/spec-helper.ts
