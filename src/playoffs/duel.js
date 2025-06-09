@@ -118,8 +118,8 @@ module.exports = function(numTeams) {
 
   var schedule = elimination(numTeams, p);
 
-  tourney.schedule = schedule;
-  tourney.games = schedule.length;
+  tourney.schedule = schedule; // schedule already contains all matches including byes
+  tourney.games = schedule.filter(match => !match.isByeMatch).length; // Count only actual games
 
   return tourney
 };

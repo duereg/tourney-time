@@ -135,8 +135,7 @@ function roundRobin<T extends string | number>(
 
   const scheduleFlat: Game[] = addedRounds.flat(1);
 
-  // This is the line that often caused the TS2345 error (approx. line 47 in original)
-  const games: number = scheduleFlat.length;
+  const actualGamesCount = scheduleFlat.filter(game => !game.isByeMatch).length;
 
   // Sorting logic (simplified, assuming no custom sort from config for now to reduce complexity)
   // if (sort) {
@@ -145,8 +144,8 @@ function roundRobin<T extends string | number>(
   // }
 
   return {
-    schedule: scheduleFlat,
-    games: games,
+    schedule: scheduleFlat, // scheduleFlat contains all items including byes
+    games: actualGamesCount, // games property now counts only actual games
     teams: actualNames.slice(0, teams),
     type: 'round robin',
   };

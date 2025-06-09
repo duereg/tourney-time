@@ -42,9 +42,9 @@ describe('tourney/pods', () => {
   });
 
   it('given 3 teams returns 3 games with numbers for names', () => {
-    // For 3 teams, one pod, RR(3) = 3 games + 3 byes = 6 items.
+    // For 3 teams, one pod, RR(3) = 3 actual games. Schedule items = 6.
     const result = pods(3);
-    expect(result.games).to.eq(6);
+    expect(result.games).to.eq(3); // Actual games
     const expectedSchedule: Game[] = [
       { id: 'Pod 1 Game g0-0', round: 1, teams: [3, 2] as any },
       { id: 'Pod 1 Game b0-3', round: 1, teams: [1], isByeMatch: true },
@@ -145,10 +145,10 @@ describe('tourney/pods', () => {
     // Let's re-check the logic from `crossover-schedule.ts`: it generates `(numOfDivisions - 1) * 2` total games.
     // So for 4 divisions, it's (4-1)*2 = 6 games.
     // Pod phase: 3 pods of 4 teams. Each pod RR(4) = 6 games. 3 * 6 = 18 games.
-    // Divisions by rank: 4 divisions of 3 teams. Each division RR(3) = 3 games + 3 byes = 6 items. 4 * 6 = 24 items.
-    // Crossover games: (4 divisions - 1) * 2 = 6 games.
-    // Total = 18 + 24 + 6 = 48 items.
-    expect(pods(12).games).to.eq(48);
+    // Divisions by rank: 4 divisions of 3 teams. Each division RR(3) = 3 actual games. 4 * 3 = 12 actual games.
+    // Crossover games: (4 divisions - 1) * 2 = 6 actual games.
+    // Total actual games = 18 + 12 + 6 = 36.
+    expect(pods(12).games).to.eq(36);
   });
 
   it('given 16 teams returns 54 games', () => {
@@ -173,11 +173,11 @@ describe('tourney/pods', () => {
     });
 
     it('returns 76 games', () => {
-      // 20 teams -> 5 pods of 4. Each pod RR(4) = 6 games. Total pod games = 30. (No byes)
-      // Divisions by rank: 4 divisions of 5 teams. Each division RR(5) = 10 games + 5 byes = 15 items. 4 * 15 = 60 items.
-      // Crossover games for 4 divisions = (4-1)*2 = 6 games.
-      // Total = 30 (pod) + 60 (division) + 6 (crossover) = 96 items.
-      expect(result.games).to.eq(96);
+      // Pod phase: 5 pods of 4. Each RR(4) = 6 actual games. 5 * 6 = 30 actual games.
+      // Divisions by rank: 4 divisions of 5 teams. Each RR(5) = 10 actual games. 4 * 10 = 40 actual games.
+      // Crossover games: (4 divisions - 1) * 2 = 6 actual games.
+      // Total actual games = 30 + 40 + 6 = 76.
+      expect(result.games).to.eq(76);
     });
 
     it('returns 5 pods', () => {

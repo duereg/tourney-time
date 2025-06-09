@@ -69,8 +69,8 @@ describe('playoffs/duel', () => {
     // If it includes a 3rd place game (Loser of S1vW vs Loser of S2vS3 initial match, but S2/S3 loser already known)
     // the structure is Seed1 (bye), Seed2 vs Seed3. Winner plays Seed1. This is 2 games.
     // duel(3) schedule: [ { id: 212, round: 1, teams: [ 'Seed 3', 'Seed 2' ] }, { id: 221, round: 2, teams: [ 'Seed 1', 'Winner 212' ] } ]
-    // This was 2 contested games. Now 1 bye + 2 contested = 3.
-    expect(duel(3).games).to.eq(3);
+    // This was 2 contested games. Schedule items = 3. Actual games = 2.
+    expect(duel(3).games).to.eq(2);
   });
 
   it('given 4 teams returns 4 games', () => {
@@ -79,8 +79,8 @@ describe('playoffs/duel', () => {
   });
 
   it('given 5 teams return 5 games', () => {
-    // 5 teams: 3 byes + 5 contested games = 8 schedule items.
-    expect(duel(5).games).to.eq(8);
+    // 5 teams: 5 contested games. Schedule items = 8.
+    expect(duel(5).games).to.eq(5);
   });
 
   it('given 5 teams returns the correct schedule', () => {
@@ -88,8 +88,8 @@ describe('playoffs/duel', () => {
   });
 
   it('given 6 teams return 6 games', () => {
-    // 6 teams (p=3): 2 byes + 6 contested games = 8 schedule items.
-    expect(duel(6).games).to.eq(8);
+    // 6 teams (p=3): 6 contested games. Schedule items = 8.
+    expect(duel(6).games).to.eq(6);
   });
 
   it('given 8 teams return 8 games', () => {
@@ -98,18 +98,18 @@ describe('playoffs/duel', () => {
   });
 
   it('given 9 teams return 9 games', () => {
-    // 9 teams (p=4): 7 byes + 9 contested games = 16 schedule items.
-    expect(duel(9).games).to.eq(16);
+    // 9 teams (p=4): 9 contested games. Schedule items = 16.
+    expect(duel(9).games).to.eq(9);
   });
 
   it('given 12 teams return 12 games', () => {
-    // 12 teams (p=4): 4 byes + 12 contested games = 16 schedule items.
-    expect(duel(12).games).to.eq(16);
+    // 12 teams (p=4): 12 contested games. Schedule items = 16.
+    expect(duel(12).games).to.eq(12);
   });
 
   it('given 13 teams returns 13 games', () => {
-    // 13 teams (p=4): 3 byes + 13 contested games = 16 schedule items.
-    expect(duel(13).games).to.eq(16);
+    // 13 teams (p=4): 13 contested games. Schedule items = 16.
+    expect(duel(13).games).to.eq(13);
   });
 
   it('given 13 teams returns the correct schedule', () => {
@@ -129,9 +129,9 @@ describe('playoffs/duel', () => {
       // Then these are processed.
       // The old filter logic would remove the bye match. New logic keeps it.
 
-      expect(result.games).to.equal(3); // Game1 (S2vS3), Game2 (S1 v Winner), Bye Match (S1)
-
+      expect(result.games).to.equal(2); // 2 actual games
       const schedule: Game[] = result.schedule!; // Assert schedule is not undefined
+      expect(schedule.length).to.equal(3); // Total 3 items in schedule
 
       // Expect Seed 1 to have a bye match
       const byeMatch = schedule.find((m: Game) => m.isByeMatch === true);
@@ -176,7 +176,10 @@ describe('playoffs/duel', () => {
       // Match 3: seeds(3,3) => [3,6] -> S3 vs WO(S6) -> isByeMatch=true for S3
       // Match 4: seeds(4,3) => [7,2] -> WO(S7) vs S2 -> isByeMatch=true for S2
 
+      expect(result.games).to.equal(5); // 5 actual games
       const schedule: Game[] = result.schedule!; // Assert schedule is not undefined
+      expect(schedule.length).to.equal(8); // Total 8 items in schedule
+
       const byeMatches = schedule.filter((m: Game) => m.isByeMatch === true);
       expect(byeMatches.length).to.equal(3); // Seed 1, Seed 2, Seed 3 get byes
 
@@ -199,9 +202,6 @@ describe('playoffs/duel', () => {
       // Given WO logic, S2 and S3 advanced directly.
       const gameS2S3 = schedule.find((m: Game) => m.round === 2 && m.teams.includes('Seed 2') && m.teams.includes('Seed 3'));
       expect(gameS2S3).to.exist;
-
-      // Total games: Original 5 games + 3 bye markers
-      expect(result.games).to.equal(5 + 3); // 5 actual contest games, 3 byes now part of schedule
     });
   });
 });

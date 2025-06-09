@@ -67,11 +67,13 @@ describe('tourney/round-robin', () => {
         result = roundRobin(3);
       });
 
-      it('returns 3 contested games + 3 byes = 6 schedule items', () => {
-        expect(result.games).to.eq(6);
+      it('returns 3 actual games', () => {
+        expect(result.games).to.eq(3);
       });
 
-      it('returns correct schedule with byes', () => {
+      it('returns correct schedule with byes (total 6 items)', () => {
+        expect(result.schedule.length).to.eq(6);
+        const schedule = result.schedule;
         const schedule = result.schedule;
         const actualGames = schedule.filter(g => !g.isByeMatch);
         const byeGames = schedule.filter(g => g.isByeMatch === true);
@@ -143,11 +145,13 @@ describe('tourney/round-robin', () => {
         result = roundRobin(names.length, names);
       });
 
-      it('returns 3 contested games + 3 byes = 6 schedule items', () => {
-        expect(result.games).to.eq(6);
+      it('returns 3 actual games', () => {
+        expect(result.games).to.eq(3);
       });
 
-      it('returns correct schedule with byes (named teams)', () => {
+      it('returns correct schedule with byes (named teams, total 6 items)', () => {
+        expect(result.schedule.length).to.eq(6);
+        const schedule = result.schedule;
         const schedule = result.schedule;
          // Looser check due to complexity of predicting exact IDs and round progression from library
         expect(schedule.filter(g => !g.isByeMatch).length).to.equal(3);
@@ -180,7 +184,8 @@ describe('tourney/round-robin', () => {
       expect(actualGames.length).to.equal(3); // (3 choose 2) games
       expect(byeMatches.length).to.equal(3); // 3 teams, each gets one bye
 
-      expect(result.games).to.equal(3 + 3); // Total items in schedule
+      expect(result.games).to.equal(3); // Actual games
+      expect(result.schedule.length).to.equal(6); // Total items in schedule
 
       // Check properties of a bye match
       expect(byeMatches[0].teams.length).to.equal(1);
@@ -207,7 +212,8 @@ describe('tourney/round-robin', () => {
 
       expect(actualGames.length).to.equal(10);
       expect(byeMatches.length).to.equal(5);
-      expect(result.games).to.equal(10 + 5);
+      expect(result.games).to.equal(10); // Actual games
+      expect(result.schedule.length).to.equal(15); // Total items in schedule
 
       expect(byeMatches[0].teams.length).to.equal(1);
       expect(byeMatches[0].isByeMatch).to.be.true;

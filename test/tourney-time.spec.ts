@@ -23,7 +23,6 @@ interface TourneyTimeResult {
 describe('tourney-time', () => {
   describe('given one team', () => {
     it('throws an error', () => {
-      // tourneyTime expects an object with a teams property.
       expect(() =>
         tourneyTime({ teams: 0 } as TestTourneyTimeOptions),
       ).to.throw('You must have at least two teams to continue');
@@ -33,31 +32,28 @@ describe('tourney-time', () => {
   describe('with one playing area, 20 min games, and 5 minutes rest', () => {
     const defaultTourney: Partial<TestTourneyTimeOptions> = {
       areas: 1,
-      gameTime: 20, // gameTime
-      restTime: 5, // restTime
-      playoffTime: 20, // Assuming playoff times match game times if not specified
-      playoffRestTime: 5, // Assuming playoff rests match game rests if not specified
+      gameTime: 20,
+      restTime: 5,
+      playoffTime: 20,
+      playoffRestTime: 5,
     };
 
     describe('given two teams', () => {
       it('generates correct output', () => {
         const options: TestTourneyTimeOptions = { ...defaultTourney, teams: 2 };
         const result: TourneyTimeResult = tourneyTime(options);
-
-        // Tourney: roundRobin(2) = 1 item. Playoff: duel(2) = 1 item. Total = 2 items.
-        // EffRounds = ceil(1/1) + ceil(1/1) = 1+1 = 2.
-        // Time = 2 * (20+5) = 50.
+        // Actual games: RR(2)=1, Duel(2)=1. Total actual=2.
+        // Schedule items: RR(2)=1, Duel(2)=1. Total items=2.
+        // Time (A=1): (ceil(1/1)+ceil(1/1))*(20+5) = (1+1)*25 = 50.
         expect(result.timeNeededMinutes).to.eql(50);
-        // For 1 area, schedule should be Game[]
-        // scheduleGenerator concatenates tourneySchedule.schedule and playoffSchedule.schedule
-        expect(result.schedule.length).to.eql(2); // 1 tourney + 1 playoff
+        expect(result.schedule.length).to.eql(2); // Total items
         expect(result.tourneySchedule).to.eql({
-          games: 1,
+          games: 1, // Actual games
           type: 'round robin',
           areas: 1,
         });
         expect(result.playoffSchedule).to.eql({
-          games: 1,
+          games: 1, // Actual games
           type: 'knockout',
         });
       });
@@ -71,31 +67,32 @@ describe('tourney-time', () => {
         result = tourneyTime(options);
       });
 
-      it('generates 1400 minutes needed', () => {
-        // Tourney: selector(10,1) -> pods(10) -> 40 items.
-        // Playoff: duel(10) -> 16 items.
-        // EffRounds = ceil(40/1) + ceil(16/1) = 40+16 = 56.
-        // Time = 56 * (20+5) = 1400.
-        expect(result.timeNeededMinutes).to.eq(1400);
+      it('generates 925 minutes needed', () => {
+        // Actual Tourney Games (pods(10)): 27. Schedule items: 33.
+        // Actual Playoff Games (duel(10)): 10. Schedule items: 16.
+        // Areas = 1.
+        // Time (A=1): (ceil(27/1)+ceil(10/1))*(20+5) = (27+10)*25 = 37*25 = 925.
+        expect(result.timeNeededMinutes).to.eq(925);
       });
 
       it('generates the correct type of tourney schedule', () => {
         expect(result.tourneySchedule).to.eql({
-          games: 40,
+          games: 27, // Actual games from pods(10)
           type: 'pods',
           areas: 1,
         });
       });
 
-      it('generates a 16 game playoff schedule', () => {
+      it('generates a 10 game playoff schedule', () => {
         expect(result.playoffSchedule).to.eql({
-          games: 16,
+          games: 10, // Actual games from duel(10)
           type: 'knockout'
         });
       });
 
-      it('generates a schedule containing 56 games', () => {
-        expect(result.schedule.length).to.eq(56); // 40 tourney + 16 playoff
+      it('generates a schedule containing 49 games/byes', () => {
+        // Total items: pods(10) schedule items = 33, duel(10) schedule items = 16. Sum = 49.
+        expect(result.schedule.length).to.eq(49);
       });
     });
   });
@@ -113,20 +110,17 @@ describe('tourney-time', () => {
       it('generates correct output', () => {
         const options: TestTourneyTimeOptions = { ...defaultTourney, teams: 2 };
         const result: TourneyTimeResult = tourneyTime(options);
-        // Tourney: RR(2)=1 item. selector(2,2) -> areas=1.
-        // Playoff: duel(2)=1 item.
-        // EffRounds (areas=1): ceil(1/1)+ceil(1/1) = 1+1=2.
-        // Time = 2 * (30+10) = 80.
+        // Actual games: RR(2)=1, Duel(2)=1. Areas (adjusted by selector for RR(2)) = 1.
+        // Time (A=1): (ceil(1/1)+ceil(1/1))*(30+10) = (1+1)*40 = 80.
         expect(result.timeNeededMinutes).to.eql(80);
-        // For areas=1 (adjusted by selector), schedule is Game[]
-        expect(result.schedule.length).to.eql(2);
+        expect(result.schedule.length).to.eql(2); // Total items
         expect(result.tourneySchedule).to.eql({
           areas: 1,
-          games: 1,
+          games: 1, // Actual games
           type: 'round robin',
         });
         expect(result.playoffSchedule).to.eql({
-          games: 1,
+          games: 1, // Actual games
           type: 'knockout',
         });
       });
@@ -136,13 +130,11 @@ describe('tourney-time', () => {
       it('generates correct output', () => {
         const options: TestTourneyTimeOptions = { ...defaultTourney, teams: 3 };
         const result: TourneyTimeResult = tourneyTime(options);
-        // Tourney: selector(3,2) -> RR(3)=6 items, areas=1.
-        // Playoff: duel(3)=3 items.
-        // EffRounds (areas=1): ceil(6/1)+ceil(3/1) = 6+3=9.
-        // Time = 9 * (30+10) = 360.
-        expect(result.timeNeededMinutes).to.eql(360);
-        // For areas=1, schedule is Game[]
-        expect(result.schedule.length).to.eql(9); // 6 tourney + 3 playoff
+        // Actual games: RR(3)=3, Duel(3)=2. Areas (adjusted by selector for RR(3)) = 1.
+        // Time (A=1): (ceil(3/1)+ceil(2/1))*(30+10) = (3+2)*40 = 200.
+        expect(result.timeNeededMinutes).to.eql(200);
+        // Schedule items: RR(3)=6, Duel(3)=3. Total items = 9.
+        expect(result.schedule.length).to.eql(9);
 
         const expectedScheduleGames: Game[] = [
             { id: 'g0-0', round: 1, teams: [3, 2] as any },
@@ -153,21 +145,17 @@ describe('tourney-time', () => {
             { id: 'b2-5', round: 3, teams: [3], isByeMatch: true },
             { id: 211, round: 1, teams: ['Seed 1'], isByeMatch: true },
             { id: 212, round: 1, teams: ['Seed 3', 'Seed 2'] },
-            { id: 221, round: 2, teams: ['Seed 1', 'Winner WB 212'] } // THIS IS THE CRUCIAL FIX
+            { id: 221, round: 2, teams: ['Seed 1', 'Winner WB 212'] }
         ];
-        // Check that all expected games are present. Order might vary slightly due to concat.
-        // Using to.have.deep.members for order-insensitivity if scheduleGenerator output order is not guaranteed.
-        // If scheduleGenerator simply concats, then the order should be predictable.
-        // For now, ensuring all members are there is a good step.
         expect(result.schedule).to.have.deep.members(expectedScheduleGames);
 
         expect(result.tourneySchedule).to.eql({
           areas: 1,
-          games: 6,
+          games: 3, // Actual games from RR(3)
           type: 'round robin',
         });
         expect(result.playoffSchedule).to.eql({
-          games: 3,
+          games: 2, // Actual games from duel(3)
           type: 'knockout',
         });
       });
@@ -183,30 +171,29 @@ describe('tourney-time', () => {
 
       it('generates a 4 game playoff schedule', () => {
         expect(result.playoffSchedule).to.eql({
-          games: 4, // duel(4) = 4 items (no byes)
+          games: 4, // Actual games from duel(4)
           type: 'knockout'
         });
       });
 
       it('generates 200 minutes needed', () => {
-        // Tourney: selector(4,2) -> RR(4)=6 items, areas=2.
-        // Playoff: duel(4)=4 items.
-        // EffRounds T: ceil(6/2)=3. EffRounds P: ceil(4/2)=2. Total=5.
-        // Time = 5 * (30+10) = 200.
+        // Actual games: RR(4)=6, Duel(4)=4. Areas (selector for RR(4), areas=2) = 2.
+        // Time (A=2): (ceil(6/2)+ceil(4/2))*(30+10) = (3+2)*40 = 200.
         expect(result.timeNeededMinutes).to.eq(200);
       });
 
       it('generates the 6 game tourney schedule', () => {
         expect(result.tourneySchedule).to.eql({
-          games: 6,
+          games: 6, // Actual games from RR(4)
           type: 'round robin',
           areas: 2,
         });
       });
 
       it('generates a schedule containing 5 effective rounds', () => {
-        // schedule is Game[][] for areas > 1
-        expect(result.schedule.length).to.eq(5); // 3 tourney rounds + 2 playoff rounds
+        // Schedule items: RR(4)=6, Duel(4)=4.
+        // EffRounds (A=2): ceil(6/2) + ceil(4/2) = 3+2=5.
+        expect(result.schedule.length).to.eq(5);
       });
     });
 
@@ -218,32 +205,31 @@ describe('tourney-time', () => {
         result = tourneyTime(options);
       });
 
-      it('generates a 16 game playoff schedule', () => {
+      it('generates a 10 game playoff schedule', () => {
         expect(result.playoffSchedule).to.eql({
-          games: 16, // duel(10) new
+          games: 10, // Actual games from duel(10)
           type: 'knockout'
         });
       });
 
-      it('generates 1120 minutes needed', () => {
-        // Tourney: selector(10,2) -> pods(10)=40 items. Areas=2.
-        // Playoff: duel(10)=16 items.
-        // EffRounds T: ceil(40/2)=20. EffRounds P: ceil(16/2)=8. Total=28.
-        // Time = 28 * (30+10) = 1120.
-        expect(result.timeNeededMinutes).to.eq(1120);
+      it('generates 760 minutes needed', () => {
+        // Actual games: pods(10)=27, duel(10)=10. Areas (selector for pods(10), areas=2) = 2.
+        // Time (A=2): (ceil(27/2)+ceil(10/2))*(30+10) = (14+5)*40 = 19*40 = 760.
+        expect(result.timeNeededMinutes).to.eq(760);
       });
 
-      it('generates a 40 game tourney schedule', () => {
+      it('generates a 27 game tourney schedule', () => {
         expect(result.tourneySchedule).to.eql({
-          games: 40,
+          games: 27, // Actual games from pods(10)
           type: 'pods',
           areas: 2,
         });
       });
 
-      it('generates a schedule containing 28 effective rounds', () => {
-        // EffRounds = 20 + 8 = 28
-        expect(result.schedule.length).to.eq(28);
+      it('generates a schedule containing 25 effective rounds', () => {
+        // Schedule items: pods(10)=33, duel(10)=16.
+        // EffRounds (A=2): ceil(33/2) + ceil(16/2) = 17+8=25.
+        expect(result.schedule.length).to.eq(25);
       });
     });
   });

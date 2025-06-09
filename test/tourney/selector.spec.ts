@@ -66,16 +66,20 @@ describe('tourney/selector', () => {
         // teams=9, teamsInPodsCount=4. numOfPodsBase=2, leftOverTeams=1. effectiveNumOfPods=3.
         // Pods: "1":[1,4,7], "2":[2,5,8], "3":[3,6,9]
         // Pod games: 3 games per pod * 3 pods = 9 games.
-        // Divisions: (teams-in-divisions with these 3 pods of 3) -> 3 divisions of 3 teams.
-        // Div games: 3 games per division * 3 divisions = 9 games.
-        // Crossover games (3 divisions): (3-1)*2 = 4 games.
-        // Total = 18 (pod) + 18 (division) + 4 (crossover) = 40 items.
-        expect(results?.games).to.eq(40);
+        // Divisions: (teams-in-divisions with these 3 pods of 3) -> 3 divisions of 3 teams. Each RR(3) = 3 actual games. Total 3*3=9 actual.
+        // Crossover games (3 divisions): (3-1)*2 = 4 actual games.
+        // Total actual games = 9 (pod) + 9 (division) + 4 (crossover) = 22 actual games.
+        // Total schedule items (including byes from RR(3)):
+        // Pod items: 3 * (3g+3b=6i) = 18 items.
+        // Division items: 3 * (3g+3b=6i) = 18 items.
+        // Crossover items: 4 games.
+        // Total items = 18 + 18 + 4 = 40 items.
+        expect(results?.games).to.eq(22); // Actual games
       });
 
       it('returns object containing a schedule', () => {
         expect(results?.schedule).to.be.ok; // .ok checks for truthy value
-        expect(results!.schedule!.length).to.eq(40); // Number of games
+        expect(results!.schedule!.length).to.eq(40); // Total schedule items
       });
 
       it('returns object containing number of areas', () => {
