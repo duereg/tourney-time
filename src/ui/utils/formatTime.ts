@@ -15,7 +15,7 @@ export function formatTime(totalMinutes: number): string {
   const hours = Math.floor(remainingMinutesAfterDays / minutesInHour);
   const remainingMinutes = remainingMinutesAfterDays % minutesInHour;
 
-  let parts: string[] = [];
+  const parts: string[] = [];
 
   if (days > 0) {
     parts.push(`${days} day${days > 1 ? 's' : ''}`);
