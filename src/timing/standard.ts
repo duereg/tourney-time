@@ -8,15 +8,17 @@ interface StandardTimingOptions {
   playoffRest: number;
 }
 
-const calculateStandardTiming = ({
-  tourneyGames,
-  playoffGames,
-  gameTime,
-  restTime,
-  areas,
-  playoffTime,
-  playoffRest,
-}: StandardTimingOptions): number => {
+const calculateStandardTiming = (options: StandardTimingOptions): number => {
+  const {
+    tourneyGames,
+    playoffGames,
+    gameTime,
+    restTime,
+    areas,
+    playoffTime,
+    playoffRest,
+  } = options;
+
   const calcAreaLength = (games: number): number => {
     return Math.floor(games / areas) + (games % areas);
   };

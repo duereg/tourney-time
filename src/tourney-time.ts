@@ -137,7 +137,6 @@ export default (options: TourneyTimeOptions): TourneyTimeResult => {
   // Ensure areas is at least 1, as some calculations might divide by it or expect it to be positive.
   // selector also has logic to adjust areas, this is a safeguard.
   const areas = Math.max(1, opts.areas || 1);
-
   const tourneyScheduleResult = tourneyTypeSelector(opts.teams, areas);
   const playoffScheduleResult = playoffGamesCalculator(opts.teams);
 

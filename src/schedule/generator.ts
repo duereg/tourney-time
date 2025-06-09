@@ -1,6 +1,9 @@
 import singleArea from './single';
 import multipleArea from './multiple';
-import { Schedule as TourneySchedule, Schedule as PlayoffSchedule } from '../tourney-time'; // Assuming types are defined in tourney-time
+import {
+  Schedule as TourneySchedule,
+  Schedule as PlayoffSchedule,
+} from '../tourney-time'; // Assuming types are defined in tourney-time
 
 interface GeneratorOptions {
   tourneySchedule: TourneySchedule;

@@ -1,5 +1,9 @@
 import _ from 'underscore';
-import { Schedule as TourneySchedule, Schedule as PlayoffSchedule, Game } from '../tourney-time'; // Assuming types are defined
+import {
+  Schedule as TourneySchedule,
+  Schedule as PlayoffSchedule,
+  Game,
+} from '../tourney-time'; // Assuming types are defined
 
 interface ScheduleBalancerInput {
   schedule: Game[];

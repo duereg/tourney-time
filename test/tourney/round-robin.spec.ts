@@ -21,11 +21,21 @@ describe('tourney/round-robin', () => {
 
   describe('given number of teams', () => {
     it('given no teams returns zero games', () => {
-      expect(roundRobin(0)).to.eql({ games: 0, schedule: [], teams: [], type: 'round robin' });
+      expect(roundRobin(0)).to.eql({
+        games: 0,
+        schedule: [],
+        teams: [],
+        type: 'round robin',
+      });
     });
 
     it('given 1 team returns zero', () => {
-      expect(roundRobin(1)).to.eql({ games: 0, schedule: [], teams: [1], type: 'round robin' });
+      expect(roundRobin(1)).to.eql({
+        games: 0,
+        schedule: [],
+        teams: [1],
+        type: 'round robin',
+      });
     });
 
     describe('given 2 teams', () => {

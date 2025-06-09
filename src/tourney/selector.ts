@@ -1,6 +1,6 @@
 import roundRobin from './round-robin'; // Relative path
 import pods from './pods'; // Relative path
-import { Game, Schedule } from '../tourney-time'; // Adjust path as needed for types
+import { Game } from '../tourney-time'; // Adjust path as needed for types
 
 interface TourneyResultBase {
   games: number;

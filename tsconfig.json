@@ -22,10 +22,6 @@
     },
     "noEmitOnError": true
   },
-  "include": [
-    "src/**/*",
-    "test/**/*",
-    "bin/**/*"
-  ],
+  "include": ["src/**/*", "test/**/*", "bin/**/*"],
   "exclude": ["node_modules", "docs"]
 }
