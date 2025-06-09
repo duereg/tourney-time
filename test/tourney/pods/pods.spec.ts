@@ -1,5 +1,4 @@
 import { expect } from '../../spec-helper';
-import _ from 'underscore';
 import pods from '@lib/tourney/pods'; // Using path alias
 import { Game, Schedule } from '@lib/tourney-time'; // Assuming types
 

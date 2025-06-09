@@ -1,4 +1,3 @@
-import _ from 'underscore'; 
 import suffix from '../../helpers/suffix'; 
 
 type TeamName = string; // e.g., "1st Pod 1"
@@ -65,15 +64,12 @@ export default (pods: PodsInput): TeamName[][] => {
 
   let divisions: TeamName[][] = [];
 
-  const podsArray: TeamName[][] = _(pods).values();
-  const numPods: number = _(pods).keys().length;
+  const podsArray: TeamName[][] = Object.values(pods);
+  const numPods: number = Object.keys(pods).length;
 
   // Determine the number of divisions by the length of the largest pod
-  const numOfDivisions: number = _(podsArray)
-    .chain()
-    .map((pod) => pod.length)
-    .max()
-    .value();
+  const podLengths = podsArray.map((pod) => pod.length);
+  const numOfDivisions: number = podLengths.length === 0 ? -Infinity : Math.max(...podLengths);
 
   // Check if numOfDivisions is -Infinity (empty podsArray) or if there's only one pod (no divisions needed)
   if (numOfDivisions !== -Infinity && numPods >= 2) {

@@ -1,4 +1,3 @@
-import _ from 'underscore';
 import roundRobin from '../round-robin'; // Adjusted path
 import { Game, Schedule } from '../../tourney-time'; // Adjust path as needed, define types
 
@@ -37,7 +36,7 @@ export default (pods: PodsInput): PodSchedule[] => {
         schedule: rrResult.schedule || [],
       };
 
-      _(podScheduleResult.schedule).forEach((game: Game) => {
+      podScheduleResult.schedule.forEach((game: Game) => {
         // Assuming game is of type Game
         game.id = `Pod ${key} Game ${game.id}`;
       });

@@ -42,18 +42,16 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "roundrobin": "duereg/roundrobin",
-    "underscore": "^1.13.7",
     "yargs": "^17.7.2"
   },
   "devDependencies": {
-    "@swc/core": "*",
+    "@swc/core": "~1.4.17",
     "@types/chai": "*",
     "@types/mocha": "^10.0.10",
     "@types/react": "*",
     "@types/react-dom": "*",
     "@types/sinon": "*",
     "@types/sinon-chai": "*",
-    "@types/underscore": "*",
     "@types/yargs": "^17.0.33",
     "@typescript-eslint/eslint-plugin": "^8.32.1",
     "@typescript-eslint/parser": "^8.32.1",
@@ -83,5 +81,9 @@
     "node": ">=4.2.0",
     "npm": ">=3.5.10"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "alias": {
+    "react/jsx-dev-runtime": "react/jsx-dev-runtime.js",
+    "react/jsx-runtime": "react/jsx-runtime.js"
+  }
 }
