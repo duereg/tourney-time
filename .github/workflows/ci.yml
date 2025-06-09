@@ -68,10 +68,9 @@ jobs:
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4 # Using a popular action
         with:
-          branch: gh-pages # The branch the action should deploy to.
+          branch: master # The branch the action should deploy to.
           folder: docs     # The folder the action should deploy.
           token: ${{ secrets.ACCESS_TOKEN }} # Default GITHUB_TOKEN
-          clean: true # Automatically remove deleted files from the deploy branch
           # Optional: if your project is not at the root of the user/org pages site
           # single-commit: true # Optional: if you want to squash new commits to a single commit
           repository-name: duereg/duereg.github.io
