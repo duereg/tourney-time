@@ -2,9 +2,9 @@ name: CI/CD
 
 on:
   push:
-    branches: [ main ] # Assuming 'main' is the default branch
+    branches: [ master ] # Assuming 'master' is the default branch
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   build-and-test:
@@ -36,42 +36,42 @@ jobs:
       - name: Run tests
         run: npm test
 
-  deploy-ui:
-    name: Deploy UI to GitHub Pages
-    runs-on: ubuntu-latest
-    # Only run on pushes to the main branch
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    # Depends on the build-and-test job completing successfully
-    needs: build-and-test
+  # deploy-ui:
+  #   name: Deploy UI to GitHub Pages
+  #   runs-on: ubuntu-latest
+  #   # Only run on pushes to the master branch
+  #   if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+  #   # Depends on the build-and-test job completing successfully
+  #   needs: build-and-test
 
-    permissions:
-      contents: write # Required to push to gh-pages branch
+  #   permissions:
+  #     contents: write # Required to push to gh-pages branch
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20.x'
-          cache: 'npm'
+  #     - name: Set up Node.js
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: '20.x'
+  #         cache: 'npm'
 
-      - name: Install dependencies
-        # Install devDependencies needed for build:ui if not included by default with `npm ci --production`
-        # `npm ci` should install devDependencies by default unless NODE_ENV=production
-        run: npm ci
+  #     - name: Install dependencies
+  #       # Install devDependencies needed for build:ui if not included by default with `npm ci --production`
+  #       # `npm ci` should install devDependencies by default unless NODE_ENV=production
+  #       run: npm ci
 
-      - name: Build UI
-        run: npm run build:ui # This should generate files in the 'docs' directory
+  #     - name: Build UI
+  #       run: npm run build:ui # This should generate files in the 'docs' directory
 
-      - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4 # Using a popular action
-        with:
-          branch: gh-pages # The branch the action should deploy to.
-          folder: docs     # The folder the action should deploy.
-          token: ${{ secrets.GITHUB_TOKEN }} # Default GITHUB_TOKEN
-          clean: true # Automatically remove deleted files from the deploy branch
-          # Optional: if your project is not at the root of the user/org pages site
-          # single-commit: true # Optional: if you want to squash new commits to a single commit
-          # target-folder: 'tourney-time' # If deploying to a subfolder on gh-pages branch
+  #     - name: Deploy to GitHub Pages
+  #       uses: JamesIves/github-pages-deploy-action@v4 # Using a popular action
+  #       with:
+  #         branch: gh-pages # The branch the action should deploy to.
+  #         folder: docs     # The folder the action should deploy.
+  #         token: ${{ secrets.GITHUB_TOKEN }} # Default GITHUB_TOKEN
+  #         clean: true # Automatically remove deleted files from the deploy branch
+  #         # Optional: if your project is not at the root of the user/org pages site
+  #         # single-commit: true # Optional: if you want to squash new commits to a single commit
+  #         # target-folder: 'tourney-time' # If deploying to a subfolder on gh-pages branch

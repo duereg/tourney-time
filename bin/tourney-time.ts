@@ -1,8 +1,8 @@
 #!/usr/bin/env ts-node
 
 import yargs from 'yargs';
-import tourneyTime from '@lib/tourney-time'; // Using path alias, assuming tourney-time exports default
-import { Schedule, Game } from '@lib/tourney-time'; // Assuming these types are exported
+import tourneyTime from '../src/tourney-time'; // Using path alias, assuming tourney-time exports default
+import { Schedule, Game } from '../src/tourney-time'; // Assuming these types are exported
 
 interface Argv {
   teams: number;
