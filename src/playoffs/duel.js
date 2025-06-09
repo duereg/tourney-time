@@ -80,10 +80,27 @@ var elimination = function (numTeams, p) {
     matches[matches.length - 1].id += 1;
   }
 
-  return matches.filter(function(match){
-    var isBye = match.isBye;
-    delete match.isBye;
-    return !!!isBye; });
+  // Iterate through matches to mark bye matches and remove original isBye property
+  for (var i = 0; i < matches.length; i++) {
+    var match = matches[i];
+    if (match.isBye) {
+      match.isByeMatch = true;
+      // Refine teams array for bye matches to only include the advancing team
+      // The `woMark` function would have placed a WO ("BYE") placeholder.
+      // We need to find the actual seed/team.
+      // match.teams is currently like ['Seed 1', WO] or [WO, 'Seed 2']
+      const advancingTeam = match.teams.find(function(t) { return t !== WO; });
+      if (advancingTeam) {
+        match.teams = [advancingTeam];
+      }
+      // If for some reason no advancing team is found (e.g. [WO, WO]),
+      // which shouldn't happen for a bye that implies one team advances,
+      // we leave match.teams as is, though this case is unlikely.
+    }
+    delete match.isBye; // Remove original isBye property
+  }
+
+  return matches;
 };
 
 module.exports = function(numTeams) {
@@ -101,8 +118,8 @@ module.exports = function(numTeams) {
 
   var schedule = elimination(numTeams, p);
 
-  tourney.schedule = schedule;
-  tourney.games = schedule.length;
+  tourney.schedule = schedule; // schedule already contains all matches including byes
+  tourney.games = schedule.filter(match => !match.isByeMatch).length; // Count only actual games
 
   return tourney
 };

@@ -67,43 +67,75 @@ function roundRobin<T extends string | number>(
   // duereg/roundrobin returns T[][][] (rounds -> pairings -> teams)
   const rawSchedule: T[][][] = actualScheduler(teams, actualNames);
 
-  // Map to Game objects - keeping types loose initially to replicate original issue
+  // Map to Game objects
   const unflattenedSchedule: any[][] = rawSchedule.map(
     (round: T[][], rNumber: number) => {
-      return round.map((matchup: T[], mNumber: number) => {
-        // Ensure matchup has at least two teams for a valid game
+      const gamesInThisRound: any[] = []; // Stores both actual games and bye markers
+
+      // Process actual matchups from the library
+      round.forEach((matchup: T[], mNumber: number) => {
         if (matchup && matchup.length >= 2) {
-          return {
-            id: `g${rNumber}-${mNumber}`, // Example ID
+          gamesInThisRound.push({
+            id: `g${rNumber}-${mNumber}`,
             round: rNumber + 1,
-            teams: [matchup[0], matchup[1]], // Takes the first two teams
-          };
+            teams: [matchup[0], matchup[1]],
+          });
         }
-        return null; // Or handle incomplete matchups/byes appropriately
       });
+
+      // New Bye Detection Logic for odd number of teams
+      // This logic assumes the 'roundrobin' library output for N teams (odd)
+      // is N rounds, and in each round, N-1 teams play, 1 team gets a bye.
+      if (actualNames.length % 2 !== 0 && round.length === (actualNames.length -1) / 2) {
+        const teamsInActualGamesThisRound = new Set<T>();
+        round.forEach((matchup: T[]) => {
+          if (matchup) { // Check if matchup is not null or undefined
+            matchup.forEach(team => teamsInActualGamesThisRound.add(team));
+          }
+        });
+
+        for (const team of actualNames) {
+          if (!teamsInActualGamesThisRound.has(team)) {
+            // This team has a bye in this round
+            // Find a unique mNumber for the bye ID.
+            const byeMNumber = actualNames.length + rNumber; // Simple unique enough ID component
+            gamesInThisRound.push({
+              id: `b${rNumber}-${byeMNumber}`,
+              round: rNumber + 1,
+              teams: [team],
+              isByeMatch: true,
+            });
+            break; // Assuming one bye per round for odd-team tournaments
+          }
+        }
+      }
+      return gamesInThisRound; // This is now an array of processed games and potential byes for the round
     },
   );
 
   // Filter out nulls (from byes/incomplete matchups) and ensure round numbers
   const addedRounds: Game[][] = unflattenedSchedule.map(
-    (round: any[], rNumber: number): Game[] => {
-      const validGamesInRound = round.filter((game) => game !== null);
-      return validGamesInRound.map((game: any): Game => {
-        return {
-          id:
-            game.id ||
-            `g${rNumber}-${game.teams && game.teams.join ? game.teams.join('') : Math.random()}`,
-          round: rNumber + 1, // Set round number consistently
+    (processedRound: any[], rNumber: number): Game[] => {
+      // processedRound should already be filtered for nulls if any were possible before.
+      // If gamesInThisRound can't produce nulls, this filter might be redundant.
+      const gamesInRound = processedRound.filter((game) => game !== null);
+        return gamesInRound.map((game: any): Game => {
+          const newGame: Game = {
+            id: game.id || `g${rNumber}-${game.teams && game.teams.join ? game.teams.join('') : Math.random()}`,
+            round: game.round || rNumber + 1,
           teams: game.teams || [],
-        } as Game; // Cast to Game
+          };
+          if (game.isByeMatch) {
+            newGame.isByeMatch = true;
+          }
+          return newGame;
       });
     },
   );
 
   const scheduleFlat: Game[] = addedRounds.flat(1);
 
-  // This is the line that often caused the TS2345 error (approx. line 47 in original)
-  const games: number = scheduleFlat.length;
+  const actualGamesCount = scheduleFlat.filter(game => !game.isByeMatch).length;
 
   // Sorting logic (simplified, assuming no custom sort from config for now to reduce complexity)
   // if (sort) {
@@ -112,8 +144,8 @@ function roundRobin<T extends string | number>(
   // }
 
   return {
-    schedule: scheduleFlat,
-    games: games,
+    schedule: scheduleFlat, // scheduleFlat contains all items including byes
+    games: actualGamesCount, // games property now counts only actual games
     teams: actualNames.slice(0, teams),
     type: 'round robin',
   };

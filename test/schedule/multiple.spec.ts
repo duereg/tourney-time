@@ -251,4 +251,132 @@ describe('schedule/multiple', () => {
       });
     });
   });
+
+  describe('scheduleBalancer with Byes', () => {
+    let args: Args;
+
+    beforeEach(() => {
+      // Default setup for these tests
+      args = {
+        tourneySchedule: { type: 'test', games: 0, schedule: [] },
+        playoffSchedule: { type: 'test', games: 0, schedule: [] },
+        areas: 2, // Default to 2 areas, can be overridden in specific tests
+      };
+    });
+
+    it('Scenario 1: Playoff Style Bye - G2 should be in new block due to Team C bye', () => {
+      const mockSchedule: Game[] = [
+        { id: 'G1', round: 1, teams: ['Team A', 'Team B'] },
+        { id: 'Bye1', round: 1, teams: ['Team C'], isByeMatch: true },
+        { id: 'G2', round: 2, teams: ['Team A', 'Team C'] }, // Team C had a bye
+      ];
+      args.playoffSchedule.schedule = mockSchedule;
+      args.playoffSchedule.games = mockSchedule.length;
+      args.areas = 2;
+
+      const result = multiAreaSchedule(args as MultipleOptions);
+      // Expected: [[G1, Bye1], [G2]]
+      // G1 and Bye1 are in round 1, fit in areas=2.
+      // G2 is round 2, so starts a new block. Team C from Bye1 is now "active".
+      // If G2 were round 1, it would also start a new block due to Team C.
+      expect(result.length).to.equal(2);
+      expect(result[0].map(g => g.id)).to.deep.equal(['G1', 'Bye1']);
+      expect(result[1].map(g => g.id)).to.deep.equal(['G2']);
+    });
+
+    it('Scenario 1.1: Playoff Style Bye - G2 (same round) should be in new block', () => {
+      const mockSchedule: Game[] = [
+        { id: 'G1', round: 1, teams: ['Team A', 'Team B'] },
+        { id: 'Bye1', round: 1, teams: ['Team C'], isByeMatch: true },
+        { id: 'G2', round: 1, teams: ['Team X', 'Team C'] }, // Team C had a bye in same round
+      ];
+      args.playoffSchedule.schedule = mockSchedule;
+      args.playoffSchedule.games = mockSchedule.length;
+      args.areas = 2;
+
+      const result = multiAreaSchedule(args as MultipleOptions);
+      // Expected: [[G1, Bye1], [G2]]
+      // G1, Bye1 are round 1. Team C is in Bye1.
+      // G2 is round 1, involves Team C. `hasTeam` for G2 will be true. New block.
+      expect(result.length).to.equal(2);
+      expect(result[0].map(g => g.id)).to.deep.equal(['G1', 'Bye1']);
+      expect(result[1].map(g => g.id)).to.deep.equal(['G2']);
+    });
+
+    it('Scenario 2: Same Round Back-to-Back Attempt - G11 new block due to Team R bye', () => {
+      const mockSchedule: Game[] = [
+        { id: 'G10', round: 1, teams: ['Team P', 'Team Q'] },
+        { id: 'ByeR', round: 1, teams: ['Team R'], isByeMatch: true },
+        { id: 'G11', round: 1, teams: ['Team R', 'Team S'] },
+      ];
+      args.tourneySchedule.schedule = mockSchedule;
+      args.tourneySchedule.games = mockSchedule.length;
+      args.areas = 3; // Allowing more area capacity
+
+      const result = multiAreaSchedule(args as MultipleOptions);
+      // Expected: [[G10, ByeR], [G11]]
+      // G10, ByeR are round 1. Team R is in ByeR.
+      // G11 is round 1, involves Team R. `hasTeam` for G11 will be true. New block.
+      expect(result.length).to.equal(2);
+      expect(result[0].map(g => g.id)).to.deep.equal(['G10', 'ByeR']);
+      expect(result[1].map(g => g.id)).to.deep.equal(['G11']);
+    });
+
+    it('Scenario 3: Bye is last in area, next game (same round) starts new block', () => {
+      const mockSchedule: Game[] = [
+        { id: 'AreaFiller1', round: 1, teams: ['T1', 'T2'] },
+        { id: 'ByeZ', round: 1, teams: ['Team Z'], isByeMatch: true }, // Fills area if areas=2
+        { id: 'NextGameForZ', round: 1, teams: ['Team Z', 'Team K'] },
+      ];
+      args.tourneySchedule.schedule = mockSchedule;
+      args.tourneySchedule.games = mockSchedule.length;
+      args.areas = 2;
+
+      const result = multiAreaSchedule(args as MultipleOptions);
+      // Expected: [[AreaFiller1, ByeZ], [NextGameForZ]]
+      // AreaFiller1, ByeZ are round 1, fill areas=2. Team Z is in ByeZ.
+      // NextGameForZ is round 1, involves Team Z. `hasTeam` will be true. New block.
+      expect(result.length).to.equal(2);
+      expect(result[0].map(g => g.id)).to.deep.equal(['AreaFiller1', 'ByeZ']);
+      expect(result[1].map(g => g.id)).to.deep.equal(['NextGameForZ']);
+    });
+
+    it('Scenario 4: No back-to-back if teams are different (areas=3)', () => {
+      const mockSchedule: Game[] = [
+        { id: 'GameAlpha', round: 1, teams: ['Alpha1', 'Alpha2'] },
+        { id: 'ByeBeta', round: 1, teams: ['Beta1'], isByeMatch: true },
+        { id: 'GameGamma', round: 1, teams: ['Gamma1', 'Gamma2'] }, // No common teams with ByeBeta
+      ];
+      args.tourneySchedule.schedule = mockSchedule;
+      args.tourneySchedule.games = mockSchedule.length;
+      args.areas = 3;
+
+      const result = multiAreaSchedule(args as MultipleOptions);
+      // Expected with areas=3: [[GameAlpha, ByeBeta, GameGamma]]
+      // All are round 1. ByeBeta involves Beta1. GameGamma does not involve Beta1.
+      // `hasTeam` for GameGamma (w.r.t teams in [GameAlpha, ByeBeta]) is false.
+      // All fit in one block.
+      expect(result.length).to.equal(1);
+      expect(result[0].map(g => g.id)).to.deep.equal(['GameAlpha', 'ByeBeta', 'GameGamma']);
+    });
+
+    it('Scenario 4.1: No back-to-back if teams are different (areas=2, GameGamma new block due to area limit)', () => {
+      const mockSchedule: Game[] = [
+        { id: 'GameAlpha', round: 1, teams: ['Alpha1', 'Alpha2'] },
+        { id: 'ByeBeta', round: 1, teams: ['Beta1'], isByeMatch: true },
+        { id: 'GameGamma', round: 1, teams: ['Gamma1', 'Gamma2'] }, // No common teams with ByeBeta
+      ];
+      args.tourneySchedule.schedule = mockSchedule;
+      args.tourneySchedule.games = mockSchedule.length;
+      args.areas = 2;
+
+      const result = multiAreaSchedule(args as MultipleOptions);
+      // Expected with areas=2: [[GameAlpha, ByeBeta], [GameGamma]]
+      // GameAlpha, ByeBeta fill the first block.
+      // GameGamma starts a new block because round.length (2) < areas (2) is false.
+      expect(result.length).to.equal(2);
+      expect(result[0].map(g => g.id)).to.deep.equal(['GameAlpha', 'ByeBeta']);
+      expect(result[1].map(g => g.id)).to.deep.equal(['GameGamma']);
+    });
+  });
 });

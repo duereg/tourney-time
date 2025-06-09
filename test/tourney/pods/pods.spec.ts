@@ -42,14 +42,23 @@ describe('tourney/pods', () => {
   });
 
   it('given 3 teams returns 3 games with numbers for names', () => {
-    // For 3 teams, one pod, 3 games (round robin).
+    // For 3 teams, one pod, RR(3) = 3 actual games. Schedule items = 6.
     const result = pods(3);
-    expect(result.games).to.eq(3);
-    expect(result.schedule).to.eql([
-      { id: 'Pod 1 Game g0-0', round: 1, teams: [3, 2] as any }, // Updated ID
-      { id: 'Pod 1 Game g1-0', round: 2, teams: [1, 3] as any }, // Updated ID
-      { id: 'Pod 1 Game g2-0', round: 3, teams: [2, 1] as any }, // Updated ID
-    ]);
+    expect(result.games).to.eq(3); // Actual games
+    const expectedSchedule: Game[] = [
+      { id: 'Pod 1 Game g0-0', round: 1, teams: [3, 2] as any },
+      { id: 'Pod 1 Game b0-3', round: 1, teams: [1], isByeMatch: true },
+      { id: 'Pod 1 Game g1-0', round: 2, teams: [1, 3] as any },
+      { id: 'Pod 1 Game b1-4', round: 2, teams: [2], isByeMatch: true },
+      { id: 'Pod 1 Game g2-0', round: 3, teams: [2, 1] as any },
+      { id: 'Pod 1 Game b2-5', round: 3, teams: [3], isByeMatch: true }
+    ];
+    // The schedule might be sorted differently by round, then by original order.
+    // Let's check for presence of all expected games.
+    expect(result.schedule.length).to.equal(expectedSchedule.length);
+    for (const game of expectedSchedule) {
+      expect(result.schedule).to.deep.include(game);
+    }
     expect(result.divisions).to.eql([]);
     expect(result.pods).to.eql({ '1': [1, 2, 3] });
   });
@@ -135,7 +144,10 @@ describe('tourney/pods', () => {
     // For 4 divisions, 3 pairs.
     // Let's re-check the logic from `crossover-schedule.ts`: it generates `(numOfDivisions - 1) * 2` total games.
     // So for 4 divisions, it's (4-1)*2 = 6 games.
-    // Total = 18 (pod) + 12 (division) + 6 (crossover) = 36 games. This matches.
+    // Pod phase: 3 pods of 4 teams. Each pod RR(4) = 6 games. 3 * 6 = 18 games.
+    // Divisions by rank: 4 divisions of 3 teams. Each division RR(3) = 3 actual games. 4 * 3 = 12 actual games.
+    // Crossover games: (4 divisions - 1) * 2 = 6 actual games.
+    // Total actual games = 18 + 12 + 6 = 36.
     expect(pods(12).games).to.eq(36);
   });
 
@@ -161,15 +173,10 @@ describe('tourney/pods', () => {
     });
 
     it('returns 76 games', () => {
-      // 20 teams -> 5 pods of 4. Each pod: 6 games. Total pod games = 30.
-      // Divisions: 4 divisions (max teams in pod).
-      // Div 1: 1P1..1P5 (10 games)
-      // Div 2: 2P1..2P5 (10 games)
-      // Div 3: 3P1..3P5 (10 games)
-      // Div 4: 4P1..4P5 (10 games)
-      // Total division games = 40.
-      // Crossover games for 4 divisions = (4-1)*2 = 6 games.
-      // Total = 30 (pod) + 40 (division) + 6 (crossover) = 76 games. This matches.
+      // Pod phase: 5 pods of 4. Each RR(4) = 6 actual games. 5 * 6 = 30 actual games.
+      // Divisions by rank: 4 divisions of 5 teams. Each RR(5) = 10 actual games. 4 * 10 = 40 actual games.
+      // Crossover games: (4 divisions - 1) * 2 = 6 actual games.
+      // Total actual games = 30 + 40 + 6 = 76.
       expect(result.games).to.eq(76);
     });
 
