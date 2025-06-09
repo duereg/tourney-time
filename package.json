@@ -46,7 +46,7 @@
     "yargs": "^17.7.2"
   },
   "devDependencies": {
-    "@swc/core": "*",
+    "@swc/core": "~1.4.17",
     "@types/chai": "*",
     "@types/mocha": "^10.0.10",
     "@types/react": "*",
@@ -83,5 +83,9 @@
     "node": ">=4.2.0",
     "npm": ">=3.5.10"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "alias": {
+    "react/jsx-dev-runtime": "react/jsx-dev-runtime.js",
+    "react/jsx-runtime": "react/jsx-runtime.js"
+  }
 }

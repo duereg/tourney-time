@@ -1,5 +1,6 @@
-import _ from 'underscore';
-import robinSchedule from 'roundrobin';
+import * as underscoreNS from 'underscore';
+const _ = (underscoreNS.default || underscoreNS) as _.UnderscoreStatic;
+import * as robinScheduleNS from 'roundrobin';
 import { Game, TourneyTimeOptions } from '../tourney-time'; // Adjusted import
 
 // Interface for the config object (matching original structure if possible)
@@ -47,8 +48,10 @@ function roundRobin<T extends string | number>(
   const actualNames =
     names.length === teams ? names : (_.range(1, teams + 1) as any as T[]);
 
+  type RoundRobinSchedulerType = (teams: number, names?: T[]) => T[][][];
+  const actualScheduler = (robinScheduleNS.default || robinScheduleNS) as RoundRobinSchedulerType;
   // duereg/roundrobin returns T[][][] (rounds -> pairings -> teams)
-  const rawSchedule: T[][][] = robinSchedule(teams, actualNames);
+  const rawSchedule: T[][][] = actualScheduler(teams, actualNames);
 
   // Map to Game objects - keeping types loose initially to replicate original issue
   const unflattenedSchedule: any[][] = _.map(
