@@ -18,6 +18,10 @@ Access the online tool here: [Tourney Time UI](https://duereg.github.io/tourney-
 
 _(Note: This UI is built and deployed via GitHub Pages from the `docs/` directory of this repository.)_
 
+## Deployment to GitHub Pages
+
+For the GitHub Actions workflow to deploy the UI to the `duereg/duereg.github.io` repository, a Personal Access Token (PAT) with `repo` scope must be created. This token should be added as a secret named `ACCESS_TOKEN` in the GitHub repository settings where this workflow runs.
+
 ## Usage Example
 
 ```shell
