@@ -20,7 +20,8 @@
       "@bin/*": ["bin/*"],
       "@tests/*": ["test/*"]
     },
-    "noEmitOnError": true
+    "noEmitOnError": true,
+    "typeRoots": ["./node_modules/@types", "./src/types"]
   },
   "include": ["src/**/*", "test/**/*", "bin/**/*"],
   "exclude": ["node_modules", "docs"]
