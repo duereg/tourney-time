@@ -39,19 +39,34 @@ describe('tourney-time', () => {
     };
 
     describe('given two teams', () => {
-      it('generates correct output', () => {
-        const options: TestTourneyTimeOptions = { ...defaultTourney, teams: 2 };
-        const result: TourneyTimeResult = tourneyTime(options);
-        expect(result.timeNeededMinutes).to.eql(50);
-        expect(result.schedule.length).to.eql(2);
-        expect(result.tourneySchedule).to.eql({
-          games: 1,
-          type: 'round robin',
-          areas: 1,
+      describe('generates correct output', () => {
+        let result: TourneyTimeResult;
+        beforeEach(() => {
+          const options: TestTourneyTimeOptions = { ...defaultTourney, teams: 2 };
+          result = tourneyTime(options);
         });
-        expect(result.playoffSchedule).to.eql({
-          games: 1,
-          type: 'knockout',
+
+        it('should calculate timeNeededMinutes as 50', () => {
+          expect(result.timeNeededMinutes).to.eql(50);
+        });
+
+        it('should have a schedule length of 2', () => {
+          expect(result.schedule.length).to.eql(2);
+        });
+
+        it('should have the correct tourneySchedule', () => {
+          expect(result.tourneySchedule).to.eql({
+            games: 1,
+            type: 'round robin',
+            areas: 1,
+          });
+        });
+
+        it('should have the correct playoffSchedule', () => {
+          expect(result.playoffSchedule).to.eql({
+            games: 1,
+            type: 'knockout',
+          });
         });
       });
     });
@@ -99,51 +114,83 @@ describe('tourney-time', () => {
     };
 
     describe('given two teams', () => {
-      it('generates correct output', () => {
-        const options: TestTourneyTimeOptions = { ...defaultTourney, teams: 2 };
-        const result: TourneyTimeResult = tourneyTime(options);
-        expect(result.timeNeededMinutes).to.eql(80);
-        expect(result.schedule.length).to.eql(2);
-        expect(result.tourneySchedule).to.eql({
-          areas: 1,
-          games: 1,
-          type: 'round robin',
+      describe('generates correct output', () => {
+        let result: TourneyTimeResult;
+        beforeEach(() => {
+          const options: TestTourneyTimeOptions = { ...defaultTourney, teams: 2 };
+          result = tourneyTime(options);
         });
-        expect(result.playoffSchedule).to.eql({
-          games: 1,
-          type: 'knockout',
+
+        it('should calculate timeNeededMinutes as 80', () => {
+          expect(result.timeNeededMinutes).to.eql(80);
+        });
+
+        it('should have a schedule length of 2', () => {
+          expect(result.schedule.length).to.eql(2);
+        });
+
+        it('should have the correct tourneySchedule', () => {
+          expect(result.tourneySchedule).to.eql({
+            areas: 1,
+            games: 1,
+            type: 'round robin',
+          });
+        });
+
+        it('should have the correct playoffSchedule', () => {
+          expect(result.playoffSchedule).to.eql({
+            games: 1,
+            type: 'knockout',
+          });
         });
       });
     });
 
     describe('given three teams', () => {
-      it('generates correct output', () => {
-        const options: TestTourneyTimeOptions = { ...defaultTourney, teams: 3 };
-        const result: TourneyTimeResult = tourneyTime(options);
-        expect(result.timeNeededMinutes).to.eql(200); // Corrected based on actual games
-        expect(result.schedule.length).to.eql(9);
-
-        const expectedScheduleGames: Game[] = [
-            { id: 'g0-0', round: 1, teams: [3, 2] as any },
-            { id: 'b0-3', round: 1, teams: [1], isByeMatch: true },
-            { id: 'g1-0', round: 2, teams: [1, 3] as any },
-            { id: 'b1-4', round: 2, teams: [2], isByeMatch: true },
-            { id: 'g2-0', round: 3, teams: [2, 1] as any },
-            { id: 'b2-5', round: 3, teams: [3], isByeMatch: true },
-            { id: 211, round: 1, teams: ['Seed 1'], isByeMatch: true },
-            { id: 212, round: 1, teams: ['Seed 3', 'Seed 2'] },
-            { id: 221, round: 2, teams: ['Seed 1', 'Winner 212'] }
-        ];
-        expect(result.schedule).to.have.deep.members(expectedScheduleGames);
-
-        expect(result.tourneySchedule).to.eql({
-          areas: 1,
-          games: 3, // Actual games from RR(3)
-          type: 'round robin',
+      describe('generates correct output', () => {
+        let result: TourneyTimeResult;
+        let expectedScheduleGames: Game[];
+        beforeEach(() => {
+          const options: TestTourneyTimeOptions = { ...defaultTourney, teams: 3 };
+          result = tourneyTime(options);
+          expectedScheduleGames = [
+              { id: 'g0-0', round: 1, teams: [3, 2] as any },
+              { id: 'b0-3', round: 1, teams: [1], isByeMatch: true },
+              { id: 'g1-0', round: 2, teams: [1, 3] as any },
+              { id: 'b1-4', round: 2, teams: [2], isByeMatch: true },
+              { id: 'g2-0', round: 3, teams: [2, 1] as any },
+              { id: 'b2-5', round: 3, teams: [3], isByeMatch: true },
+              { id: 211, round: 1, teams: ['Seed 1'], isByeMatch: true },
+              { id: 212, round: 1, teams: ['Seed 3', 'Seed 2'] },
+              { id: 221, round: 2, teams: ['Seed 1', 'Winner 212'] }
+          ];
         });
-        expect(result.playoffSchedule).to.eql({
-          games: 2, // Actual games from duel(3)
-          type: 'knockout',
+
+        it('should calculate timeNeededMinutes as 200', () => {
+          expect(result.timeNeededMinutes).to.eql(200); // Corrected based on actual games
+        });
+
+        it('should have a schedule length of 9', () => {
+          expect(result.schedule.length).to.eql(9);
+        });
+
+        it('should contain all expected games in the schedule', () => {
+          expect(result.schedule).to.have.deep.members(expectedScheduleGames);
+        });
+
+        it('should have the correct tourneySchedule', () => {
+          expect(result.tourneySchedule).to.eql({
+            areas: 1,
+            games: 3, // Actual games from RR(3)
+            type: 'round robin',
+          });
+        });
+
+        it('should have the correct playoffSchedule', () => {
+          expect(result.playoffSchedule).to.eql({
+            games: 2, // Actual games from duel(3)
+            type: 'knockout',
+          });
         });
       });
     });
