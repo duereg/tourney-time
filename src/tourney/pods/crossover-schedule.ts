@@ -14,8 +14,7 @@ export default (divisions: string[][]): Game[] => {
   // Note: TypeScript's type system would ideally enforce that 'divisions' is always provided
   // unless its type is explicitly 'Division[] | undefined' or 'divisions?: Division[]'.
   // This check is to mimic the original CoffeeScript's runtime check.
-  if (!divisions || divisions.length < 2) {
-    // Crossover games only make sense with at least 2 divisions
+  if (!divisions || divisions.length < 2) { // Crossover games only make sense with at least 2 divisions
     return []; // Return empty array if not enough divisions for crossover
   }
 

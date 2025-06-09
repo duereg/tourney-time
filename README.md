@@ -24,7 +24,7 @@ _(Note: This UI is built and deployed via GitHub Pages from the `docs/` director
 ## Usage Example
 
 ```shell
-Usage: ./bin/tourney-time.ts --teams 10 -t 20 -r 5 -a 2 -p 30 -o 10
+Usage: ./bin/tourney-time.coffee --teams 10 -t 20 -r 5 -a 2 -p 30 -o 10
 
 Options:
   --teams            number of players/teams competing          [required]
@@ -36,7 +36,7 @@ Options:
 ```
 
 ```shell
-  Example: ./bin/tourney-time.ts --teams 10 -t 20 -r 5 -a 2 -p 30 -o 10
+  Example: ./bin/tourney-time.coffee --teams 10 -t 20 -r 5 -a 2 -p 30 -o 10
 ```
 
 ## Testing
@@ -59,7 +59,7 @@ Options:
 
 The MIT License (MIT)
 
-Copyright 2025 Matt Blair
+Copyright 2016 Matt Blair
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

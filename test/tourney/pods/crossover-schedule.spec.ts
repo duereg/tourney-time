@@ -47,8 +47,7 @@ const twoDivisionScheduleResult: Game[] = [
 ];
 
 describe('tourney/pods/crossoverSchedule', () => {
-  it('given no params returns empty array', () => {
-    // Updated description
+  it('given no params returns empty array', () => { // Updated description
     // Cast to any because the function expects arguments
     // Now returns [] instead of throwing due to source code change
     expect((crossoverSchedule as any)()).to.eql([]);

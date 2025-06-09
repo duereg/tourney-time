@@ -89,9 +89,7 @@ describe('tourney/pods', () => {
     });
 
     const findGameById = (schedule: Game[], idSubstring: string) => {
-      return schedule.find(
-        (game) => game.id && String(game.id).includes(idSubstring),
-      );
+      return schedule.find((game) => game.id && String(game.id).includes(idSubstring));
     };
 
     it('splits the tournament into two pods', () => {

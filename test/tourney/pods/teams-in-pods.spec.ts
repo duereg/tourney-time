@@ -27,7 +27,7 @@ describe('tourney/pods/teams-in-pods', () => {
       // teamsInPods(["1"], 1)
       // teams = 1, teamsInPodsCount = 1. numOfPodsBase = 1. leftOverTeams = 0. effectiveNumOfPods = 1.
       // groupBy index 0 % 1 + 1 = pod '1'. Result: {'1': ["1"]}
-      expect(teamsInPods(['1'], 1)).to.eql({ '1': ['1'] });
+      expect(teamsInPods(["1"], 1)).to.eql({ '1': ["1"] });
     });
 
     it('given 10 teams for pods of 4 teams, returns 3 pods', () => {
@@ -53,9 +53,9 @@ describe('tourney/pods/teams-in-pods', () => {
       // "3": ["3", "6", "9"]
       const teamNames = Array.from({ length: 10 }, (_, i) => String(i + 1)); // Creates ["1", "2", ..., "10"]
       const expectedPods: PodsOutput = {
-        '1': ['1', '4', '7', '10'],
-        '2': ['2', '5', '8'],
-        '3': ['3', '6', '9'],
+        '1': ["1", "4", "7", "10"],
+        '2': ["2", "5", "8"],
+        '3': ["3", "6", "9"],
       };
       expect(teamsInPods(teamNames, 4)).to.eql(expectedPods);
     });

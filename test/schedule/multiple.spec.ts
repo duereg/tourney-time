@@ -150,9 +150,7 @@ describe('schedule/multiple', () => {
       });
 
       it('returns the one game', () => {
-        expect(multiAreaSchedule(args as MultipleOptions)).to.eql([
-          singleGameSchedule,
-        ]);
+        expect(multiAreaSchedule(args as MultipleOptions)).to.eql([singleGameSchedule]);
       });
 
       describe('and a one game playoff schedule', () => {
