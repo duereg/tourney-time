@@ -146,7 +146,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, error }) => {
       {renderScheduleDetails(results.tourneySchedule, 'Tournament Schedule')}
       {renderScheduleDetails(results.playoffSchedule, 'Playoff Schedule')}
       <div style={sectionStyle}>
-        {renderFullSchedule(results.schedule, results.tourneySchedule.areas)}
+        {renderFullSchedule(results.schedule, results.tourneySchedule.areas || 1)}
       </div>
     </div>
   );
