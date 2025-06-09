@@ -22,6 +22,11 @@ export interface Game {
    * An array of teams participating in the game. Teams can be identified by numbers or names.
    */
   teams: (string | number)[];
+  /**
+   * Indicates if this game object represents a bye for a team.
+   * If true, the `teams` array should ideally contain the single team receiving the bye.
+   */
+  isByeMatch?: boolean;
   // Add other game properties if they exist
 }
 

@@ -69,13 +69,13 @@ describe('tourney/selector', () => {
         // Divisions: (teams-in-divisions with these 3 pods of 3) -> 3 divisions of 3 teams.
         // Div games: 3 games per division * 3 divisions = 9 games.
         // Crossover games (3 divisions): (3-1)*2 = 4 games.
-        // Total = 9 + 9 + 4 = 22 games. This matches.
-        expect(results?.games).to.eq(22);
+        // Total = 18 (pod) + 18 (division) + 4 (crossover) = 40 items.
+        expect(results?.games).to.eq(40);
       });
 
       it('returns object containing a schedule', () => {
         expect(results?.schedule).to.be.ok; // .ok checks for truthy value
-        expect(results!.schedule!.length).to.eq(22); // Number of games
+        expect(results!.schedule!.length).to.eq(40); // Number of games
       });
 
       it('returns object containing number of areas', () => {
