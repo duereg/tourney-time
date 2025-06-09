@@ -1,8 +1,5 @@
 # tourney-time
 
-[![Build Status](https://secure.travis-ci.org/duereg/tourney-time.svg?branch=master)](https://travis-ci.org/duereg/tourney-time)
-[![Dependency status](https://david-dm.org/duereg/tourney-time.svg)](https://david-dm.org/duereg/tourney-time)
-[![devDependency Status](https://david-dm.org/duereg/tourney-time/dev-status.svg)](https://david-dm.org/duereg/tourney-time#info=devDependencies)
 [![Coverage Status](https://img.shields.io/coveralls/duereg/tourney-time.svg)](https://coveralls.io/r/duereg/tourney-time)
 
 <!--
