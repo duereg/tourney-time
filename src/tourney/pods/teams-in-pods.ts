@@ -1,5 +1,3 @@
-import _ from 'underscore';
-
 type TeamName = string;
 
 interface TeamsInPodsResult {
@@ -46,12 +44,20 @@ export default (
     return {};
   }
 
-  const teamsAssignedToPods: TeamsInPodsResult = _(names).groupBy(
-    (name, index) => {
-      if (effectiveNumOfPods === 0) return '1'; // Avoid modulo by zero, put all in pod '1' if no pods
-      return String(Math.floor(index % effectiveNumOfPods) + 1); // Pod keys are "1", "2", ...
-    },
-  );
+  const teamsAssignedToPods: TeamsInPodsResult = names.reduce((acc, name, index) => {
+    let podKey: string;
+    if (effectiveNumOfPods === 0) {
+      podKey = '1'; // Avoid modulo by zero, put all in pod '1' if no pods
+    } else {
+      podKey = String(Math.floor(index % effectiveNumOfPods) + 1); // Pod keys are "1", "2", ...
+    }
+
+    if (!acc[podKey]) {
+      acc[podKey] = [];
+    }
+    acc[podKey].push(name);
+    return acc;
+  }, {} as TeamsInPodsResult);
 
   // The previous logic in CoffeeScript for `teamsInPods = _(names).groupBy ...` directly returns
   // the object where keys are pod numbers (1-indexed) and values are arrays of names.

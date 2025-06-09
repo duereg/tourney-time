@@ -1,4 +1,3 @@
-import _ from 'underscore';
 import {
   Schedule as TourneySchedule,
   Schedule as PlayoffSchedule,
@@ -22,12 +21,16 @@ const scheduleBalancer = (
       const round = balancedSchedule[balancedSchedule.length - 1];
 
       if (round.length < areas) {
-        const hasTeam = _(round)
-          .chain()
-          .map((aRound) => aRound.teams) // Ensure aRound has teams property
-          .flatten()
-          .intersection(game.teams)
-          .value().length;
+        let teamsInRound: (string | number)[] = [];
+        for (const r of round) {
+          if (r.teams) { // Ensure r.teams exists
+            teamsInRound = teamsInRound.concat(r.teams);
+          }
+        }
+        // Ensure game.teams is an array before filtering
+        const currentBlockTeams = Array.isArray(game.teams) ? game.teams : [];
+        const commonTeams = teamsInRound.filter(team => currentBlockTeams.includes(team));
+        const hasTeam = commonTeams.length;
 
         if (hasTeam || currentRound !== game.round) {
           balancedSchedule.push([game]);

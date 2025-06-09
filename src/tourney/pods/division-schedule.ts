@@ -1,4 +1,3 @@
-import _ from 'underscore';
 import roundRobin from '../round-robin'; // Assuming round-robin is in the parent directory
 import { Game, Schedule } from '../../tourney-time'; // Adjust path as needed, define types
 
@@ -34,7 +33,7 @@ export default (divisions: Team[][]): DivisionSchedule[] => {
       schedule: rrResult.schedule || [],
     };
 
-    _(divisionSchedule.schedule).forEach((game: Game) => {
+    divisionSchedule.schedule.forEach((game: Game) => {
       // Assuming game is of type Game
       game.id = `Div ${index + 1} Game ${game.id}`;
     });

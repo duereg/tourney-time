@@ -1,4 +1,3 @@
-import _ from 'underscore';
 import roundRobin from '../round-robin'; // Adjusted path
 import getTeamNamesAndNumber from '../team-names-and-number'; // Adjusted path
 import generatePods from './teams-in-pods';
@@ -32,16 +31,20 @@ interface ScheduleSection {
 }
 
 const sumGames = (schedule: ScheduleSection[]): number => {
-  return _(schedule).reduce((memo, div) => memo + div.games, 0);
+  return schedule.reduce((memo, div) => memo + div.games, 0);
 };
 
 const spreadSchedule = (schedule: ScheduleSection[]): Game[] => {
-  return _(schedule)
-    .chain()
-    .map((section) => section.schedule)
-    .flatten()
-    .sortBy((game) => game.round) // Assuming Game has a round property
-    .value();
+  const mappedAndFlattened = schedule.map((section) => section.schedule).flat(1);
+  // Ensure game.round is a number for direct subtraction.
+  // If game.round can be other types or needs complex sorting, adjust the sort function.
+  return mappedAndFlattened.sort((a, b) => {
+    // Robust sorting for potentially undefined or non-numeric rounds
+    const roundA = typeof a.round === 'number' ? a.round : Infinity;
+    const roundB = typeof b.round === 'number' ? b.round : Infinity;
+    if (roundA === Infinity && roundB === Infinity) return 0; // both non-numeric or undefined
+    return roundA - roundB;
+  });
 };
 
 // The original CoffeeScript used `arguments` which is not directly available in the same way in TS arrow functions
