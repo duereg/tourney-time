@@ -82,11 +82,12 @@ describe('tourney/pods', () => {
       expect(result.schedule.length).to.equal(expectedSchedule.length);
     });
 
-    it('should include all expected games in the schedule', () => {
-      // Let's check for presence of all expected games.
-      for (const game of expectedSchedule) {
-        expect(result.schedule).to.deep.include(game);
-      }
+    describe('schedule contents', () => {
+      it('should include all expected games', () => {
+        for (const game of expectedSchedule) {
+          expect(result.schedule).to.deep.include(game);
+        }
+      });
     });
 
     it('should return no divisions', () => {
@@ -105,6 +106,11 @@ describe('tourney/pods', () => {
 
   describe('given 8 teams', () => {
     let result: PodsResult;
+    const findGameById = (schedule: Game[], idSubstring: string) => {
+      return schedule.find(
+        (game) => game.id && String(game.id).includes(idSubstring),
+      );
+    };
 
     beforeEach(() => {
       result = pods(8);
@@ -131,35 +137,40 @@ describe('tourney/pods', () => {
       expect(result.divisions.length).to.eq(4);
     });
 
-    const findGameById = (schedule: Game[], idSubstring: string) => {
-      return schedule.find(
-        (game) => game.id && String(game.id).includes(idSubstring),
-      );
-    };
-
-    it('splits the tournament into two pods', () => {
-      // Original test used schedule.indexOf which doesn't work with objects directly.
-      // Assuming first game of each pod. Pod 1, Round 1 (idx 0), Match 1 (idx 0) -> g0-0
-      // Pod 2, Round 1 (idx 0), Match 1 (idx 0) -> g0-0 (relative to that pod's schedule generation)
-      expect(findGameById(result.schedule, 'Pod 1 Game g0-0')).to.be.ok;
-      expect(findGameById(result.schedule, 'Pod 2 Game g0-0')).to.be.ok;
+    describe('tournament structure in schedule', () => {
+      it('should show first game from Pod 1', () => {
+        expect(findGameById(result.schedule, 'Pod 1 Game g0-0')).to.be.ok;
+      });
+      it('should show first game from Pod 2', () => {
+        expect(findGameById(result.schedule, 'Pod 2 Game g0-0')).to.be.ok;
+      });
     });
 
-    it('has games for each division', () => {
-      // Assuming these are the first game generated for each division's round robin
-      expect(findGameById(result.schedule, 'Div 1 Game g0-0')).to.be.ok;
-      expect(findGameById(result.schedule, 'Div 2 Game g0-0')).to.be.ok;
-      expect(findGameById(result.schedule, 'Div 3 Game g0-0')).to.be.ok;
-      expect(findGameById(result.schedule, 'Div 4 Game g0-0')).to.be.ok;
+    describe('division games in schedule', () => {
+      it('should have a game for Division 1', () => {
+        expect(findGameById(result.schedule, 'Div 1 Game g0-0')).to.be.ok;
+      });
+      it('should have a game for Division 2', () => {
+        expect(findGameById(result.schedule, 'Div 2 Game g0-0')).to.be.ok;
+      });
+      it('should have a game for Division 3', () => {
+        expect(findGameById(result.schedule, 'Div 3 Game g0-0')).to.be.ok;
+      });
+      it('should have a game for Division 4', () => {
+        expect(findGameById(result.schedule, 'Div 4 Game g0-0')).to.be.ok;
+      });
     });
 
-    it('has crossover games for each division', () => {
-      // Crossover game IDs are not from roundRobin, so they should remain as is.
-      // The error was likely due to crossover games not being generated or included if `divisions` was empty.
-      // With robust sub-functions, these should now be found.
-      expect(findGameById(result.schedule, 'Div 1/2 <-1->')).to.be.ok;
-      expect(findGameById(result.schedule, 'Div 2/3 <-1->')).to.be.ok;
-      expect(findGameById(result.schedule, 'Div 3/4 <-1->')).to.be.ok;
+    describe('crossover games in schedule', () => {
+      it('should have crossover game for Div 1/2', () => {
+        expect(findGameById(result.schedule, 'Div 1/2 <-1->')).to.be.ok;
+      });
+      it('should have crossover game for Div 2/3', () => {
+        expect(findGameById(result.schedule, 'Div 2/3 <-1->')).to.be.ok;
+      });
+      it('should have crossover game for Div 3/4', () => {
+        expect(findGameById(result.schedule, 'Div 3/4 <-1->')).to.be.ok;
+      });
     });
   });
 
