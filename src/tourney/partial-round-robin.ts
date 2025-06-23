@@ -78,11 +78,11 @@ export default function partialRoundRobin<T extends string | number>(
   }
 
 
-  // 2. Shuffle these games
-  for (let i = allGamesFlat.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [allGamesFlat[i], allGamesFlat[j]] = [allGamesFlat[j], allGamesFlat[i]];
-  }
+  // 2. Shuffle these games - REMOVED to preserve round structure from generator
+  // for (let i = allGamesFlat.length - 1; i > 0; i--) {
+  //   const j = Math.floor(Math.random() * (i + 1));
+  //   [allGamesFlat[i], allGamesFlat[j]] = [allGamesFlat[j], allGamesFlat[i]];
+  // }
 
   const schedule: Game[] = [];
   const gamesPlayedPerTeam: { [team: string | number]: number } = {};
