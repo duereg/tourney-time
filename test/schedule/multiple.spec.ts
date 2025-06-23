@@ -442,4 +442,182 @@ describe('schedule/multiple', () => {
       });
     });
   });
+
+  describe('Back-to-back scheduling prevention', () => {
+    let args: Args;
+
+    beforeEach(() => {
+      args = {
+        tourneySchedule: { type: 'test', games: 0, schedule: [] },
+        playoffSchedule: { type: 'test', games: 0, schedule: [] }, // Keep playoff empty unless specified
+        areas: 2, // Default to 2 areas for these tests
+      };
+    });
+
+    it('should swap games to prevent a team playing back-to-back across rounds', () => {
+      // R1G1: A vs B (Area 1), C vs D (Area 2)
+      // R1G2: E vs F (Area 1) // This is the last game of Round 1 in Area 1
+      // R2G1: F vs G (Area 1) <- Conflict: F plays last in R1 and first in R2
+      // R2G2: H vs I (Area 2)
+      // R2G3: J vs K (Area 1) <- Potential swap for F vs G
+      const tourneyGames: Game[] = [
+        // Round 1
+        { id: 'R1G1A1', round: 1, teams: ['A', 'B'] },
+        { id: 'R1G1A2', round: 1, teams: ['C', 'D'] },
+        { id: 'R1G2A1', round: 1, teams: ['E', 'F'] }, // F is in a "last game" of round 1
+        // Round 2
+        { id: 'R2G1A1', round: 2, teams: ['F', 'G'] }, // F would play back-to-back
+        { id: 'R2G1A2', round: 2, teams: ['H', 'I'] },
+        { id: 'R2G2A1', round: 2, teams: ['J', 'K'] }, // Available for swap
+      ];
+      args.tourneySchedule.schedule = tourneyGames;
+      args.tourneySchedule.games = tourneyGames.length;
+      args.areas = 2;
+
+      const result = multiAreaSchedule(args as MultipleOptions);
+      // Expected:
+      // Block 1 (Round 1): [R1G1A1, R1G1A2]
+      // Block 2 (Round 1): [R1G2A1]
+      // Block 3 (Round 2): [R2G2A1 (swapped), R2G1A2] // J vs K, H vs I
+      // Block 4 (Round 2): [R2G1A1 (original F vs G)] // F vs G now later
+      expect(result.length).to.equal(4);
+      expect(result[0].map(g => g.id)).to.deep.equal(['R1G1A1', 'R1G1A2']);
+      expect(result[1].map(g => g.id)).to.deep.equal(['R1G2A1']); // E vs F
+      expect(result[2].map(g => g.id)).to.deep.equal(['R2G2A1', 'R2G1A2']); // J vs K, H vs I
+      expect(result[3].map(g => g.id)).to.deep.equal(['R2G1A1']); // F vs G
+      // Verify F is not in the first games of the new round block
+      const firstGamesNewRoundBlock = result[2];
+      const teamsInFirstGamesNewRoundBlock = firstGamesNewRoundBlock.flatMap(g => g.teams || []);
+      expect(teamsInFirstGamesNewRoundBlock).to.not.include('F');
+    });
+
+    it('should not swap if no non-conflicting game is available in the same round', () => {
+      // R1G1: A vs B (Area 1) // B is in a "last game"
+      // R2G1: B vs C (Area 1) <- Conflict
+      // R2G2: B vs D (Area 1) <- Also conflict if swapped
+      const tourneyGames: Game[] = [
+        { id: 'R1G1A1', round: 1, teams: ['A', 'B'] },
+        { id: 'R2G1A1', round: 2, teams: ['B', 'C'] },
+        { id: 'R2G2A1', round: 2, teams: ['B', 'D'] },
+      ];
+      args.tourneySchedule.schedule = tourneyGames;
+      args.tourneySchedule.games = tourneyGames.length;
+      args.areas = 1; // Single area to make it clear
+
+      const result = multiAreaSchedule(args as MultipleOptions);
+      // Expected: No swap, conflict remains
+      // Block 1: [R1G1A1]
+      // Block 2: [R2G1A1] (B vs C)
+      // Block 3: [R2G2A1] (B vs D)
+      expect(result.length).to.equal(3);
+      expect(result[0].map(g => g.id)).to.deep.equal(['R1G1A1']);
+      expect(result[1].map(g => g.id)).to.deep.equal(['R2G1A1']); // B vs C
+      expect(result[2].map(g => g.id)).to.deep.equal(['R2G2A1']); // B vs D
+    });
+
+    it('should handle multiple areas correctly when checking last games', () => {
+      // Area 1: R1GA1 (A vs B) | R2GA1 (C vs D)
+      // Area 2: R1GA2 (E vs F) | R2GA2 (B vs G) <- Conflict: B played in R1GA1 (Area 1)
+      // R2GA3 (H vs I) - available for swap
+      const tourneyGames: Game[] = [
+        // Round 1
+        { id: 'R1GA1', round: 1, teams: ['A', 'B'] }, // B in last game of R1 for Area 1 implicitly
+        { id: 'R1GA2', round: 1, teams: ['E', 'F'] }, // F in last game of R1 for Area 2 implicitly
+        // Round 2
+        { id: 'R2GA2', round: 2, teams: ['B', 'G'] }, // B would play back-to-back (last in R1A1, first in R2A2)
+        { id: 'R2GA1', round: 2, teams: ['C', 'D'] }, // Does not conflict with B or F
+        { id: 'R2GA3', round: 2, teams: ['H', 'I'] }, // Does not conflict
+      ];
+      args.tourneySchedule.schedule = tourneyGames;
+      args.tourneySchedule.games = tourneyGames.length;
+      args.areas = 2;
+
+      const result = multiAreaSchedule(args as MultipleOptions);
+      // Expected:
+      // Block 1 (R1): [R1GA1, R1GA2] (A vs B, E vs F)
+      // Block 2 (R2): [R2GA1, R2GA3] (C vs D, H vs I) - Swapped R2GA2 with R2GA1 or R2GA3
+      // Block 3 (R2): [R2GA2] (B vs G)
+
+      // The exact order in block 2 might vary based on which game is chosen for swap first.
+      // Key is that 'B vs G' is not in the first set of games for round 2.
+      expect(result.length).to.equal(3);
+      expect(result[0].map(g => g.id)).to.deep.equal(['R1GA1', 'R1GA2']);
+
+      const firstBlockR2 = result[1];
+      const teamsInFirstBlockR2 = firstBlockR2.flatMap(g => g.teams || []);
+      expect(teamsInFirstBlockR2).to.not.include('B');
+      expect(teamsInFirstBlockR2).to.not.include('F'); // Ensure F also doesn't play back-to-back
+
+      // Check that B vs G is scheduled later
+      expect(result[2][0].id).to.equal('R2GA2');
+    });
+
+     it('should not swap if the only available games for swap also create a conflict', () => {
+      const tourneyGames: Game[] = [
+        // Round 1
+        { id: 'R1G1A1', round: 1, teams: ['TeamA', 'TeamB'] }, // TeamB is last
+        // Round 2
+        { id: 'R2G1A1', round: 2, teams: ['TeamB', 'TeamC'] }, // Conflict for TeamB
+        { id: 'R2G2A1', round: 2, teams: ['TeamX', 'TeamB'] }, // Swap candidate, but also involves TeamB
+      ];
+      args.tourneySchedule.schedule = tourneyGames;
+      args.tourneySchedule.games = tourneyGames.length;
+      args.areas = 1;
+      const result = multiAreaSchedule(args as MultipleOptions);
+      expect(result[0].map(g => g.id)).to.deep.equal(['R1G1A1']);
+      expect(result[1].map(g => g.id)).to.deep.equal(['R2G1A1']); // Original conflicting game
+      expect(result[2].map(g => g.id)).to.deep.equal(['R2G2A1']);
+    });
+
+    it('should correctly identify last games even if a round has fewer games than areas', () => {
+      // R1G1: A vs B (Area 1)
+      // R1G2: C vs D (Area 2)
+      // R1G3: E vs F (Area 1) - F is in a "last game" of its slot in R1.
+      // Areas = 3. R1 has 3 games, spread over 2 blocks.
+      // Block1: [A-B, C-D, X-Y] (if X-Y existed)
+      // Block2: [E-F]
+      // So last games are E-F (from block 2) and C-D (from block 1 area 2). A-B is not last.
+      // R2G1: F vs G <- Conflict F
+      // R2G2: H vs I
+      // R2G3: J vs K <- Swap for F vs G
+      const tourneyGames: Game[] = [
+        { id: 'R1G1', round: 1, teams: ['A', 'B'] },
+        { id: 'R1G2', round: 1, teams: ['C', 'D'] }, // D is in a last game slot
+        { id: 'R1G3', round: 1, teams: ['E', 'F'] }, // F is in a last game slot
+        // Round 2
+        { id: 'R2G1', round: 2, teams: ['F', 'G'] }, // Conflict for F
+        { id: 'R2G2', round: 2, teams: ['D', 'H'] }, // Conflict for D
+        { id: 'R2G3', round: 2, teams: ['J', 'K'] }, // Swap for F vs G
+        { id: 'R2G4', round: 2, teams: ['L', 'M'] }, // Swap for D vs H
+      ];
+      args.tourneySchedule.schedule = tourneyGames;
+      args.tourneySchedule.games = tourneyGames.length;
+      args.areas = 2; // Max 2 games per time slot
+
+      const result = multiAreaSchedule(args as MultipleOptions);
+      // Expected:
+      // R1: [R1G1, R1G2], [R1G3]
+      //     Last games teams: D (from R1G2), F (from R1G3)
+      // R2: Attempt to schedule R2G1 (F,G) - conflict F. Swap with R2G3 (J,K) -> R2G3 is now first in R2.
+      //     Current R2 schedule: R2G3 (J,K)
+      //     Attempt to schedule R2G2 (D,H) - conflict D. Swap with R2G4 (L,M) -> R2G4 is now second in R2.
+      //     Current R2 schedule: R2G3 (J,K), R2G4 (L,M)
+      //     Then schedule R2G1 (F,G), R2G2 (D,H)
+      // Block 1 (R1): [R1G1, R1G2]
+      // Block 2 (R1): [R1G3]
+      // Block 3 (R2): [R2G3, R2G4] (J-K, L-M)
+      // Block 4 (R2): [R2G1, R2G2] (F-G, D-H)
+      expect(result[0].map(g=>g.id)).to.deep.equal(['R1G1', 'R1G2']);
+      expect(result[1].map(g=>g.id)).to.deep.equal(['R1G3']);
+
+      const r2Block1Teams = result[2].flatMap(g => g.teams);
+      expect(r2Block1Teams).to.not.include('F');
+      expect(r2Block1Teams).to.not.include('D');
+      expect(result[2].map(g => g.id)).to.contain.members(['R2G3', 'R2G4']);
+
+      const r2Block2Teams = result[3].flatMap(g => g.teams);
+      expect(r2Block2Teams).to.include.members(['F', 'G', 'D', 'H']);
+      expect(result[3].map(g => g.id)).to.contain.members(['R2G1', 'R2G2']);
+    });
+  });
 });

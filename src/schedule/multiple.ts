@@ -4,6 +4,29 @@ import {
   Game,
 } from '../tourney-time'; // Assuming types are defined
 
+// Helper function to get teams playing in the last games of the previous round
+const getTeamsInLastGames = (
+  balancedSchedule: Game[][],
+  areas: number,
+): (string | number)[] => {
+  if (balancedSchedule.length === 0) {
+    return [];
+  }
+
+  const lastRoundGames = balancedSchedule[balancedSchedule.length - 1];
+  const teamsInLastGames: (string | number)[] = [];
+
+  // Get games from the end of the last round, up to 'areas' number of games
+  const gamesToCheck = lastRoundGames.slice(-areas);
+
+  for (const game of gamesToCheck) {
+    if (game.teams) {
+      teamsInLastGames.push(...game.teams);
+    }
+  }
+  return teamsInLastGames;
+};
+
 interface ScheduleBalancerInput {
   schedule: Game[];
   // Add other properties if they exist on thingToSchedule
@@ -14,53 +37,88 @@ const scheduleBalancer = (
   areas: number,
 ): Game[][] => {
   const balancedSchedule: Game[][] = [];
-  let currentRound = 1;
+  const schedule = [...thingToSchedule.schedule]; // Create a mutable copy
 
-  for (const game of thingToSchedule.schedule) {
-    if (balancedSchedule.length) {
-      const round = balancedSchedule[balancedSchedule.length - 1];
+  for (let i = 0; i < schedule.length; i++) {
+    let game = schedule[i];
 
-      if (round.length < areas) {
-        let teamsInRound: (string | number)[] = [];
-        for (const r of round) {
-          if (r.teams) { // Ensure r.teams exists
-            teamsInRound = teamsInRound.concat(r.teams);
+    // Check for back-to-back conflict if this game starts a new logical round
+    let previousBlockActualRound = 0;
+    if (balancedSchedule.length > 0 && balancedSchedule[balancedSchedule.length - 1].length > 0) {
+      previousBlockActualRound = balancedSchedule[balancedSchedule.length - 1][0].round;
+    }
+
+    if (balancedSchedule.length > 0 && game.round > previousBlockActualRound) {
+      const teamsInLastGames = getTeamsInLastGames(balancedSchedule, areas);
+      const currentBlockTeams = Array.isArray(game.teams) ? game.teams : [];
+      const conflict = currentBlockTeams.some(team => teamsInLastGames.includes(team));
+
+      if (conflict) {
+        let swapped = false;
+        for (let j = i + 1; j < schedule.length; j++) {
+          if (schedule[j].round === game.round) {
+            const potentialSwapTeams = Array.isArray(schedule[j].teams) ? schedule[j].teams : [];
+            const swapConflictWithLastGames = potentialSwapTeams.some(team => teamsInLastGames.includes(team));
+
+            let teamsInCurrentNewBlock: (string | number)[] = [];
+            // This logic for teamsInCurrentNewBlock applies if we were already building the new round's first block.
+            // However, 'game' is the *first* game of the new round being considered here.
+            // So, the current new block is conceptually empty for this check.
+            // The check against teamsInCurrentNewBlock is more for preventing a swap from introducing
+            // a same-block conflict if the new round's block already had games.
+            // For the first game of a new round, this will effectively be an empty check.
+            // (No, this was subtly wrong, see refined logic below)
+
+            // Corrected check for teamsInCurrentNewBlock:
+            // We are trying to place 'game'. If we swap it with 'schedule[j]',
+            // 'schedule[j]' would be placed. 'teamsInCurrentNewBlock' should be teams
+            // *already placed in the block where schedule[j] would go*.
+            // Since schedule[j] would be the *first* game in that block (as game is first of new round),
+            // teamsInCurrentNewBlock for schedule[j]'s placement check is effectively empty.
+            // The existing logic for swapConflictWithCurrentBlock is fine.
+
+            const swapConflictWithCurrentBlock = potentialSwapTeams.some(team => teamsInCurrentNewBlock.includes(team));
+
+
+            if (!swapConflictWithLastGames && !swapConflictWithCurrentBlock) {
+              [schedule[i], schedule[j]] = [schedule[j], schedule[i]];
+              game = schedule[i];
+              swapped = true;
+              break;
+            }
           }
         }
-        // Ensure game.teams is an array before filtering
-        const currentBlockTeams = Array.isArray(game.teams) ? game.teams : [];
-        const commonTeams = teamsInRound.filter(team => currentBlockTeams.includes(team));
-        const hasTeam = commonTeams.length > 0; // Corrected to boolean check
+      }
+    }
 
-        // How bye matches (now included in thingToSchedule.schedule) are handled:
-        // 1. Upstream changes (duel.js, round-robin.ts) ensure bye matches (with isByeMatch: true
-        //    and the single team in game.teams) are part of the input schedule.
-        // 2. This loop iterates over all games, including these bye matches.
-        // 3. When a game (regular or bye) is added to `round` (the current scheduling block),
-        //    its teams are effectively included in `teamsInRound` for the next iteration's check.
-        // 4. If a bye match for 'Team A' is placed in the current block, 'Team A' is added to `teamsInRound`.
-        // 5. If the immediately following game in `thingToSchedule.schedule` also involves 'Team A',
-        //    the `hasTeam` condition (checking for common teams between the current game
-        //    and `teamsInRound`) will become true.
-        // 6. This (hasTeam === true) correctly triggers the creation of a new scheduling block
-        //    (`balancedSchedule.push([game])`) for the game involving 'Team A'.
-        // 7. This prevents 'Team A' from "playing" a regular game in the same scheduling block
-        //    immediately after its bye match was scheduled in that block.
-        // 8. Therefore, the existing conditional logic `if (hasTeam || currentRound !== game.round)`
-        //    is sufficient to prevent back-to-back scheduling for a team after a bye,
-        //    given the modified input data that now includes bye matches as distinct game objects.
-        if (hasTeam || currentRound !== game.round) {
-          balancedSchedule.push([game]);
+    // Game placement logic
+    if (balancedSchedule.length === 0) {
+      balancedSchedule.push([game]);
+    } else {
+      const currentProcessingBlock = balancedSchedule[balancedSchedule.length - 1];
+      if (currentProcessingBlock.length === 0) { // Should not happen if previous logic is correct
+        currentProcessingBlock.push(game); // Start new block if somehow empty
+      } else if (currentProcessingBlock.length < areas && currentProcessingBlock[0].round === game.round) {
+        // Check for team conflict within the currentProcessingBlock
+        let teamsInCurrentProcessingBlock: (string | number)[] = [];
+        for (const g of currentProcessingBlock) {
+          if (g.teams) teamsInCurrentProcessingBlock.push(...g.teams);
+        }
+        const gameTeams = Array.isArray(game.teams) ? game.teams : [];
+        const hasConflictInBlock = gameTeams.some(team => teamsInCurrentProcessingBlock.includes(team));
+
+        if (hasConflictInBlock) {
+          balancedSchedule.push([game]); // New block due to team conflict
         } else {
-          round.push(game);
+          currentProcessingBlock.push(game); // Append to current block
         }
       } else {
+        // New block if:
+        // 1. Current block is full (currentProcessingBlock.length === areas)
+        // 2. Game is for a new round (currentProcessingBlock[0].round !== game.round)
         balancedSchedule.push([game]);
       }
-    } else {
-      balancedSchedule.push([game]);
     }
-    currentRound = game.round;
   }
   return balancedSchedule;
 };
