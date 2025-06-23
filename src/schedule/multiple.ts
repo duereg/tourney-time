@@ -54,13 +54,13 @@ const scheduleBalancer = (
       const conflict = currentBlockTeams.some(team => teamsInLastGames.includes(team));
 
       if (conflict) {
-        let swapped = false;
+        // let swapped = false; // Not strictly needed if 'game' is reassigned
         for (let j = i + 1; j < schedule.length; j++) {
           if (schedule[j].round === game.round) {
             const potentialSwapTeams = Array.isArray(schedule[j].teams) ? schedule[j].teams : [];
             const swapConflictWithLastGames = potentialSwapTeams.some(team => teamsInLastGames.includes(team));
 
-            let teamsInCurrentNewBlock: (string | number)[] = [];
+            const teamsInCurrentNewBlock: (string | number)[] = []; // Will be empty as this is for the first game of a new round
             // This logic for teamsInCurrentNewBlock applies if we were already building the new round's first block.
             // However, 'game' is the *first* game of the new round being considered here.
             // So, the current new block is conceptually empty for this check.
@@ -82,8 +82,8 @@ const scheduleBalancer = (
 
             if (!swapConflictWithLastGames && !swapConflictWithCurrentBlock) {
               [schedule[i], schedule[j]] = [schedule[j], schedule[i]];
-              game = schedule[i];
-              swapped = true;
+              game = schedule[i]; // game is now the swapped game
+              // swapped = true;
               break;
             }
           }
@@ -100,7 +100,7 @@ const scheduleBalancer = (
         currentProcessingBlock.push(game); // Start new block if somehow empty
       } else if (currentProcessingBlock.length < areas && currentProcessingBlock[0].round === game.round) {
         // Check for team conflict within the currentProcessingBlock
-        let teamsInCurrentProcessingBlock: (string | number)[] = [];
+        const teamsInCurrentProcessingBlock: (string | number)[] = [];
         for (const g of currentProcessingBlock) {
           if (g.teams) teamsInCurrentProcessingBlock.push(...g.teams);
         }
