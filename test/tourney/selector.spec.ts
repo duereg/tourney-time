@@ -79,64 +79,95 @@ describe('tourney/selector', () => {
       // Total actual games = 9 (pod) + 9 (division) + 4 (crossover) = 22 games.
       expect(results?.games).to.eq(22);
     });
-     it('returns correct number of areas (not adjusted by RR logic for pods)', () => {
+    it('returns correct number of areas (not adjusted by RR logic for pods)', () => {
       expect(results?.areas).to.eq(2);
     });
-     it('returns empty schedule if less than 2 teams for pods, defaults to RR type', () => {
-      const podResults1Team = selectTourneyType({ teams: 1, areas: 1, strategy: 'pods' });
-      expect(podResults1Team.type).to.eq('round robin'); // Defaulted from pods
-      expect(podResults1Team.games).to.eq(0);
-      expect(podResults1Team.schedule).to.be.empty;
 
-      const podResults0Team = selectTourneyType({ teams: 0, areas: 1, strategy: 'pods' });
-      expect(podResults0Team.type).to.eq('round robin'); // Defaulted from pods
-      expect(podResults0Team.games).to.eq(0);
-      expect(podResults0Team.schedule).to.be.empty;
+    describe('when less than 2 teams are provided for "pods" strategy', () => {
+      describe('for 1 team', () => {
+        const podResults1Team = selectTourneyType({ teams: 1, areas: 1, strategy: 'pods' });
+        it('defaults to "round robin" type', () => {
+          expect(podResults1Team.type).to.eq('round robin');
+        });
+        it('returns 0 games', () => {
+          expect(podResults1Team.games).to.eq(0);
+        });
+        it('returns an empty schedule', () => {
+          expect(podResults1Team.schedule).to.be.empty;
+        });
+      });
+      describe('for 0 teams', () => {
+        const podResults0Team = selectTourneyType({ teams: 0, areas: 1, strategy: 'pods' });
+        it('defaults to "round robin" type', () => {
+          expect(podResults0Team.type).to.eq('round robin');
+        });
+        it('returns 0 games', () => {
+          expect(podResults0Team.games).to.eq(0);
+        });
+        it('returns an empty schedule', () => {
+          expect(podResults0Team.schedule).to.be.empty;
+        });
+      });
     });
   });
 
   describe('Explicit "partial-round-robin" strategy', () => {
-    it('returns partial round robin schedule', () => {
+    describe('when returning a partial round robin schedule (6 teams, 2 games each, 3 areas)', () => {
       const numTeams = 6;
       const numGamesPerTeam = 2;
-      // Expected games for 6 teams, 2 games each = (6 * 2) / 2 = 6 games.
-      // The partialRoundRobin function might produce slightly more or less based on exact pairing.
-      // Test from partial-round-robin.spec: 6 teams, 2 games -> result.games = 6
-      results = selectTourneyType({
+      const areas = 3;
+      const partialResults = selectTourneyType({
         teams: numTeams,
-        areas: 3, // Max areas = 6/2 = 3
+        areas,
         strategy: 'partial-round-robin',
         numGamesPerTeam,
       });
-      expect(results?.type).to.eq('partial round robin');
-      expect(results?.games).to.be.at.least( (numTeams * numGamesPerTeam) / 2 ); // Should be around this
-      expect(results?.areas).to.eq(3);
-    });
 
-    it('handles 0 numGamesPerTeam by defaulting to full round-robin for >=2 teams', () => {
-       results = selectTourneyType({
-        teams: 4,
-        areas: 1,
-        strategy: 'partial-round-robin',
-        numGamesPerTeam: 0,
+      it('should set type to "partial round robin"', () => {
+        expect(partialResults?.type).to.eq('partial round robin');
       });
-      expect(results?.type).to.eq('round robin'); // Defaulted
-      expect(results?.games).to.eq(6); // Full RR for 4 teams
-    });
-
-    it('handles 0 numGamesPerTeam by returning empty for <2 teams (via RR default)', () => {
-       results = selectTourneyType({
-        teams: 1,
-        areas: 1,
-        strategy: 'partial-round-robin',
-        numGamesPerTeam: 0,
+      it('should schedule at least the minimum required games', () => {
+        // Expected games for 6 teams, 2 games each = (6 * 2) / 2 = 6 games.
+        expect(partialResults?.games).to.be.at.least((numTeams * numGamesPerTeam) / 2);
       });
-      expect(results?.type).to.eq('partial round robin'); // Stays partial for 0/1 team
-      expect(results?.games).to.eq(0);
+      it('should use the specified number of areas', () => {
+        expect(partialResults?.areas).to.eq(areas);
+      });
     });
 
+    describe('when numGamesPerTeam is 0', () => {
+      describe('for 2 or more teams (e.g. 4 teams)', () => {
+        const resultsZeroGames = selectTourneyType({
+          teams: 4,
+          areas: 1,
+          strategy: 'partial-round-robin',
+          numGamesPerTeam: 0,
+        });
+        it('defaults to "round robin" type', () => {
+          expect(resultsZeroGames?.type).to.eq('round robin'); // Defaulted
+        });
+        it('returns games for a full round-robin', () => {
+          expect(resultsZeroGames?.games).to.eq(6); // Full RR for 4 teams
+        });
+      });
 
-    it('area adjustment for partial-round-robin', () => {
+      describe('for less than 2 teams (e.g. 1 team)', () => {
+        const resultsZeroGamesFewTeams = selectTourneyType({
+          teams: 1,
+          areas: 1,
+          strategy: 'partial-round-robin',
+          numGamesPerTeam: 0,
+        });
+        it('keeps type as "partial round robin"', () => {
+          expect(resultsZeroGamesFewTeams?.type).to.eq('partial round robin'); // Stays partial for 0/1 team
+        });
+        it('returns 0 games', () => {
+          expect(resultsZeroGamesFewTeams?.games).to.eq(0);
+        });
+      });
+    });
+
+    it('area adjustment for partial-round-robin (6 teams, 4 areas requested, should use 3)', () => {
       const newResults = selectTourneyType({
         teams: 6,
         areas: 4, // More than 6/2=3

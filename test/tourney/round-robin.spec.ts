@@ -100,11 +100,30 @@ describe('tourney/round-robin', () => {
           expect(teamsWithByes).to.have.members([1, 2, 3]);
         });
 
-        it('should have correct properties for actual games', () => {
-          // Check basic properties of actual games
-          actualGames.forEach(g => {
-            expect(g.teams.length).to.equal(2);
-            expect(g.id).to.match(/^g\d+-\d+$/);
+        describe('properties for actual games', () => {
+          describe('game 1 properties', () => {
+            it('should involve two teams', () => {
+              expect(actualGames[0].teams.length).to.equal(2);
+            });
+            it('should have a valid game ID', () => {
+              expect(actualGames[0].id).to.match(/^g\d+-\d+$/);
+            });
+          });
+          describe('game 2 properties', () => {
+            it('should involve two teams', () => {
+              expect(actualGames[1].teams.length).to.equal(2);
+            });
+            it('should have a valid game ID', () => {
+              expect(actualGames[1].id).to.match(/^g\d+-\d+$/);
+            });
+          });
+          describe('game 3 properties', () => {
+            it('should involve two teams', () => {
+              expect(actualGames[2].teams.length).to.equal(2);
+            });
+            it('should have a valid game ID', () => {
+              expect(actualGames[2].id).to.match(/^g\d+-\d+$/);
+            });
           });
         });
       });
@@ -239,17 +258,28 @@ describe('tourney/round-robin', () => {
         expect(result.schedule.length).to.equal(6);
       });
 
-      it('should have correct properties for bye matches', () => {
-        // Check properties of a bye match
-        expect(byeMatches[0].teams.length).to.equal(1);
-        expect(byeMatches[0].isByeMatch).to.be.true;
-        expect(byeMatches[0].id).to.match(/^b\d+-\d+$/); // e.g., b0-1 or similar
+      describe('properties for the first bye match', () => {
+        it('should involve one team', () => {
+          expect(byeMatches[0].teams.length).to.equal(1);
+        });
+        it('should be marked as a bye match', () => {
+          expect(byeMatches[0].isByeMatch).to.be.true;
+        });
+        it('should have a valid bye ID', () => {
+          expect(byeMatches[0].id).to.match(/^b\d+-\d+$/); // e.g., b0-1 or similar
+        });
       });
 
-      it('should ensure all teams (1, 2, 3) get a bye', () => {
-        expect(teamsWithByes).to.include(1);
-        expect(teamsWithByes).to.include(2);
-        expect(teamsWithByes).to.include(3);
+      describe('each team getting a bye', () => {
+        it('team 1 should get a bye', () => {
+          expect(teamsWithByes).to.include(1);
+        });
+        it('team 2 should get a bye', () => {
+          expect(teamsWithByes).to.include(2);
+        });
+        it('team 3 should get a bye', () => {
+          expect(teamsWithByes).to.include(3);
+        });
       });
     });
 
@@ -289,15 +319,23 @@ describe('tourney/round-robin', () => {
         expect(result.schedule.length).to.equal(15);
       });
 
-      it('should have correct properties for bye matches', () => {
-        expect(byeMatches[0].teams.length).to.equal(1);
-        expect(byeMatches[0].isByeMatch).to.be.true;
-        expect(byeMatches[0].id).to.match(/^b\d+-\d+$/);
+      describe('properties for the first bye match (named teams)', () => {
+        it('should involve one team', () => {
+          expect(byeMatches[0].teams.length).to.equal(1);
+        });
+        it('should be marked as a bye match', () => {
+          expect(byeMatches[0].isByeMatch).to.be.true;
+        });
+        it('should have a valid bye ID', () => {
+          expect(byeMatches[0].id).to.match(/^b\d+-\d+$/);
+        });
       });
 
-      it('should ensure all named teams get a bye', () => {
+      describe('each named team getting a bye', () => {
         for (const name of names) {
-          expect(teamsWithByes).to.include(name);
+          it(`team ${name} should get a bye`, () => {
+            expect(teamsWithByes).to.include(name);
+          });
         }
       });
     });

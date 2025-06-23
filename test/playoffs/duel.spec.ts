@@ -144,30 +144,57 @@ describe('playoffs/duel', () => {
         expect(schedule.length).to.equal(3);
       });
 
-      it('should identify Seed 1 as having a bye match in round 1', () => {
-        const byeMatch = schedule.find((m: Game) => m.isByeMatch === true);
-        expect(byeMatch).to.exist;
-        // Using non-null assertion operator `!` as existence is checked above.
-        expect(byeMatch!.teams).to.deep.equal(['Seed 1']); // Seed 1 gets the bye
-        expect(byeMatch!.round).to.equal(1); // Byes are typically in the first round
+      describe('Seed 1 bye match in round 1', () => {
+        let byeMatch: Game | undefined;
+        beforeEach(() => {
+          byeMatch = schedule.find((m: Game) => m.isByeMatch === true);
+        });
+
+        it('should exist', () => {
+          expect(byeMatch).to.exist;
+        });
+        it('should be for Seed 1', () => {
+          // Using non-null assertion operator `!` as existence is checked above.
+          expect(byeMatch!.teams).to.deep.equal(['Seed 1']); // Seed 1 gets the bye
+        });
+        it('should be in round 1', () => {
+          expect(byeMatch!.round).to.equal(1); // Byes are typically in the first round
+        });
       });
 
-      it('should identify the actual game between Seed 3 and Seed 2 in round 1', () => {
-        const actualGame = schedule.find((m: Game) => !m.isByeMatch && m.round === 1);
-        expect(actualGame).to.exist;
-        expect(actualGame!.teams).to.deep.equal(['Seed 3', 'Seed 2']);
+      describe('actual game between Seed 3 and Seed 2 in round 1', () => {
+        let actualGame: Game | undefined;
+        beforeEach(() => {
+          actualGame = schedule.find((m: Game) => !m.isByeMatch && m.round === 1);
+        });
+        it('should exist', () => {
+          expect(actualGame).to.exist;
+        });
+        it('should be between Seed 3 and Seed 2', () => {
+          expect(actualGame!.teams).to.deep.equal(['Seed 3', 'Seed 2']);
+        });
       });
 
-      it('should correctly reference Seed 1 and a winner placeholder in the final game', () => {
-        const finalGame = schedule.find((m: Game) => m.round === 2);
-        expect(finalGame).to.exist;
-        // One of the teams in the final game should be 'Seed 1'
-        // The other team is 'Winner of the S2vS3 game'.
-        // The exact ID (e.g., gId(2,1,2) for S2vS3) depends on internal gId logic.
-        // Let's assume the 'Winner' placeholder is structured as 'Winner <someId>'
-        // and Seed 1 is correctly propagated.
-        expect(finalGame!.teams).to.include('Seed 1');
-        expect(finalGame!.teams.some((t: string | number) => typeof t === 'string' && t.startsWith('Winner'))).to.be.true;
+      describe('final game (round 2)', () => {
+        let finalGame: Game | undefined;
+        beforeEach(() => {
+          finalGame = schedule.find((m: Game) => m.round === 2);
+        });
+
+        it('should exist', () => {
+          expect(finalGame).to.exist;
+        });
+        it('should include Seed 1', () => {
+          expect(finalGame!.teams).to.include('Seed 1');
+        });
+        it('should include a winner placeholder', () => {
+          // One of the teams in the final game should be 'Seed 1'
+          // The other team is 'Winner of the S2vS3 game'.
+          // The exact ID (e.g., gId(2,1,2) for S2vS3) depends on internal gId logic.
+          // Let's assume the 'Winner' placeholder is structured as 'Winner <someId>'
+          // and Seed 1 is correctly propagated.
+          expect(finalGame!.teams.some((t: string | number) => typeof t === 'string' && t.startsWith('Winner'))).to.be.true;
+        });
       });
     });
 
@@ -205,31 +232,58 @@ describe('playoffs/duel', () => {
         expect(schedule.length).to.equal(8);
       });
 
-      it('should identify 3 bye matches', () => {
-        const byeMatches = schedule.filter((m: Game) => m.isByeMatch === true);
-        expect(byeMatches.length).to.equal(3);
+      describe('bye matches for Seeds 1, 2, and 3', () => {
+        let byeMatches: Game[];
+        beforeEach(() => {
+          byeMatches = schedule.filter((m: Game) => m.isByeMatch === true);
+        });
+
+        it('should identify 3 bye matches in total', () => {
+          expect(byeMatches.length).to.equal(3);
+        });
+        it('should confirm Seed 1 has a bye match', () => {
+          expect(byeMatches.some((m: Game) => m.teams.includes('Seed 1'))).to.be.true;
+        });
+        it('should confirm Seed 2 has a bye match', () => {
+          expect(byeMatches.some((m: Game) => m.teams.includes('Seed 2'))).to.be.true;
+        });
+        it('should confirm Seed 3 has a bye match', () => {
+          expect(byeMatches.some((m: Game) => m.teams.includes('Seed 3'))).to.be.true;
+        });
       });
 
-      it('should confirm Seed 1, Seed 2, and Seed 3 have bye matches', () => {
-        const byeMatches = schedule.filter((m: Game) => m.isByeMatch === true);
-        expect(byeMatches.some((m: Game) => m.teams.includes('Seed 1'))).to.be.true;
-        expect(byeMatches.some((m: Game) => m.teams.includes('Seed 2'))).to.be.true;
-        expect(byeMatches.some((m: Game) => m.teams.includes('Seed 3'))).to.be.true;
+      describe('round 1 actual game (Seed 5 vs Seed 4)', () => {
+        let round1ActualGames: Game[];
+        beforeEach(() => {
+          round1ActualGames = schedule.filter((m: Game) => m.round === 1 && !m.isByeMatch);
+        });
+        it('should identify 1 actual game in round 1', () => {
+          expect(round1ActualGames.length).to.equal(1);
+        });
+        it('should be between Seed 5 and Seed 4', () => {
+          expect(round1ActualGames[0].teams).to.deep.equal(['Seed 5', 'Seed 4']);
+        });
       });
 
-      it('should identify 1 actual game in round 1 between Seed 5 and Seed 4', () => {
-        const round1ActualGames = schedule.filter((m: Game) => m.round === 1 && !m.isByeMatch);
-        expect(round1ActualGames.length).to.equal(1);
-        expect(round1ActualGames[0].teams).to.deep.equal(['Seed 5', 'Seed 4']);
+      describe('round 2 game involving a bye winner (e.g. Seed 1)', () => {
+        let round2GameWithByeWinner: Game | undefined;
+        beforeEach(() => {
+          round2GameWithByeWinner = schedule.find((m: Game) => m.round === 2 && (m.teams.includes('Seed 1') || m.teams.includes('Seed 2') || m.teams.includes('Seed 3')));
+        });
+        it('should exist', () => {
+          expect(round2GameWithByeWinner).to.exist;
+        });
+        it('should include a winner placeholder if Seed 1 is involved', () => {
+          if (round2GameWithByeWinner!.teams.includes('Seed 1')) {
+            expect(round2GameWithByeWinner!.teams.some((t: string | number) => typeof t === 'string' && t.startsWith('Winner'))).to.be.true;
+          } else {
+            // If Seed 1 is not in this specific game, this part of the test doesn't apply to it.
+            // Consider a more targeted way to find the game involving Seed 1 if that's the sole focus.
+            // For now, this structure means the expect only runs if Seed 1 is found.
+          }
+        });
       });
 
-      it('should ensure a round 2 game involves a bye winner and includes a winner placeholder if Seed 1 is involved', () => {
-        const round2GameWithByeWinner = schedule.find((m: Game) => m.round === 2 && (m.teams.includes('Seed 1') || m.teams.includes('Seed 2') || m.teams.includes('Seed 3')));
-        expect(round2GameWithByeWinner).to.exist;
-        if (round2GameWithByeWinner!.teams.includes('Seed 1')) {
-          expect(round2GameWithByeWinner!.teams.some((t: string | number) => typeof t === 'string' && t.startsWith('Winner'))).to.be.true;
-        }
-      });
 
       it('should ensure a round 2 game between Seed 2 and Seed 3 exists', () => {
         // Example: One of the round 2 games should be Seed 1 vs Winner of (S4vS5)
