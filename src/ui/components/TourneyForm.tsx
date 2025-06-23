@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { TourneyTimeOptions } from '@lib/tourney-time'; // Assuming path alias is configured for Parcel
+import { TourneyTimeOptions, SchedulingStrategy } from '@lib/tourney-time'; // Assuming path alias and SchedulingStrategy import
 
 // Define a type for the props, including the submit handler
+// TourneyTimeOptions already includes schedulingStrategy and numGamesPerTeam
 interface TourneyFormProps {
   // Callback to App.tsx with the form data
   onSubmit: (
-    options: Omit<TourneyTimeOptions, 'teams'> & { teams: number | string },
+    options: Omit<TourneyTimeOptions, 'teams'> & { teams: number | string } // teams can be string from input
   ) => void;
   defaultValues: Partial<TourneyTimeOptions>;
 }
@@ -15,10 +16,9 @@ const TourneyForm: React.FC<TourneyFormProps> = ({
   defaultValues,
 }) => {
   // State for each form field
-  // Initialize with defaultValues or typical defaults if not provided
   const [teams, setTeams] = useState<string | number>(
     defaultValues.teams || '',
-  ); // Allow string for input flexibility
+  );
   const [gameTime, setGameTime] = useState<number>(
     defaultValues.gameTime || 33,
   );
@@ -30,23 +30,43 @@ const TourneyForm: React.FC<TourneyFormProps> = ({
   const [playoffRestTime, setPlayoffRestTime] = useState<number>(
     defaultValues.playoffRestTime || 12,
   );
+  // New state for scheduling strategy and games per team
+  const [schedulingStrategy, setSchedulingStrategy] = useState<SchedulingStrategy>(
+    defaultValues.schedulingStrategy || 'round-robin',
+  );
+  const [numGamesPerTeam, setNumGamesPerTeam] = useState<number | ''>( // Allow empty string for input
+    defaultValues.numGamesPerTeam || '',
+  );
+
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // Convert teams to number before submitting
     const numTeams = typeof teams === 'string' ? parseInt(teams, 10) : teams;
     if (isNaN(numTeams)) {
       alert('Please enter a valid number for teams.');
       return;
     }
-    onSubmit({
+
+    const optionsToSubmit: Omit<TourneyTimeOptions, 'teams'> & { teams: number } = {
       teams: numTeams,
       gameTime,
       restTime,
       areas,
       playoffTime,
       playoffRestTime,
-    });
+      schedulingStrategy,
+    };
+
+    if (schedulingStrategy === 'partial-round-robin') {
+      const games = typeof numGamesPerTeam === 'string' ? parseInt(numGamesPerTeam, 10) : numGamesPerTeam;
+      if (isNaN(games) || games <= 0) {
+        alert('Please enter a valid number of games per team for partial round robin.');
+        return;
+      }
+      optionsToSubmit.numGamesPerTeam = games;
+    }
+
+    onSubmit(optionsToSubmit);
   };
 
   const formRowStyle: React.CSSProperties = {
@@ -93,6 +113,44 @@ const TourneyForm: React.FC<TourneyFormProps> = ({
           min="0"
         />
       </div>
+
+      {/* Scheduling Strategy Dropdown */}
+      <div style={formRowStyle}>
+        <label style={labelStyle} htmlFor="schedulingStrategy">
+          Scheduling Strategy:
+        </label>
+        <select
+          style={inputStyle}
+          id="schedulingStrategy"
+          value={schedulingStrategy}
+          onChange={(e) => setSchedulingStrategy(e.target.value as SchedulingStrategy)}
+        >
+          <option value="round-robin">Round Robin (Full)</option>
+          <option value="partial-round-robin">Partial Round Robin</option>
+          <option value="pods">Pods</option>
+        </select>
+      </div>
+
+      {/* Conditional Input for Number of Games Per Team */}
+      {schedulingStrategy === 'partial-round-robin' && (
+        <div style={formRowStyle}>
+          <label style={labelStyle} htmlFor="numGamesPerTeam">
+            Games Per Team (Partial RR):
+          </label>
+          <input
+            style={inputStyle}
+            type="number"
+            id="numGamesPerTeam"
+            value={numGamesPerTeam}
+            onChange={(e) =>
+              setNumGamesPerTeam(e.target.value === '' ? '' : parseInt(e.target.value, 10))
+            }
+            min="1" // A team should play at least 1 game in partial RR
+            required={schedulingStrategy === 'partial-round-robin'}
+          />
+        </div>
+      )}
+
       <div style={formRowStyle}>
         <label style={labelStyle} htmlFor="gameTime">
           Game Time (min):
