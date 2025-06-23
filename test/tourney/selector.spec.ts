@@ -1,149 +1,191 @@
 import { expect } from '../spec-helper';
-import selector from '@lib/tourney/selector'; // Using path alias
-import { Game, Schedule } from '@lib/tourney-time'; // Assuming types
+// Old imports and interface removed below
 
-interface SelectorResult extends Schedule {
-  areas?: number; // selector function adds/modifies areas property
-  // It also returns type, games, schedule from underlying functions
-}
+import selectorFromLib, { TourneyResultBase } from '@lib/tourney/selector'; // Using path alias and importing type
+import { Game, Schedule, SchedulingStrategy } from '@lib/tourney-time'; // Assuming types
+
+// Renaming selector to avoid conflict with Mocha's context/describe, if any issues arise.
+// And to match the actual exported name if it's default.
+const selectTourneyType = selectorFromLib;
+
 
 describe('tourney/selector', () => {
-  let results: SelectorResult | null = null; // Explicitly typed
+  let results: TourneyResultBase | null = null;
 
-  describe('given number of teams less than 9', () => {
+  // Helper to reset results before each test if needed, though direct assignment in beforeEach is also fine.
+  // afterEach(() => {
+  //   results = null;
+  // });
+
+  describe('Default strategy (round-robin) if strategy is not provided', () => {
     beforeEach(() => {
-      // Assuming selector takes (teams, areas)
-      // The original CoffeeScript selector(2,1)
-      results = selector(2, 1);
+      results = selectTourneyType({ teams: 2, areas: 1 }); // No strategy, should default to round-robin
     });
 
     it('returns object with type "round robin"', () => {
       expect(results?.type).to.eq('round robin');
     });
-
-    it('returns object containing number of games', () => {
+    it('returns 1 game for 2 teams', () => {
       expect(results?.games).to.eq(1);
     });
-
-    it('returns object containing a schedule', () => {
-      // For 2 teams, 1 area, it's a round robin.
-      // Schedule for roundRobin(2) is now [{id:'g0-0',round:1,teams:[2,1]}]
+    it('returns correct schedule for 2 teams', () => {
       expect(results?.schedule).to.eql([
-        { id: 'g0-0', round: 1, teams: [2, 1] as any }, // Updated ID
+        { id: 'g0-0', round: 1, teams: [2, 1] as any },
       ]);
     });
-
-    it('returns object containing number of areas', () => {
+     it('returns correct number of areas', () => {
       expect(results?.areas).to.eq(1);
     });
   });
 
-  describe('given number of teams greater than 8', () => {
-    describe('and number of areas less than teams / 4', () => {
-      beforeEach(() => {
-        // 9 teams, 2 areas. 2 < 9/4 (2.25) is false.
-        // However, the logic in selector might be integer division or specific thresholds.
-        // The original 'tourney/selector.coffee' logic is:
-        // if teams < 9 or areas > Math.floor(teams / 4)
-        //   # round robin
-        // else
-        //   # pods
-        // For selector(9, 2): teams = 9, areas = 2. Math.floor(9/4) = 2.
-        // areas > Math.floor(teams/4) is 2 > 2, which is false. So it SHOULD go to 'pods'.
-        results = selector(9, 2);
-      });
-
-      it('returns object with type "pods"', () => {
-        expect(results?.type).to.eq('pods');
-      });
-
-      it('returns object containing number of games', () => {
-        // pods(9) would be 2 pods (one of 5, one of 4) or similar distribution.
-        // If it's 3 pods of 3: pod games = 3*3=9. Div games for 3 div = 3*1=3. Crossover for 3 div = (3-1)*2=4. Total 9+3+4 = 16.
-        // The original test expects 22 games, which matches pods(8) logic.
-        // Let's check pods(9) based on current teams-in-pods logic:
-        // names = [1..9], teamsInPodsCount = 4 (default in pods/index.coffee)
-        // teams=9, teamsInPodsCount=4. numOfPodsBase=2, leftOverTeams=1. effectiveNumOfPods=3.
-        // Pods: "1":[1,4,7], "2":[2,5,8], "3":[3,6,9]
-        // Pod games: 3 games per pod * 3 pods = 9 games.
-        // Divisions: (teams-in-divisions with these 3 pods of 3) -> 3 divisions of 3 teams. Each RR(3) = 3 actual games. Total 3*3=9 actual.
-        // Crossover games (3 divisions): (3-1)*2 = 4 actual games.
-        // Total actual games = 9 (pod) + 9 (division) + 4 (crossover) = 22 actual games.
-        // Total schedule items (including byes from RR(3)):
-        // Pod items: 3 * (3g+3b=6i) = 18 items.
-        // Division items: 3 * (3g+3b=6i) = 18 items.
-        // Crossover items: 4 games.
-        // Total items = 18 + 18 + 4 = 40 items.
-        expect(results?.games).to.eq(22); // Actual games
-      });
-
-      describe('returns object containing a schedule', () => {
-        it('should have a schedule property that is ok', () => {
-          expect(results?.schedule).to.be.ok; // .ok checks for truthy value
-        });
-        it('should have a schedule with 40 items', () => {
-          expect(results!.schedule!.length).to.eq(40); // Total schedule items
-        });
-      });
-
-      it('returns object containing number of areas', () => {
-        expect(results?.areas).to.eq(2);
-      });
+  describe('Explicit "round-robin" strategy', () => {
+    beforeEach(() => {
+      results = selectTourneyType({ teams: 4, areas: 2, strategy: 'round-robin' });
     });
 
-    describe('and number of areas > teams / 4 but <= teams / 2', () => {
-      beforeEach(() => {
-        // selector(10, 4)
-        // teams = 10, areas = 4. Math.floor(teams / 4) = Math.floor(10/4) = 2.
-        // areas > Math.floor(teams/4) is 4 > 2, which is true. So it SHOULD go to 'round robin'.
-        results = selector(10, 4);
-      });
+    it('returns object with type "round robin"', () => {
+      expect(results?.type).to.eq('round robin');
+    });
+    it('returns 6 games for 4 teams', () => {
+      expect(results?.games).to.eq(6); // C(4,2) = 6
+    });
+    it('area adjustment: 4 teams, 3 areas requested, should use 2 areas', () => {
+      const newResults = selectTourneyType({ teams: 4, areas: 3, strategy: 'round-robin' });
+      expect(newResults?.areas).to.eq(2); // Max areas for 4 teams is 4/2=2
+    });
+    it('area adjustment: 4 teams, 0 areas requested, should use 1 area', () => {
+      const newResults = selectTourneyType({ teams: 4, areas: 0, strategy: 'round-robin' });
+      expect(newResults?.areas).to.eq(1);
+    });
+  });
 
-      it('returns object with type "round robin"', () => {
-        expect(results?.type).to.eq('round robin');
-      });
-
-      it('returns object containing number of games', () => {
-        // roundRobin(10) games = (10 * 9) / 2 = 45 games.
-        expect(results?.games).to.eq(45);
-      });
-
-      describe('returns object containing a schedule', () => {
-        it('should have a schedule property that is ok', () => {
-          expect(results?.schedule).to.be.ok;
-        });
-        it('should have a schedule with 45 items', () => {
-          expect(results!.schedule!.length).to.eq(45);
-        });
-      });
-
-      it('returns object containing number of areas', () => {
-        expect(results?.areas).to.eq(4);
-      });
+  describe('Explicit "pods" strategy', () => {
+    beforeEach(() => {
+      // For pods, the old auto-selection logic (teams > 8 && areas <= teams/4) is bypassed.
+      // We directly request pods.
+      results = selectTourneyType({ teams: 9, areas: 2, strategy: 'pods' });
     });
 
-    describe('and number of areas > teams / 2', () => {
-      beforeEach(() => {
-        // selector(10, 10)
-        // teams = 10, areas = 10. Math.floor(teams / 4) = 2.
-        // areas > Math.floor(teams/4) is 10 > 2, which is true. So 'round robin'.
-        // Then, areas > teams / 2?  10 > 10/2 (5) is true.
-        // So areas should be reduced to Math.ceil(teams / 2) = Math.ceil(10/2) = 5.
-        results = selector(10, 10);
-      });
-
-      describe('reduces number of areas to teams / 2', () => {
-        it('should set areas to 5', () => {
-          expect(results?.areas).to.eq(5);
-        });
-        it('should set type to round robin', () => {
-          // It should still be round robin type
-          expect(results?.type).to.eq('round robin');
-        });
-        it('should set games to 45', () => {
-          expect(results?.games).to.eq(45); // Games for roundRobin(10)
-        });
-      });
+    it('returns object with type "pods"', () => {
+      expect(results?.type).to.eq('pods');
     });
+    it('returns 22 games for 9 teams in pods', () => {
+      // Calculation based on pods(9) from previous tests:
+      // Pods: 3 pods of 3 teams each (e.g., [1,4,7], [2,5,8], [3,6,9])
+      // Pod games: 3 pods * C(3,2) games/pod = 3 * 3 = 9 actual games
+      // Divisions: 3 divisions from these pods (e.g., 1st places, 2nd places, 3rd places)
+      // Division games: 3 divisions * C(3,2) games/div = 3 * 3 = 9 actual games
+      // Crossover games (for 3 divisions): (3-1)*2 = 4 actual games
+      // Total actual games = 9 (pod) + 9 (division) + 4 (crossover) = 22 games.
+      expect(results?.games).to.eq(22);
+    });
+     it('returns correct number of areas (not adjusted by RR logic for pods)', () => {
+      expect(results?.areas).to.eq(2);
+    });
+     it('returns empty schedule if less than 2 teams for pods, defaults to RR type', () => {
+      const podResults1Team = selectTourneyType({ teams: 1, areas: 1, strategy: 'pods' });
+      expect(podResults1Team.type).to.eq('round robin'); // Defaulted from pods
+      expect(podResults1Team.games).to.eq(0);
+      expect(podResults1Team.schedule).to.be.empty;
+
+      const podResults0Team = selectTourneyType({ teams: 0, areas: 1, strategy: 'pods' });
+      expect(podResults0Team.type).to.eq('round robin'); // Defaulted from pods
+      expect(podResults0Team.games).to.eq(0);
+      expect(podResults0Team.schedule).to.be.empty;
+    });
+  });
+
+  describe('Explicit "partial-round-robin" strategy', () => {
+    it('returns partial round robin schedule', () => {
+      const numTeams = 6;
+      const numGamesPerTeam = 2;
+      // Expected games for 6 teams, 2 games each = (6 * 2) / 2 = 6 games.
+      // The partialRoundRobin function might produce slightly more or less based on exact pairing.
+      // Test from partial-round-robin.spec: 6 teams, 2 games -> result.games = 6
+      results = selectTourneyType({
+        teams: numTeams,
+        areas: 3, // Max areas = 6/2 = 3
+        strategy: 'partial-round-robin',
+        numGamesPerTeam,
+      });
+      expect(results?.type).to.eq('partial round robin');
+      expect(results?.games).to.be.at.least( (numTeams * numGamesPerTeam) / 2 ); // Should be around this
+      expect(results?.areas).to.eq(3);
+    });
+
+    it('handles 0 numGamesPerTeam by defaulting to full round-robin for >=2 teams', () => {
+       results = selectTourneyType({
+        teams: 4,
+        areas: 1,
+        strategy: 'partial-round-robin',
+        numGamesPerTeam: 0,
+      });
+      expect(results?.type).to.eq('round robin'); // Defaulted
+      expect(results?.games).to.eq(6); // Full RR for 4 teams
+    });
+
+    it('handles 0 numGamesPerTeam by returning empty for <2 teams (via RR default)', () => {
+       results = selectTourneyType({
+        teams: 1,
+        areas: 1,
+        strategy: 'partial-round-robin',
+        numGamesPerTeam: 0,
+      });
+      expect(results?.type).to.eq('partial round robin'); // Stays partial for 0/1 team
+      expect(results?.games).to.eq(0);
+    });
+
+
+    it('area adjustment for partial-round-robin', () => {
+      const newResults = selectTourneyType({
+        teams: 6,
+        areas: 4, // More than 6/2=3
+        strategy: 'partial-round-robin',
+        numGamesPerTeam: 2,
+      });
+      expect(newResults?.areas).to.eq(3);
+    });
+  });
+
+  // These describe blocks replicate the original tests' scenarios but with explicit strategy.
+  // The original tests were implicitly testing the auto-selection logic.
+  // Since auto-selection is removed in favor of explicit strategy, these tests
+  // now confirm that if 'round-robin' or 'pods' is chosen, the behavior is as expected.
+
+  describe('Scenario: 9 teams, 2 areas, strategy "pods" (was auto pods)', () => {
+    // This used to be auto-selected as pods.
+    // selector(9, 2) -> teams=9, areas=2. Math.floor(9/4)=2. areas <= floor(teams/4) is 2<=2 (true).
+    // Old logic: pods. New logic: if strategy: 'pods', then pods.
+    beforeEach(() => {
+      results = selectTourneyType({ teams: 9, areas: 2, strategy: 'pods' });
+    });
+    it('returns type "pods"', () => expect(results?.type).to.eq('pods'));
+    it('returns 22 games', () => expect(results?.games).to.eq(22));
+    it('schedule has 40 items', () => expect(results!.schedule!.length).to.eq(40));
+    it('areas is 2', () => expect(results?.areas).to.eq(2));
+  });
+
+  describe('Scenario: 10 teams, 4 areas, strategy "round-robin" (was auto round-robin)', () => {
+    // selector(10, 4) -> teams=10, areas=4. Math.floor(10/4)=2. areas > floor(teams/4) is 4>2 (true).
+    // Old logic: round-robin. New logic: if strategy: 'round-robin', then round-robin.
+    beforeEach(() => {
+      results = selectTourneyType({ teams: 10, areas: 4, strategy: 'round-robin' });
+    });
+    it('returns type "round robin"', () => expect(results?.type).to.eq('round robin'));
+    it('returns 45 games', () => expect(results?.games).to.eq(45));
+    it('schedule has 45 items', () => expect(results!.schedule!.length).to.eq(45));
+    it('areas is 4', () => expect(results?.areas).to.eq(4)); // Not adjusted as 4 <= 10/2
+  });
+
+  describe('Scenario: 10 teams, 10 areas, strategy "round-robin" (was auto round-robin with area reduction)', () => {
+    // selector(10,10) -> teams=10, areas=10. Math.floor(10/4)=2. areas > floor(teams/4) is 10>2 (true).
+    // Old logic: round-robin. Then area reduction: 10 > 10/2 (true), so areas = 5.
+    // New logic: if strategy: 'round-robin', then round-robin & area reduction.
+    beforeEach(() => {
+      results = selectTourneyType({ teams: 10, areas: 10, strategy: 'round-robin' });
+    });
+    it('areas reduced to 5', () => expect(results?.areas).to.eq(5));
+    it('type is "round robin"', () => expect(results?.type).to.eq('round robin'));
+    it('games is 45', () => expect(results?.games).to.eq(45));
   });
 });

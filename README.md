@@ -16,6 +16,11 @@ A web-based user interface for this tool is available, allowing you to easily ca
 
 Access the online tool here: [Tourney Time UI](https://duereg.github.io/tourney-time/)
 
+The UI allows for selection of different scheduling strategies:
+- **Full Round Robin:** Every team plays every other team.
+- **Partial Round Robin:** Specify the number of games each team should play. The system generates a schedule aiming for this target.
+- **Pods System:** Teams are grouped into pods, play within pods, then advance to divisional and crossover games. This is typically better for larger tournaments.
+
 _(Note: This UI is built and deployed via GitHub Pages from the `docs/` directory of this repository.)_
 
 ## Deployment to GitHub Pages

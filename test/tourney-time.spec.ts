@@ -57,6 +57,7 @@ describe('tourney-time', () => {
         it('should have the correct tourneySchedule', () => {
           expect(result.tourneySchedule).to.eql({
             games: 1,
+            teams: [1, 2], // roundRobin now includes teams array
             type: 'round robin',
             areas: 1,
           });
@@ -75,7 +76,8 @@ describe('tourney-time', () => {
       let result: TourneyTimeResult;
 
       beforeEach(() => {
-        const options: TestTourneyTimeOptions = { ...defaultTourney, teams: 10 };
+        // This test originally expected 'pods' due to 10 teams, 1 area.
+        const options: TestTourneyTimeOptions = { ...defaultTourney, teams: 10, schedulingStrategy: 'pods' };
         result = tourneyTime(options);
       });
 
@@ -88,6 +90,17 @@ describe('tourney-time', () => {
           games: 28, // Corrected based on test actuals
           type: 'pods',
           areas: 1,
+          // From pods() result for 10 teams
+          pods: {
+            '1': [1, 4, 7, 10],
+            '2': [2, 5, 8],
+            '3': [3, 6, 9],
+          },
+          divisions: [
+            ['1st Pod 1', '1st Pod 2', '1st Pod 3'],
+            ['2nd Pod 1', '2nd Pod 2', '2nd Pod 3'],
+            ['3rd Pod 1', '3rd Pod 2', '3rd Pod 3', '4th Pod 1'],
+          ],
         });
       });
 
@@ -133,6 +146,7 @@ describe('tourney-time', () => {
           expect(result.tourneySchedule).to.eql({
             areas: 1,
             games: 1,
+            teams: [1, 2], // roundRobin now includes teams array
             type: 'round robin',
           });
         });
@@ -182,6 +196,7 @@ describe('tourney-time', () => {
           expect(result.tourneySchedule).to.eql({
             areas: 1,
             games: 3, // Actual games from RR(3)
+            teams: [1, 2, 3], // roundRobin now includes teams array
             type: 'round robin',
           });
         });
@@ -217,6 +232,7 @@ describe('tourney-time', () => {
       it('generates the 6 game tourney schedule', () => {
         expect(result.tourneySchedule).to.eql({
           games: 6,
+          teams: [1, 2, 3, 4], // roundRobin now includes teams array
           type: 'round robin',
           areas: 2,
         });
@@ -231,7 +247,8 @@ describe('tourney-time', () => {
       let result: TourneyTimeResult;
 
       beforeEach(() => {
-        const options: TestTourneyTimeOptions = { ...defaultTourney, teams: 10 };
+        // This test originally expected 'pods' due to 10 teams, 2 areas.
+        const options: TestTourneyTimeOptions = { ...defaultTourney, teams: 10, schedulingStrategy: 'pods' };
         result = tourneyTime(options);
       });
 
@@ -251,6 +268,17 @@ describe('tourney-time', () => {
           games: 28,
           type: 'pods',
           areas: 2,
+          // From pods() result for 10 teams
+          pods: {
+            '1': [1, 4, 7, 10],
+            '2': [2, 5, 8],
+            '3': [3, 6, 9],
+          },
+          divisions: [
+            ['1st Pod 1', '1st Pod 2', '1st Pod 3'],
+            ['2nd Pod 1', '2nd Pod 2', '2nd Pod 3'],
+            ['3rd Pod 1', '3rd Pod 2', '3rd Pod 3', '4th Pod 1'],
+          ],
         });
       });
 
