@@ -74,4 +74,4 @@ jobs:
           # Optional: if your project is not at the root of the user/org pages site
           # single-commit: true # Optional: if you want to squash new commits to a single commit
           repository-name: duereg/duereg.github.io
-          target-folder: tourney-time # If deploying to a subfolder on gh-pages branch
+          target-folder: tourney # If deploying to a subfolder on gh-pages branch
