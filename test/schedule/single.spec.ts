@@ -143,4 +143,114 @@ describe('schedule/single', () => {
       });
     });
   });
+
+  describe('back-to-back game annotation', () => {
+    it('should not annotate if no games are back-to-back', () => {
+      const games: Game[] = [
+        { id: 1, round: 1, teams: ['A', 'B'] },
+        { id: 2, round: 2, teams: ['C', 'D'] },
+        { id: 3, round: 3, teams: ['A', 'C'] },
+      ];
+      args.tourneySchedule.schedule = games;
+      args.playoffSchedule.schedule = [];
+      const result = standardSchedule(args);
+      expect(result).to.deep.equal(games.map(g => ({...g}))); // Cloned, no backToBackTeams
+      result.forEach(game => {
+        expect(game.backToBackTeams).to.be.undefined;
+      });
+    });
+
+    it('should annotate a simple back-to-back game', () => {
+      const games: Game[] = [
+        { id: 1, round: 1, teams: ['A', 'B'] },
+        { id: 2, round: 2, teams: ['A', 'C'] }, // A plays back-to-back
+      ];
+      args.tourneySchedule.schedule = games;
+      args.playoffSchedule.schedule = [];
+      const result = standardSchedule(args);
+
+      expect(result[0].backToBackTeams).to.be.undefined;
+      expect(result[1].backToBackTeams).to.deep.equal(['A']);
+    });
+
+    it('should correctly clone games and then annotate', () => {
+      const originalGame1: Game = { id: 1, round: 1, teams: ['A', 'B'] };
+      const originalGame2: Game = { id: 2, round: 2, teams: ['A', 'C'] };
+      args.tourneySchedule.schedule = [originalGame1, originalGame2];
+      args.playoffSchedule.schedule = [];
+      const result = standardSchedule(args);
+
+      expect(result[0]).to.not.equal(originalGame1); // Should be a clone
+      expect(result[1]).to.not.equal(originalGame2); // Should be a clone
+      expect(result[1].backToBackTeams).to.deep.equal(['A']);
+      // Ensure original games are not mutated
+      expect(originalGame1.backToBackTeams).to.be.undefined;
+      expect(originalGame2.backToBackTeams).to.be.undefined;
+    });
+
+    it('should annotate multiple back-to-back games', () => {
+      const games: Game[] = [
+        { id: 1, round: 1, teams: ['A', 'B'] },
+        { id: 2, round: 2, teams: ['A', 'C'] }, // A is b2b
+        { id: 3, round: 3, teams: ['C', 'D'] }, // C is b2b
+        { id: 4, round: 4, teams: ['B', 'E'] }, // No b2b here
+        { id: 5, round: 5, teams: ['E', 'A'] }, // E is b2b, A is not from game 2
+      ];
+      args.tourneySchedule.schedule = games;
+      args.playoffSchedule.schedule = [];
+      const result = standardSchedule(args);
+
+      expect(result[0].backToBackTeams).to.be.undefined;
+      expect(result[1].backToBackTeams).to.deep.equal(['A']);
+      expect(result[2].backToBackTeams).to.deep.equal(['C']);
+      expect(result[3].backToBackTeams).to.be.undefined;
+      expect(result[4].backToBackTeams).to.deep.equal(['E']);
+    });
+
+    it('should handle empty schedule for annotation', () => {
+      args.tourneySchedule.schedule = [];
+      args.playoffSchedule.schedule = [];
+      const result = standardSchedule(args);
+      expect(result).to.eql([]);
+    });
+
+    it('should handle schedule with one game for annotation', () => {
+      const games: Game[] = [{ id: 1, round: 1, teams: ['A', 'B'] }];
+      args.tourneySchedule.schedule = games;
+      args.playoffSchedule.schedule = [];
+      const result = standardSchedule(args);
+      expect(result[0].backToBackTeams).to.be.undefined;
+      expect(result).to.deep.equal([{...games[0]}]);
+    });
+
+    it('should correctly annotate when games come from both tourney and playoff schedules', () => {
+      const tourneyGames: Game[] = [
+        { id: 1, round: 1, teams: ['A', 'B'] },
+      ];
+      const playoffGames: Game[] = [
+        { id: 2, round: 2, teams: ['A', 'C'] }, // A plays b2b with game 1
+        { id: 3, round: 3, teams: ['C', 'D'] }, // C plays b2b with game 2
+      ];
+      args.tourneySchedule.schedule = tourneyGames;
+      args.playoffSchedule.schedule = playoffGames;
+      const result = standardSchedule(args);
+
+      expect(result.length).to.equal(3);
+      expect(result[0].backToBackTeams).to.be.undefined; // Game 1 (A,B)
+      expect(result[1].backToBackTeams).to.deep.equal(['A']); // Game 2 (A,C)
+      expect(result[2].backToBackTeams).to.deep.equal(['C']); // Game 3 (C,D)
+    });
+
+    it('should not annotate if teams are different but a team played much earlier', () => {
+        const games: Game[] = [
+            { id: 1, round: 1, teams: ['A', 'B'] },
+            { id: 2, round: 2, teams: ['C', 'D'] },
+            { id: 3, round: 3, teams: ['A', 'E'] }, // A is not b2b with game 1
+        ];
+        args.tourneySchedule.schedule = games;
+        args.playoffSchedule.schedule = [];
+        const result = standardSchedule(args);
+        expect(result[2].backToBackTeams).to.be.undefined;
+    });
+  });
 });

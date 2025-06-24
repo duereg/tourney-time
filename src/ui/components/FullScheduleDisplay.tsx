@@ -55,13 +55,14 @@ const FullScheduleDisplay: React.FC<FullScheduleDisplayProps> = ({
   }, [scheduleData]);
 
   const messageStyle: React.CSSProperties = {
-    color: 'navy',
-    backgroundColor: '#e6f7ff',
-    border: '1px solid #91d5ff',
-    padding: '8px',
-    marginTop: '0px', // Adjusted from 10px to fit better at the top
-    marginBottom: '10px',
+    color: '#D8000C', // Darker red for text for better readability
+    backgroundColor: '#FFD2D2', // Light red background
+    border: '1px solid #FFBABA', // Medium red border
+    padding: '10px', // Increased padding slightly
+    marginTop: '0px',
+    marginBottom: '15px', // Increased margin slightly
     borderRadius: '4px',
+    textAlign: 'center', // Center align text
   };
 
   return (

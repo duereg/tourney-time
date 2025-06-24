@@ -5,7 +5,7 @@ import {
   Schedule as PlayoffSchedule,
   Game,
 } from '../tourney-time';
-import { annotateBackToBackGames } from './annotator';
+// Removed import for annotateBackToBackGames as logic is now in single.ts/multiple.ts
 
 interface GeneratorOptions {
   tourneySchedule: TourneySchedule;
@@ -24,6 +24,6 @@ export default ({
   } else {
     generatedSchedule = multipleArea({ tourneySchedule, playoffSchedule, areas });
   }
-  // Annotate the generated schedule before returning
-  return annotateBackToBackGames(generatedSchedule);
+  // Schedules from singleArea and multipleArea are now pre-annotated
+  return generatedSchedule;
 };

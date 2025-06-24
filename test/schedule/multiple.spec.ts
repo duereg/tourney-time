@@ -442,4 +442,169 @@ describe('schedule/multiple', () => {
       });
     });
   });
+
+  describe('back-to-back game annotation in multi-area schedules', () => {
+    beforeEach(() => {
+      // Default to 2 areas for these tests, can be overridden
+      args.areas = 2;
+    });
+
+    it('should not annotate if no games are back-to-back across blocks', () => {
+      const tourneyGames: Game[] = [ // These will be processed by scheduleBalancer
+        { id: 'R1G1', round: 1, teams: ['A', 'B'] }, { id: 'R1G2', round: 1, teams: ['C', 'D'] },
+        { id: 'R2G1', round: 2, teams: ['E', 'F'] }, { id: 'R2G2', round: 2, teams: ['G', 'H'] },
+      ];
+      args.tourneySchedule.schedule = tourneyGames;
+      args.playoffSchedule.schedule = [];
+
+      // Expected structure after scheduleBalancer (approx, depends on exact balancer logic for rounds vs blocks)
+      // For simplicity, assume balancer output is:
+      // Block 1: [R1G1, R1G2]
+      // Block 2: [R2G1, R2G2]
+      const result = multiAreaSchedule(args as MultipleOptions);
+
+      result.forEach(block => {
+        block.forEach(game => {
+          expect(game.backToBackTeams).to.be.undefined;
+        });
+      });
+    });
+
+    it('should annotate a simple back-to-back game across blocks', () => {
+      const tourneyGames: Game[] = [
+        { id: 'R1G1', round: 1, teams: ['A', 'B'] }, { id: 'R1G2', round: 1, teams: ['C', 'D'] },
+        { id: 'R2G1', round: 2, teams: ['A', 'E'] }, // A plays b2b from R1G1
+      ];
+      args.tourneySchedule.schedule = tourneyGames;
+      args.playoffSchedule.schedule = [];
+      const result = multiAreaSchedule(args as MultipleOptions);
+
+      // Resulting structure from multiAreaSchedule will be Game[][]
+      // Example: result = [ [{id:R1G1}, {id:R1G2}], [{id:R2G1, backToBackTeams:['A']}] ]
+      // Need to find R2G1 in the result to check its annotation.
+      let gameR2G1: Game | undefined;
+      result.forEach(block => block.forEach(game => {
+        if (game.id === 'R2G1') gameR2G1 = game;
+      }));
+
+      expect(gameR2G1).to.exist;
+      expect(gameR2G1!.backToBackTeams).to.deep.equal(['A']);
+
+      // Check that other games are not annotated
+      result.forEach(block => block.forEach(game => {
+        if (game.id === 'R1G1' || game.id === 'R1G2') {
+          expect(game.backToBackTeams).to.be.undefined;
+        }
+      }));
+    });
+
+    it('should annotate multiple back-to-back games across blocks', () => {
+      const tourneyGames: Game[] = [
+        { id: 'R1G1', round: 1, teams: ['A', 'B'] }, { id: 'R1G2', round: 1, teams: ['C', 'D'] },
+        { id: 'R2G1', round: 2, teams: ['A', 'E'] }, // A is b2b
+        { id: 'R2G2', round: 2, teams: ['D', 'F'] }, // D is b2b
+        { id: 'R3G1', round: 3, teams: ['E', 'G'] }, // E is b2b
+        { id: 'R3G2', round: 3, teams: ['B', 'H'] }, // B is not b2b with R1G1
+      ];
+      args.tourneySchedule.schedule = tourneyGames;
+      args.playoffSchedule.schedule = [];
+      const result = multiAreaSchedule(args as MultipleOptions);
+
+      const findGame = (id: string) => {
+        for (const block of result) {
+          for (const game of block) {
+            if (game.id === id) return game;
+          }
+        }
+        return undefined;
+      };
+
+      expect(findGame('R1G1')!.backToBackTeams).to.be.undefined;
+      expect(findGame('R1G2')!.backToBackTeams).to.be.undefined;
+      expect(findGame('R2G1')!.backToBackTeams).to.deep.equal(['A']);
+      expect(findGame('R2G2')!.backToBackTeams).to.deep.equal(['D']);
+      expect(findGame('R3G1')!.backToBackTeams).to.deep.equal(['E']);
+      expect(findGame('R3G2')!.backToBackTeams).to.be.undefined; // B played in R1, this is R3
+    });
+
+    it('should handle empty schedule for annotation', () => {
+      args.tourneySchedule.schedule = [];
+      args.playoffSchedule.schedule = [];
+      const result = multiAreaSchedule(args as MultipleOptions);
+      expect(result).to.eql([]);
+    });
+
+    it('should handle schedule with one block for annotation', () => {
+      const tourneyGames: Game[] = [
+        { id: 'R1G1', round: 1, teams: ['A', 'B'] }, { id: 'R1G2', round: 1, teams: ['C', 'D'] },
+      ];
+      args.tourneySchedule.schedule = tourneyGames;
+      args.playoffSchedule.schedule = [];
+      const result = multiAreaSchedule(args as MultipleOptions);
+
+      expect(result.length).to.be.greaterThan(0); // Should be at least one block
+      result.forEach(block => {
+        block.forEach(game => {
+          expect(game.backToBackTeams).to.be.undefined;
+        });
+      });
+    });
+
+    it('should correctly annotate when games come from both tourney and playoff schedules', () => {
+      // Balancer will put these into blocks.
+      // Tourney: R1: [G1, G2]
+      // Playoff: R1: [G3, G4], R2: [G5]
+      // Combined: Block1=[G1,G2], Block2=[G3,G4], Block3=[G5] (approx)
+      args.tourneySchedule.schedule = [
+        { id: 'G1', round: 1, teams: ['A', 'B'] },
+        { id: 'G2', round: 1, teams: ['C', 'D'] },
+      ];
+      args.playoffSchedule.schedule = [
+        { id: 'G3', round: 1, teams: ['A', 'E'] }, // A is b2b with G1 (A,B) from previous block (tourney)
+        { id: 'G4', round: 1, teams: ['F', 'G'] },
+        { id: 'G5', round: 2, teams: ['E', 'H'] }, // E is b2b with G3 (A,E) from previous block (playoff R1)
+      ];
+      args.areas = 2; // Ensure areas is set
+      const result = multiAreaSchedule(args as MultipleOptions);
+
+      const findGame = (id: string) => {
+        for (const block of result) {
+          for (const game of block) {
+            if (game.id === id) return game;
+          }
+        }
+        return undefined;
+      };
+
+      // Note: Exact block structure depends on scheduleBalancer.
+      // We are testing the annotation *after* balancing and concatenation.
+      // Assuming G1,G2 are in block(s) before G3,G4, which are before G5.
+
+      const gameG1 = findGame('G1');
+      const gameG3 = findGame('G3');
+      const gameG5 = findGame('G5');
+
+      expect(gameG1, "G1 should exist").to.exist;
+      expect(gameG3, "G3 should exist").to.exist;
+      expect(gameG5, "G5 should exist").to.exist;
+
+      expect(gameG1!.backToBackTeams, "G1 b2b").to.be.undefined;
+      // Check G3 based on teams in the block *before* G3's block
+      // This requires knowing the block structure.
+      // The test should verify that if G1 is in block N, and G3 is in block N+1, G3 gets annotated.
+      // The current findGame doesn't give block context easily for this check.
+      // However, the logic in multiple.ts iterates blocks sequentially.
+
+      // A simpler check:
+      // If G3 involves 'A' and 'A' was in any game of the previous block, G3.b2b should include 'A'.
+      // If G5 involves 'E' and 'E' was in any game of the previous block, G5.b2b should include 'E'.
+
+      // This test might be more robust if we construct the Game[][] manually to represent
+      // the state *before* the final annotation loop in multiple.ts, then pass that to a
+      // helper if we extract the annotation loop, or check properties on the result.
+      // For now, relying on the full function:
+      expect(gameG3!.backToBackTeams, "G3 b2b").to.deep.include('A');
+      expect(gameG5!.backToBackTeams, "G5 b2b").to.deep.include('E');
+    });
+  });
 });

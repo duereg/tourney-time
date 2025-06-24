@@ -50,15 +50,15 @@ const scheduleBalancer = (
         //    is sufficient to prevent back-to-back scheduling for a team after a bye,
         //    given the modified input data that now includes bye matches as distinct game objects.
         if (hasTeam || currentRound !== game.round) {
-          balancedSchedule.push([game]);
+          balancedSchedule.push([{ ...game }]); // Clone game
         } else {
-          round.push(game);
+          round.push({ ...game }); // Clone game
         }
       } else {
-        balancedSchedule.push([game]);
+        balancedSchedule.push([{ ...game }]); // Clone game
       }
     } else {
-      balancedSchedule.push([game]);
+      balancedSchedule.push([{ ...game }]); // Clone game
     }
     currentRound = game.round;
   }
@@ -83,18 +83,52 @@ export default ({
     throw new Error('You must provide a playoff schedule to continue');
   }
 
-  let balancedSchedule: Game[][] = [];
+  let finalBalancedSchedule: Game[][] = [];
 
-  // Pass an object conforming to ScheduleBalancerInput,
-  // providing an empty array if the schedule property is undefined.
-  balancedSchedule = scheduleBalancer(
-    { schedule: tourneySchedule.schedule || [] },
+  // Process tourney schedule
+  // Ensure input to scheduleBalancer is also cloned if direct mutation of tourneySchedule.schedule is a concern.
+  // However, scheduleBalancer now clones internally, so the original Game objects in tourneySchedule.schedule are not modified by it.
+  const tourneyGamesInput = tourneySchedule.schedule ? tourneySchedule.schedule.map(g => ({...g})) : [];
+  finalBalancedSchedule = scheduleBalancer(
+    { schedule: tourneyGamesInput },
     areas,
   );
 
-  balancedSchedule = balancedSchedule.concat(
-    scheduleBalancer({ schedule: playoffSchedule.schedule || [] }, areas),
+  // Process playoff schedule and concat
+  const playoffGamesInput = playoffSchedule.schedule ? playoffSchedule.schedule.map(g => ({...g})) : [];
+  finalBalancedSchedule = finalBalancedSchedule.concat(
+    scheduleBalancer({ schedule: playoffGamesInput }, areas),
   );
 
-  return balancedSchedule;
+  // Annotate for back-to-back games
+  // This logic is taken from the former annotateBackToBackGames function for Game[][]
+  if (finalBalancedSchedule.length < 2) {
+    return finalBalancedSchedule; // Not enough blocks for a back-to-back
+  }
+
+  for (let i = 1; i < finalBalancedSchedule.length; i++) {
+    const previousBlockGames = finalBalancedSchedule[i - 1];
+    const currentBlockGames = finalBalancedSchedule[i];
+
+    if (!previousBlockGames || !currentBlockGames) continue;
+
+    const teamsInPreviousBlock = previousBlockGames.flatMap(
+      (game) => (game.teams && Array.isArray(game.teams) ? game.teams : []),
+    );
+
+    if (teamsInPreviousBlock.length === 0) continue;
+
+    for (const game of currentBlockGames) { // game is already a clone from scheduleBalancer
+      if (game.teams && Array.isArray(game.teams)) {
+        const commonTeams = game.teams.filter((team) =>
+          teamsInPreviousBlock.includes(team),
+        );
+        if (commonTeams.length > 0) {
+          game.backToBackTeams = commonTeams;
+        }
+      }
+    }
+  }
+
+  return finalBalancedSchedule;
 };
