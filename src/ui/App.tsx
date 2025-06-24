@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import TourneyForm from './components/TourneyForm';
-import ResultsDisplay from './components/ResultsDisplay';
+import { TourneyForm, ResultsDisplay } from './components'; // Updated import
 import tourneyTime, {
   TourneyTimeOptions,
   TourneyTimeResult,
