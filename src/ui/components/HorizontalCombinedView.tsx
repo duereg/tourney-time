@@ -73,12 +73,19 @@ const transformScheduleToHorizontal = (
             commonRoundForRow = game.round; // Set common round from the first game found in this slot
           }
           row[`area${areaIdx + 1}GameId`] = game.id;
-          row[`area${areaIdx + 1}Team1`] = game.teams[0];
-          row[`area${areaIdx + 1}Team2`] = game.teams[1];
+          const team1 = game.teams[0];
+          const team2 = game.teams[1];
+          row[`area${areaIdx + 1}Team1`] = team1;
+          row[`area${areaIdx + 1}Team2`] = team2;
+          // Carry over backToBack status for highlighting
+          row[`area${areaIdx + 1}Team1_isB2B`] = !!game.backToBackTeams?.includes(team1);
+          row[`area${areaIdx + 1}Team2_isB2B`] = !!game.backToBackTeams?.includes(team2);
         } else {
           row[`area${areaIdx + 1}GameId`] = '';
           row[`area${areaIdx + 1}Team1`] = '';
           row[`area${areaIdx + 1}Team2`] = '';
+          row[`area${areaIdx + 1}Team1_isB2B`] = false;
+          row[`area${areaIdx + 1}Team2_isB2B`] = false;
         }
       }
       row.round = commonRoundForRow !== '' ? commonRoundForRow : roundIndex + 1; // Fallback if no games in slot
@@ -124,13 +131,21 @@ const HorizontalCombinedView: React.FC<HorizontalCombinedViewProps> = ({
             {transformedData.map((row, rowIndex) => (
               <tr key={`hrow-${rowIndex}`}>
                 <td style={tdStyle}>{row.round}</td>
-                {Array.from({ length: actualAreas }).map((_, areaIndex) => (
-                  <React.Fragment key={`hcell-area-${areaIndex}`}>
-                    <td style={tdStyle}>{row[`area${areaIndex + 1}GameId`]}</td>
-                    <td style={tdStyle}>{row[`area${areaIndex + 1}Team1`]}</td>
-                    <td style={tdStyle}>{row[`area${areaIndex + 1}Team2`]}</td>
-                  </React.Fragment>
-                ))}
+                {Array.from({ length: actualAreas }).map((_, areaIndex) => {
+                  const team1Style = row[`area${areaIndex + 1}Team1_isB2B`]
+                    ? { ...tdStyle, color: 'red' }
+                    : tdStyle;
+                  const team2Style = row[`area${areaIndex + 1}Team2_isB2B`]
+                    ? { ...tdStyle, color: 'red' }
+                    : tdStyle;
+                  return (
+                    <React.Fragment key={`hcell-area-${areaIndex}`}>
+                      <td style={tdStyle}>{row[`area${areaIndex + 1}GameId`]}</td>
+                      <td style={team1Style}>{row[`area${areaIndex + 1}Team1`]}</td>
+                      <td style={team2Style}>{row[`area${areaIndex + 1}Team2`]}</td>
+                    </React.Fragment>
+                  );
+                })}
               </tr>
             ))}
           </tbody>

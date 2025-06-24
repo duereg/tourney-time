@@ -27,6 +27,11 @@ export interface Game {
    * If true, the `teams` array should ideally contain the single team receiving the bye.
    */
   isByeMatch?: boolean;
+  /**
+   * Optional. Lists teams that are playing this game immediately after playing in the previous time slot.
+   * Used for UI highlighting.
+   */
+  backToBackTeams?: (string | number)[];
   // Add other game properties if they exist
 }
 

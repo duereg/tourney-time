@@ -2,7 +2,8 @@ import { expect } from '../spec-helper';
 // Old imports and interface removed below
 
 import selectorFromLib, { TourneyResultBase } from '@lib/tourney/selector'; // Using path alias and importing type
-import { Game, Schedule, SchedulingStrategy } from '@lib/tourney-time'; // Assuming types
+// Assuming TourneyTimeOptions might be used implicitly or was intended. Game, Schedule, SchedulingStrategy are unused.
+// import { TourneyTimeOptions } from '@lib/tourney-time'; // If TourneyTimeOptions is needed, otherwise remove.
 
 // Renaming selector to avoid conflict with Mocha's context/describe, if any issues arise.
 // And to match the actual exported name if it's default.

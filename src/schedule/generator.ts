@@ -3,7 +3,9 @@ import multipleArea from './multiple';
 import {
   Schedule as TourneySchedule,
   Schedule as PlayoffSchedule,
-} from '../tourney-time'; // Assuming types are defined in tourney-time
+  Game,
+} from '../tourney-time';
+// Removed import for annotateBackToBackGames as logic is now in single.ts/multiple.ts
 
 interface GeneratorOptions {
   tourneySchedule: TourneySchedule;
@@ -15,10 +17,13 @@ export default ({
   tourneySchedule,
   playoffSchedule,
   areas,
-}: GeneratorOptions) => {
+}: GeneratorOptions): Game[] | Game[][] => { // Explicitly type the return
+  let generatedSchedule: Game[] | Game[][];
   if (areas === 1) {
-    return singleArea({ tourneySchedule, playoffSchedule });
+    generatedSchedule = singleArea({ tourneySchedule, playoffSchedule });
   } else {
-    return multipleArea({ tourneySchedule, playoffSchedule, areas });
+    generatedSchedule = multipleArea({ tourneySchedule, playoffSchedule, areas });
   }
+  // Schedules from singleArea and multipleArea are now pre-annotated
+  return generatedSchedule;
 };

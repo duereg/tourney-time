@@ -1,11 +1,11 @@
-import roundRobin from '../round-robin'; // Adjusted path
+// import roundRobin from '../round-robin'; // Adjusted path - Unused
 import getTeamNamesAndNumber from '../team-names-and-number'; // Adjusted path
 import generatePods from './teams-in-pods';
 import generateDivisions from './teams-in-divisions';
 import generateDivisionSchedule from './division-schedule';
 import generatePodSchedule from './pod-schedule';
 import generateCrossoverSchedule from './crossover-schedule';
-import { Game, Schedule } from '../../tourney-time'; // Adjust path as needed, define types
+import { Game } from '../../tourney-time'; // Adjust path as needed, define types - Schedule removed
 
 // Define Team type if it's more complex than string
 type Team = string;
@@ -83,7 +83,7 @@ export default (
 
   // How should you calculate how many pods you should have?
   const teamsInPods = 4;
-  const numOfPods = Math.floor(teams / teamsInPods);
+  // const numOfPods = Math.floor(teams / teamsInPods); // Unused variable
 
   // returns teams in groups of four on object
   const pods: PodsReturn = generatePods(names, teamsInPods);

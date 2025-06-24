@@ -2,11 +2,11 @@ import { expect } from '../spec-helper';
 import getTeamNamesAndNumber from '@lib/tourney/team-names-and-number'; // Using path alias
 
 // Define types for better clarity
-type TeamName = number | string;
-interface TeamInfo {
-  teams: number;
-  names: TeamName[];
-}
+// type TeamName = number | string; // Unused
+// interface TeamInfo { // Unused
+//   teams: number;
+//   names: TeamName[];
+// }
 
 describe('tourney/team-names-and-number', () => {
   describe('given null', () => {
