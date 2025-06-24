@@ -4,8 +4,26 @@ import { Game } from '../../tourney-time';
 export const annotateBackToBackGames = (
   inputScheduleData: Game[] | Game[][],
 ): Game[] | Game[][] => {
-  // Deep clone to avoid mutating original props, especially important if state is managed elsewhere
-  const processedScheduleData = JSON.parse(JSON.stringify(inputScheduleData));
+  if (
+    !inputScheduleData ||
+    inputScheduleData.length === 0
+  ) {
+    return inputScheduleData; // Return original if empty, no processing needed
+  }
+
+  // Deep clone explicitly to avoid potential issues with JSON.parse(JSON.stringify())
+  // and to ensure we're working with new objects/arrays.
+  let processedScheduleData: Game[] | Game[][];
+
+  if (!Array.isArray(inputScheduleData[0])) {
+    // It's Game[]
+    processedScheduleData = (inputScheduleData as Game[]).map(game => ({ ...game }));
+  } else {
+    // It's Game[][]
+    processedScheduleData = (inputScheduleData as Game[][]).map(block =>
+      block.map(game => ({ ...game })),
+    );
+  }
 
   if (
     !processedScheduleData ||
