@@ -37,8 +37,40 @@ const FullScheduleDisplay: React.FC<FullScheduleDisplayProps> = ({
 
   const canShowCombinedView = actualAreas > 1 && Array.isArray(scheduleData) && scheduleData.length > 0 && Array.isArray(scheduleData[0]);
 
+  const hasBackToBackGames = React.useMemo(() => {
+    if (!scheduleData || scheduleData.length === 0) {
+      return false;
+    }
+    if (Array.isArray(scheduleData[0])) {
+      // Game[][]
+      return (scheduleData as Game[][]).some(block =>
+        block.some(game => game.backToBackTeams && game.backToBackTeams.length > 0)
+      );
+    } else {
+      // Game[]
+      return (scheduleData as Game[]).some(
+        game => game.backToBackTeams && game.backToBackTeams.length > 0
+      );
+    }
+  }, [scheduleData]);
+
+  const messageStyle: React.CSSProperties = {
+    color: 'navy',
+    backgroundColor: '#e6f7ff',
+    border: '1px solid #91d5ff',
+    padding: '8px',
+    marginTop: '0px', // Adjusted from 10px to fit better at the top
+    marginBottom: '10px',
+    borderRadius: '4px',
+  };
+
   return (
     <div style={sectionStyle}>
+      {hasBackToBackGames && (
+        <p style={messageStyle}>
+          Teams highlighted in red are playing back-to-back games.
+        </p>
+      )}
       <div>
         <label>
           <input

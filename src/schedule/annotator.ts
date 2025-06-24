@@ -1,4 +1,4 @@
-import { Game } from '../../tourney-time';
+import { Game } from '../tourney-time';
 
 // Helper function to annotate games with back-to-back team information
 export const annotateBackToBackGames = (
@@ -29,6 +29,7 @@ export const annotateBackToBackGames = (
     !processedScheduleData ||
     processedScheduleData.length === 0
   ) {
+    // This check is somewhat redundant given the initial check, but safe.
     return processedScheduleData;
   }
 
@@ -41,7 +42,6 @@ export const annotateBackToBackGames = (
       const previousGame = games[i - 1];
       const currentGame = games[i];
 
-      // Ensure teams are defined and are arrays before attempting to filter/include
       if (previousGame.teams && Array.isArray(previousGame.teams) &&
           currentGame.teams && Array.isArray(currentGame.teams)) {
         const commonTeams = currentGame.teams.filter((team) =>

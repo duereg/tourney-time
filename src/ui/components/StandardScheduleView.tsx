@@ -1,63 +1,25 @@
 import React from 'react';
 import { Game } from '@lib/tourney-time';
 import GameTable from './GameTable'; // Assuming GameTable is in the same directory
-import { annotateBackToBackGames } from '../utils/annotateBackToBackGames'; // Import the moved function
+// Removed import for annotateBackToBackGames as it's now done in the library
 
 interface StandardScheduleViewProps {
-  scheduleData: Game[] | Game[][];
+  scheduleData: Game[] | Game[][]; // This data is now expected to be pre-annotated
   actualAreas: number;
 }
 
 const StandardScheduleView: React.FC<StandardScheduleViewProps> = ({
-  scheduleData: rawScheduleData, // Rename prop to avoid confusion
+  scheduleData, // Use scheduleData directly as it's pre-annotated
   actualAreas,
 }) => {
-  // Annotate games before any other processing
-  const scheduleData = React.useMemo(
-    () => annotateBackToBackGames(rawScheduleData),
-    [rawScheduleData]
-  );
-
-  const hasBackToBackGames = React.useMemo(() => {
-    if (!scheduleData || scheduleData.length === 0) {
-      return false;
-    }
-    if (Array.isArray(scheduleData[0])) {
-      // Game[][]
-      return (scheduleData as Game[][]).some(block =>
-        block.some(game => game.backToBackTeams && game.backToBackTeams.length > 0)
-      );
-    } else {
-      // Game[]
-      return (scheduleData as Game[]).some(
-        game => game.backToBackTeams && game.backToBackTeams.length > 0
-      );
-    }
-  }, [scheduleData]);
-
   if (!scheduleData || scheduleData.length === 0) {
     return <p>No games in this schedule.</p>;
   }
 
-  const messageStyle: React.CSSProperties = {
-    color: 'navy',
-    backgroundColor: '#e6f7ff',
-    border: '1px solid #91d5ff',
-    padding: '8px',
-    marginTop: '10px',
-    marginBottom: '10px',
-    borderRadius: '4px',
-  };
-
   // Main return for the component structure
+  // The informational message and its logic (hasBackToBackGames) have been moved to FullScheduleDisplay.tsx
   return (
     <>
-      {hasBackToBackGames && (
-        <p style={messageStyle}>
-          Teams highlighted in red are playing back-to-back games.
-        </p>
-      )}
-
       {/* Logic for displaying tables based on actualAreas and scheduleData structure */}
       {actualAreas > 1 && Array.isArray(scheduleData[0]) ? (
         <div>
