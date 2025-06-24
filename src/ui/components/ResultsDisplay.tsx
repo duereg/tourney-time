@@ -62,14 +62,51 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, error }) => {
       return <p>No games in this schedule.</p>;
     }
 
-    // Style for preformatted game lists (can keep existing preStyle)
-    // const preStyle: React.CSSProperties = { // preStyle is already defined in the component scope
-    //   backgroundColor: '#f4f4f4',
-    //   border: '1px solid #ddd',
-    //   padding: '10px',
-    //   overflowX: 'auto',
-    //   maxHeight: '400px',
-    // };
+    // Style for table (can be adjusted later)
+    const tableStyle: React.CSSProperties = {
+      width: '100%',
+      borderCollapse: 'collapse',
+      marginTop: '10px',
+    };
+    const thStyle: React.CSSProperties = {
+      border: '1px solid #ddd',
+      padding: '8px',
+      textAlign: 'left',
+      backgroundColor: '#f2f2f2',
+    };
+    const tdStyle: React.CSSProperties = {
+      border: '1px solid #ddd',
+      padding: '8px',
+      textAlign: 'left',
+    };
+
+    const renderTableForGames = (games: Game[], areaTitle?: string) => {
+      if (games.length === 0) {
+        return <p>No games scheduled {areaTitle ? `for ${areaTitle}` : ''}.</p>;
+      }
+      return (
+        <table style={tableStyle}>
+          <thead>
+            <tr>
+              <th style={thStyle}>Round</th>
+              <th style={thStyle}>Game ID</th>
+              <th style={thStyle}>Team 1</th>
+              <th style={thStyle}>Team 2</th>
+            </tr>
+          </thead>
+          <tbody>
+            {games.map((game, index) => (
+              <tr key={`${game.id}-${index}`}>
+                <td style={tdStyle}>{game.round}</td>
+                <td style={tdStyle}>{game.id}</td>
+                <td style={tdStyle}>{game.teams[0]}</td>
+                <td style={tdStyle}>{game.teams[1]}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      );
+    };
 
     // Case 1: Single actual area or schedule is already flat (Game[])
     if (actualAreas === 1 || !Array.isArray(scheduleData[0])) {
@@ -80,18 +117,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, error }) => {
       return (
         <div>
           <h4>Full Game Schedule (Single Area):</h4>
-          {games.length > 0 ? (
-            <pre style={preStyle}>
-              {games
-                .map(
-                  (game) =>
-                    `Round ${game.round}, Game ${game.id}: ${game.teams.join(' vs ')}`,
-                )
-                .join('\n')}
-            </pre>
-          ) : (
-            <p>No games scheduled for this area.</p>
-          )}
+          {renderTableForGames(games)}
         </div>
       );
     }
@@ -102,13 +128,9 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, error }) => {
 
     gameGroups.forEach((group) => {
       group.forEach((game, gameIndexInGroup) => {
-        // Assign game to an area. gameIndexInGroup corresponds to the area index (0-based)
-        // within that concurrent block of games.
         if (gameIndexInGroup < actualAreas) {
           scheduleByArea[gameIndexInGroup].push(game);
         }
-        // If a group has more games than actualAreas (e.g. pods scheduling),
-        // those extra games are currently ignored by this logic for per-area display.
       });
     });
 
@@ -116,20 +138,9 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, error }) => {
       <div>
         <h4>Full Game Schedule (Per Area):</h4>
         {scheduleByArea.map((areaSchedule, areaIndex) => (
-          <div key={areaIndex} style={{ marginBottom: '10px' }}>
+          <div key={areaIndex} style={{ marginBottom: '20px' }}>
             <h5>Schedule for Area {areaIndex + 1}</h5>
-            {areaSchedule.length > 0 ? (
-              <pre style={preStyle}>
-                {areaSchedule
-                  .map(
-                    (game) =>
-                      `  Round ${game.round}, Game ${game.id}: ${game.teams.join(' vs ')}`,
-                  )
-                  .join('\n')}
-              </pre>
-            ) : (
-              <p>No games scheduled for this area.</p>
-            )}
+            {renderTableForGames(areaSchedule, `Area ${areaIndex + 1}`)}
           </div>
         ))}
       </div>
