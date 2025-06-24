@@ -55,8 +55,24 @@ const GameTable: React.FC<GameTableProps> = ({ games, areaTitle }) => {
           >
             <td style={tdStyle}>{game.round}</td>
             <td style={tdStyle}>{game.id}</td>
-            <td style={tdStyle}>{game.teams[0]}</td>
-            <td style={tdStyle}>{game.teams[1]}</td>
+            <td
+              style={
+                game.backToBackTeams?.includes(game.teams[0])
+                  ? { ...tdStyle, color: 'red' }
+                  : tdStyle
+              }
+            >
+              {game.teams[0]}
+            </td>
+            <td
+              style={
+                game.backToBackTeams?.includes(game.teams[1])
+                  ? { ...tdStyle, color: 'red' }
+                  : tdStyle
+              }
+            >
+              {game.teams[1]}
+            </td>
           </tr>
         ))}
       </tbody>

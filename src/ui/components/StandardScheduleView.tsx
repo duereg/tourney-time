@@ -1,6 +1,7 @@
 import React from 'react';
 import { Game } from '@lib/tourney-time';
 import GameTable from './GameTable'; // Assuming GameTable is in the same directory
+import { annotateBackToBackGames } from '../utils/annotateBackToBackGames'; // Import the moved function
 
 interface StandardScheduleViewProps {
   scheduleData: Game[] | Game[][];
@@ -8,20 +9,31 @@ interface StandardScheduleViewProps {
 }
 
 const StandardScheduleView: React.FC<StandardScheduleViewProps> = ({
-  scheduleData,
+  scheduleData: rawScheduleData, // Rename prop to avoid confusion
   actualAreas,
 }) => {
+  // Annotate games before any other processing
+  const scheduleData = React.useMemo(
+    () => annotateBackToBackGames(rawScheduleData),
+    [rawScheduleData]
+  );
+
   if (!scheduleData || scheduleData.length === 0) {
     return <p>No games in this schedule.</p>;
   }
 
   // Case: Multiple areas, display per-area tables
   if (actualAreas > 1 && Array.isArray(scheduleData[0])) {
-    const scheduleByArea: Game[][] = Array.from({ length: actualAreas }, () => []);
-    const gameGroups = scheduleData as Game[][]; // Type assertion
+    // scheduleData here is Game[][] with annotated games
+    const gameGroups = scheduleData as Game[][];
+    const scheduleByArea: Game[][] = Array.from(
+      { length: actualAreas },
+      () => [],
+    );
 
     gameGroups.forEach((roundGameGroup) => {
       roundGameGroup.forEach((game, gameIndexInGroup) => {
+        // game object here already has backToBackTeams if applicable
         const areaIdx = gameIndexInGroup % actualAreas;
         if (areaIdx < actualAreas) {
           scheduleByArea[areaIdx].push(game);
@@ -43,11 +55,12 @@ const StandardScheduleView: React.FC<StandardScheduleViewProps> = ({
   }
 
   // Case: Single area or schedule is already flat (Game[])
-  // This also covers the case where actualAreas > 1 but scheduleData is not Game[][]
-  // (which would be unusual for multi-area but handled)
-  const games = (Array.isArray(scheduleData[0])
-    ? (scheduleData as Game[][]).flat() // Flatten if it's Game[][] but actualAreas is 1 (or other reasons)
-    : scheduleData) as Game[]; // Already Game[]
+  // scheduleData here is Game[] with annotated games
+  const games = (
+    Array.isArray(scheduleData[0])
+      ? (scheduleData as Game[][]).flat()
+      : scheduleData
+  ) as Game[];
 
   return (
     <div>
