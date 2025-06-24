@@ -5,6 +5,7 @@ import tourneyTime, {
   TourneyTimeOptions,
   TourneyTimeResult,
 } from '../tourney-time'; // Adjust path if necessary
+import './App.css';
 
 const App: React.FC = () => {
   // State for the results and any potential errors
@@ -51,16 +52,9 @@ const App: React.FC = () => {
     }
   };
 
-  const appStyle: React.CSSProperties = {
-    fontFamily: 'Arial, sans-serif',
-    maxWidth: '800px',
-    margin: '0 auto',
-    padding: '20px',
-  };
-
   return (
-    <div style={appStyle}>
-      <header style={{ textAlign: 'center', marginBottom: '20px' }}>
+    <div className="app">
+      <header className="appHeader">
         <h1>Tourney Time Calculator</h1>
       </header>
       <main>
@@ -70,14 +64,7 @@ const App: React.FC = () => {
         />
         <ResultsDisplay results={results} error={error} />
       </main>
-      <footer
-        style={{
-          textAlign: 'center',
-          marginTop: '30px',
-          fontSize: '0.9em',
-          color: '#777',
-        }}
-      >
+      <footer className="appFooter">
         <p>Powered by tourney-time library.</p>
       </footer>
     </div>
