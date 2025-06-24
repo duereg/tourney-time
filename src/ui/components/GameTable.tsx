@@ -26,6 +26,10 @@ const tdStyle: React.CSSProperties = {
   textAlign: 'left',
 };
 
+const oddRowStyle: React.CSSProperties = {
+  backgroundColor: '#f9f9f9', // Light gray for odd rows
+};
+
 const GameTable: React.FC<GameTableProps> = ({ games, areaTitle }) => {
   if (!games || games.length === 0) {
     return <p>No games scheduled {areaTitle ? `for ${areaTitle}` : ''}.</p>;
@@ -45,7 +49,10 @@ const GameTable: React.FC<GameTableProps> = ({ games, areaTitle }) => {
         {games.map((game, index) => (
           // Using game.id and index for key to ensure uniqueness if ids are not globally unique for some reason
           // Though game.id should ideally be unique enough.
-          <tr key={`${game.id}-${index}`}>
+          <tr
+            key={`${game.id}-${index}`}
+            style={index % 2 !== 0 ? oddRowStyle : undefined}
+          >
             <td style={tdStyle}>{game.round}</td>
             <td style={tdStyle}>{game.id}</td>
             <td style={tdStyle}>{game.teams[0]}</td>
