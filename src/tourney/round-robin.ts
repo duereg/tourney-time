@@ -1,5 +1,5 @@
 import roundrobinImported from 'roundrobin';
-import { Game, TourneyTimeOptions } from '../tourney-time'; // Adjusted import
+import { Game } from '../tourney-time'; // Adjusted import - TourneyTimeOptions removed
 
 // Interface for the config object (matching original structure if possible)
 interface RoundRobinConfig<T> {
@@ -19,8 +19,8 @@ export interface RoundRobinResult<T> {
 function roundRobin<T extends string | number>(
   teams: number,
   names: T[] = [],
-  sort = true, // Original default
-  config?: RoundRobinConfig<T>,
+  _sort = true, // Original default, prefixed with underscore
+  _config?: RoundRobinConfig<T>, // Prefixed with underscore
 ): RoundRobinResult<T> {
   // New check for undefined teams to ensure the test expectation is met
   if (typeof teams === 'undefined') {
@@ -138,7 +138,7 @@ function roundRobin<T extends string | number>(
   const actualGamesCount = scheduleFlat.filter(game => !game.isByeMatch).length;
 
   // Sorting logic (simplified, assuming no custom sort from config for now to reduce complexity)
-  // if (sort) {
+  // if (_sort) { // Check prefixed variable if sort logic is re-added
   //   // Apply a default sort or shuffle if required by original logic
   //   // For now, let's use the unsorted schedule to see if base logic compiles
   // }

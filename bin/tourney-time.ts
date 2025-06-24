@@ -2,7 +2,7 @@
 
 import yargs from 'yargs';
 import tourneyTime from '../src/tourney-time'; // Using path alias, assuming tourney-time exports default
-import { Schedule, Game } from '../src/tourney-time'; // Assuming these types are exported
+import { Game } from '../src/tourney-time'; // Assuming these types are exported, Schedule removed
 
 interface Argv {
   teams: number;

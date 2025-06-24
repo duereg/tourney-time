@@ -19,11 +19,11 @@ const threeGameSchedule: Game[] = [
   { id: 20, round: 2, teams: [1, 3] as any },
   { id: 30, round: 3, teams: [2, 1] as any },
 ];
-const threeGameResults: Game[][] = [
-  [{ id: 10, round: 1, teams: [3, 2] as any }],
-  [{ id: 20, round: 2, teams: [1, 3] as any }],
-  [{ id: 30, round: 3, teams: [2, 1] as any }],
-];
+// const threeGameResults: Game[][] = [ // Unused
+//   [{ id: 10, round: 1, teams: [3, 2] as any }],
+//   [{ id: 20, round: 2, teams: [1, 3] as any }],
+//   [{ id: 30, round: 3, teams: [2, 1] as any }],
+// ];
 const sixGameSchedule: Game[] = [
   { teams: [4, 1] as any, round: 1, id: 10 },
   { teams: [3, 2] as any, round: 1, id: 11 },
@@ -38,30 +38,30 @@ const fourGamePlayoff: Game[] = [
   { id: 221, round: 2, teams: ['Loser 211', 'Loser 212'] },
   { id: 222, round: 2, teams: ['Winner 211', 'Winner 212'] },
 ];
-const fourGameResults: Game[][] = [
-  [
-    { id: 211, round: 1, teams: ['Seed 1', 'Seed 4'] },
-    { id: 212, round: 1, teams: ['Seed 3', 'Seed 2'] },
-  ],
-  [
-    { id: 221, round: 2, teams: ['Loser 211', 'Loser 212'] },
-    { id: 222, round: 2, teams: ['Winner 211', 'Winner 212'] },
-  ],
-];
-const sixGameResults: Game[][] = [
-  [
-    { teams: [4, 1] as any, round: 1, id: 10 },
-    { teams: [3, 2] as any, round: 1, id: 11 },
-  ],
-  [
-    { teams: [1, 3] as any, round: 2, id: 20 },
-    { teams: [4, 2] as any, round: 2, id: 21 },
-  ],
-  [
-    { teams: [2, 1] as any, round: 3, id: 30 },
-    { teams: [4, 3] as any, round: 3, id: 31 },
-  ],
-];
+// const fourGameResults: Game[][] = [ // Unused
+//   [
+//     { id: 211, round: 1, teams: ['Seed 1', 'Seed 4'] },
+//     { id: 212, round: 1, teams: ['Seed 3', 'Seed 2'] },
+//   ],
+//   [
+//     { id: 221, round: 2, teams: ['Loser 211', 'Loser 212'] },
+//     { id: 222, round: 2, teams: ['Winner 211', 'Winner 212'] },
+//   ],
+// ];
+// const sixGameResults: Game[][] = [ // Unused
+//   [
+//     { teams: [4, 1] as any, round: 1, id: 10 },
+//     { teams: [3, 2] as any, round: 1, id: 11 },
+//   ],
+//   [
+//     { teams: [1, 3] as any, round: 2, id: 20 },
+//     { teams: [4, 2] as any, round: 2, id: 21 },
+//   ],
+//   [
+//     { teams: [2, 1] as any, round: 3, id: 30 },
+//     { teams: [4, 3] as any, round: 3, id: 31 },
+//   ],
+// ];
 
 describe('schedule/multiple', () => {
   let tourneySchedule: TestSchedule;

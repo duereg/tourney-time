@@ -106,7 +106,7 @@ class Tournament {
     // Number of rounds in a round-robin for N teams is N-1 (if N is even) or N (if N is odd, each team gets one bye)
     // The loop `for round in [1...@teams]` means rounds from 1 to `teams - 1`.
     // This is correct for an even number of teams, or for N-1 teams if one team is fixed/bye.
-    const numRounds = this.teams % 2 === 0 ? this.teams - 1 : this.teams;
+    // const numRounds = this.teams % 2 === 0 ? this.teams - 1 : this.teams; // numRounds is not used to control the loop below.
     // The original coffee `[1...@teams]` goes up to `teams-1`. So it assumes `teams-1` rounds.
 
     for (let r = 1; r < this.teams; r++) {
