@@ -14,7 +14,7 @@
 
 A web-based user interface for this tool is available, allowing you to easily calculate tournament schedules and times without using the command line.
 
-Access the online tool here: [Tourney Time UI](https://duereg.github.io/tourney-time/)
+Access the online tool here: [Tourney Time UI](https://duereg.github.io/tourney/)
 
 The UI allows for selection of different scheduling strategies:
 - **Full Round Robin:** Every team plays every other team.
