@@ -25,8 +25,8 @@
     "url": "https://github.com/duereg/tourney-time.git"
   },
   "scripts": {
-    "test": "rimraf dist && tsc -p tsconfig.json && TS_NODE_BASEURL=./dist mocha -r tsconfig-paths/register --config .mocharc.json",
-    "build": "tsc",
+    "test": "rimraf dist && npx -p typescript tsc -p tsconfig.json && TS_NODE_BASEURL=./dist mocha -r tsconfig-paths/register --config .mocharc.json",
+    "build": "npx -p typescript tsc",
     "start:ui": "parcel src/ui/index.html --dist-dir dist/ui",
     "build:ui": "parcel build src/ui/index.html --dist-dir docs --public-url ./",
     "lint": "eslint \"src/**/*.{ts,tsx}\" \"bin/**/*.ts\" \"test/**/*.ts\"",

@@ -54,65 +54,85 @@ describe('tourney-time', () => {
           expect(result.schedule.length).to.eql(2);
         });
 
-        it('should have the correct tourneySchedule', () => {
-          expect(result.tourneySchedule).to.eql({
-            games: 1,
-            teams: [1, 2], // roundRobin now includes teams array
-            type: 'round robin',
-            areas: 1,
-          });
+        it('should have the correct tourneySchedule games', () => {
+          expect(result.tourneySchedule.games).to.eql(1);
         });
 
-        it('should have the correct playoffSchedule', () => {
-          expect(result.playoffSchedule).to.eql({
-            games: 1,
-            type: 'knockout',
-          });
+        it('should have the correct tourneySchedule teams', () => {
+          expect(result.tourneySchedule.teams).to.eql([1, 2]);
+        });
+
+        it('should have the correct tourneySchedule type', () => {
+          expect(result.tourneySchedule.type).to.eql('round robin');
+        });
+
+        it('should have the correct tourneySchedule areas', () => {
+          expect(result.tourneySchedule.areas).to.eql(1);
+        });
+
+        it('should have the correct playoffSchedule games', () => {
+          expect(result.playoffSchedule.games).to.eql(1);
+        });
+
+        it('should have the correct playoffSchedule type', () => {
+          expect(result.playoffSchedule.type).to.eql('knockout');
         });
       });
     });
 
     describe('given ten teams, with all options', () => {
-      let result: TourneyTimeResult;
+      describe('generates correct output', () => {
+        let result: TourneyTimeResult;
 
-      beforeEach(() => {
-        // This test originally expected 'pods' due to 10 teams, 1 area.
-        const options: TestTourneyTimeOptions = { ...defaultTourney, teams: 10, schedulingStrategy: 'pods' };
-        result = tourneyTime(options);
-      });
+        beforeEach(() => {
+          // This test originally expected 'pods' due to 10 teams, 1 area.
+          const options: TestTourneyTimeOptions = { ...defaultTourney, teams: 10, schedulingStrategy: 'pods' };
+          result = tourneyTime(options);
+        });
 
-      it('generates 950 minutes needed', () => { // Corrected based on test actuals
-        expect(result.timeNeededMinutes).to.eq(950);
-      });
+        it('should generate 950 minutes needed', () => { // Corrected based on test actuals
+          expect(result.timeNeededMinutes).to.eq(950);
+        });
 
-      it('generates the correct type of tourney schedule', () => {
-        expect(result.tourneySchedule).to.eql({
-          games: 28, // Corrected based on test actuals
-          type: 'pods',
-          areas: 1,
-          // From pods() result for 10 teams
-          pods: {
+        it('should generate the correct tourney schedule games', () => {
+          expect(result.tourneySchedule.games).to.eql(28); // Corrected based on test actuals
+        });
+
+        it('should generate the correct tourney schedule type', () => {
+          expect(result.tourneySchedule.type).to.eql('pods');
+        });
+
+        it('should generate the correct tourney schedule areas', () => {
+          expect(result.tourneySchedule.areas).to.eql(1);
+        });
+
+        it('should generate the correct tourney schedule pods', () => {
+          expect(result.tourneySchedule.pods).to.eql({
             '1': [1, 4, 7, 10],
             '2': [2, 5, 8],
             '3': [3, 6, 9],
-          },
-          divisions: [
+          });
+        });
+
+        it('should generate the correct tourney schedule divisions', () => {
+          expect(result.tourneySchedule.divisions).to.eql([
             ['1st Pod 1', '1st Pod 2', '1st Pod 3'],
             ['2nd Pod 1', '2nd Pod 2', '2nd Pod 3'],
             ['3rd Pod 1', '3rd Pod 2', '3rd Pod 3', '4th Pod 1'],
-          ],
+          ]);
         });
-      });
 
-      it('generates a 10 game playoff schedule', () => { // Corrected to 10 actual games
-        expect(result.playoffSchedule).to.eql({
-          games: 10,
-          type: 'knockout'
+        it('should generate a 10 game playoff schedule games', () => { // Corrected to 10 actual games
+          expect(result.playoffSchedule.games).to.eql(10);
         });
-      });
 
-      it('generates a schedule containing 56 games/byes', () => { // Corrected based on test actuals (40+16=56)
-        expect(result.schedule.length).to.eq(56);
+        it('should generate a playoff schedule type knockout', () => {
+          expect(result.playoffSchedule.type).to.eql('knockout');
+        });
+
+        it('should generate a schedule containing 56 games/byes', () => { // Corrected based on test actuals (40+16=56)
+          expect(result.schedule.length).to.eq(56);
+        });
       });
     });
   });
@@ -142,20 +162,28 @@ describe('tourney-time', () => {
           expect(result.schedule.length).to.eql(2);
         });
 
-        it('should have the correct tourneySchedule', () => {
-          expect(result.tourneySchedule).to.eql({
-            areas: 1,
-            games: 1,
-            teams: [1, 2], // roundRobin now includes teams array
-            type: 'round robin',
-          });
+        it('should have the correct tourneySchedule areas', () => {
+          expect(result.tourneySchedule.areas).to.eql(1);
         });
 
-        it('should have the correct playoffSchedule', () => {
-          expect(result.playoffSchedule).to.eql({
-            games: 1,
-            type: 'knockout',
-          });
+        it('should have the correct tourneySchedule games', () => {
+          expect(result.tourneySchedule.games).to.eql(1);
+        });
+
+        it('should have the correct tourneySchedule teams', () => {
+          expect(result.tourneySchedule.teams).to.eql([1, 2]); // roundRobin now includes teams array
+        });
+
+        it('should have the correct tourneySchedule type', () => {
+          expect(result.tourneySchedule.type).to.eql('round robin');
+        });
+
+        it('should have the correct playoffSchedule games', () => {
+          expect(result.playoffSchedule.games).to.eql(1);
+        });
+
+        it('should have the correct playoffSchedule type', () => {
+          expect(result.playoffSchedule.type).to.eql('knockout');
         });
       });
     });
@@ -268,98 +296,115 @@ describe('tourney-time', () => {
           });
         });
 
-        it('should have the correct tourneySchedule', () => {
-          expect(result.tourneySchedule).to.eql({
-            areas: 1,
-            games: 3, // Actual games from RR(3)
-            teams: [1, 2, 3], // roundRobin now includes teams array
-            type: 'round robin',
-          });
+        it('should have the correct tourneySchedule areas', () => {
+          expect(result.tourneySchedule.areas).to.eql(1);
+        });
+        it('should have the correct tourneySchedule games', () => {
+          expect(result.tourneySchedule.games).to.eql(3); // Actual games from RR(3)
+        });
+        it('should have the correct tourneySchedule teams', () => {
+          expect(result.tourneySchedule.teams).to.eql([1, 2, 3]); // roundRobin now includes teams array
+        });
+        it('should have the correct tourneySchedule type', () => {
+          expect(result.tourneySchedule.type).to.eql('round robin');
         });
 
-        it('should have the correct playoffSchedule', () => {
-          expect(result.playoffSchedule).to.eql({
-            games: 2, // Actual games from duel(3)
-            type: 'knockout',
-          });
+        it('should have the correct playoffSchedule games', () => {
+          expect(result.playoffSchedule.games).to.eql(2); // Actual games from duel(3)
+        });
+        it('should have the correct playoffSchedule type', () => {
+          expect(result.playoffSchedule.type).to.eql('knockout');
         });
       });
     });
 
     describe('given four teams', () => {
-      let result: TourneyTimeResult;
+      describe('generates correct output', () => {
+        let result: TourneyTimeResult;
 
-      beforeEach(() => {
-        const options: TestTourneyTimeOptions = { ...defaultTourney, teams: 4 };
-        result = tourneyTime(options);
-      });
-
-      it('generates a 4 game playoff schedule', () => {
-        expect(result.playoffSchedule).to.eql({
-          games: 4,
-          type: 'knockout'
+        beforeEach(() => {
+          const options: TestTourneyTimeOptions = { ...defaultTourney, teams: 4 };
+          result = tourneyTime(options);
         });
-      });
 
-      it('generates 200 minutes needed', () => {
-        expect(result.timeNeededMinutes).to.eq(200);
-      });
-
-      it('generates the 6 game tourney schedule', () => {
-        expect(result.tourneySchedule).to.eql({
-          games: 6,
-          teams: [1, 2, 3, 4], // roundRobin now includes teams array
-          type: 'round robin',
-          areas: 2,
+        it('should generate a 4 game playoff schedule games', () => {
+          expect(result.playoffSchedule.games).to.eql(4);
         });
-      });
+        it('should generate a playoff schedule type knockout', () => {
+          expect(result.playoffSchedule.type).to.eql('knockout');
+        });
 
-      it('generates a schedule containing 5 effective rounds', () => {
-        expect(result.schedule.length).to.eq(5);
+        it('should generate 200 minutes needed', () => {
+          expect(result.timeNeededMinutes).to.eq(200);
+        });
+
+        it('should generate the 6 game tourney schedule games', () => {
+          expect(result.tourneySchedule.games).to.eql(6);
+        });
+        it('should generate the tourney schedule teams', () => {
+          expect(result.tourneySchedule.teams).to.eql([1, 2, 3, 4]); // roundRobin now includes teams array
+        });
+        it('should generate the tourney schedule type round robin', () => {
+          expect(result.tourneySchedule.type).to.eql('round robin');
+        });
+        it('should generate the tourney schedule areas', () => {
+          expect(result.tourneySchedule.areas).to.eql(2);
+        });
+
+        it('should generate a schedule containing 5 effective rounds', () => {
+          expect(result.schedule.length).to.eq(5);
+        });
       });
     });
 
     describe('given ten teams', () => {
-      let result: TourneyTimeResult;
+      describe('generates correct output', () => {
+        let result: TourneyTimeResult;
 
-      beforeEach(() => {
-        // This test originally expected 'pods' due to 10 teams, 2 areas.
-        const options: TestTourneyTimeOptions = { ...defaultTourney, teams: 10, schedulingStrategy: 'pods' };
-        result = tourneyTime(options);
-      });
-
-      it('generates a 10 game playoff schedule', () => { // Corrected to 10 actual games
-        expect(result.playoffSchedule).to.eql({
-          games: 10,
-          type: 'knockout'
+        beforeEach(() => {
+          // This test originally expected 'pods' due to 10 teams, 2 areas.
+          const options: TestTourneyTimeOptions = { ...defaultTourney, teams: 10, schedulingStrategy: 'pods' };
+          result = tourneyTime(options);
         });
-      });
 
-      it('generates 760 minutes needed', () => { // Corrected based on test actuals
-        expect(result.timeNeededMinutes).to.eq(760);
-      });
+        it('should generate a 10 game playoff schedule games', () => { // Corrected to 10 actual games
+          expect(result.playoffSchedule.games).to.eql(10);
+        });
+        it('should generate a playoff schedule type knockout', () => {
+          expect(result.playoffSchedule.type).to.eql('knockout');
+        });
 
-      it('generates a 28 game tourney schedule', () => { // Corrected based on test actuals
-        expect(result.tourneySchedule).to.eql({
-          games: 28,
-          type: 'pods',
-          areas: 2,
-          // From pods() result for 10 teams
-          pods: {
+        it('should generate 760 minutes needed', () => { // Corrected based on test actuals
+          expect(result.timeNeededMinutes).to.eq(760);
+        });
+
+        it('should generate a 28 game tourney schedule games', () => { // Corrected based on test actuals
+          expect(result.tourneySchedule.games).to.eql(28);
+        });
+        it('should generate a tourney schedule type pods', () => {
+          expect(result.tourneySchedule.type).to.eql('pods');
+        });
+        it('should generate a tourney schedule areas', () => {
+          expect(result.tourneySchedule.areas).to.eql(2);
+        });
+        it('should generate a tourney schedule pods', () => {
+          expect(result.tourneySchedule.pods).to.eql({
             '1': [1, 4, 7, 10],
             '2': [2, 5, 8],
             '3': [3, 6, 9],
-          },
-          divisions: [
+          });
+        });
+        it('should generate a tourney schedule divisions', () => {
+          expect(result.tourneySchedule.divisions).to.eql([
             ['1st Pod 1', '1st Pod 2', '1st Pod 3'],
             ['2nd Pod 1', '2nd Pod 2', '2nd Pod 3'],
             ['3rd Pod 1', '3rd Pod 2', '3rd Pod 3', '4th Pod 1'],
-          ],
+          ]);
         });
-      });
 
-      it('generates a schedule containing 28 effective rounds', () => { // Corrected based on test actuals
-        expect(result.schedule.length).to.eq(28);
+        it('should generate a schedule containing 28 effective rounds', () => { // Corrected based on test actuals
+          expect(result.schedule.length).to.eq(28);
+        });
       });
     });
   });
