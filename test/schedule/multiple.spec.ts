@@ -164,17 +164,33 @@ describe('schedule/multiple', () => {
           args.playoffSchedule.games = 1;
         });
 
-        it('returns two games in two rounds', () => {
-          const result = multiAreaSchedule(args as MultipleOptions);
-          // Block 1: [game from tourney]
-          // Block 2: [game from playoff] - this game is b2b with game from tourney
-          expect(result.length).to.equal(2);
-          expect(result[0].length).to.equal(1);
-          expect(result[1].length).to.equal(1);
-          expect(result[0][0]).to.deep.include({ ...singleGameSchedule[0] });
-          expect(result[0][0].backToBackTeams).to.be.undefined;
-          expect(result[1][0]).to.deep.include({ ...playoffClone[0] });
-          expect(result[1][0].backToBackTeams).to.deep.equal(playoffClone[0].teams);
+        describe('result analysis', () => {
+          let result: Game[][];
+          beforeEach(() => {
+            result = multiAreaSchedule(args as MultipleOptions);
+          });
+
+          it('should return 2 rounds', () => {
+            expect(result.length).to.equal(2);
+          });
+          it('should have 1 game in the first round', () => {
+            expect(result[0].length).to.equal(1);
+          });
+          it('should have 1 game in the second round', () => {
+            expect(result[1].length).to.equal(1);
+          });
+          it('should include the tourney game in the first round', () => {
+            expect(result[0][0]).to.deep.include({ ...singleGameSchedule[0] });
+          });
+          it('should not mark the tourney game as back-to-back', () => {
+            expect(result[0][0].backToBackTeams).to.be.undefined;
+          });
+          it('should include the playoff game in the second round', () => {
+            expect(result[1][0]).to.deep.include({ ...playoffClone[0] });
+          });
+          it('should mark the playoff game as back-to-back with its teams', () => {
+            expect(result[1][0].backToBackTeams).to.deep.equal(playoffClone[0].teams);
+          });
         });
       });
     });
@@ -184,10 +200,6 @@ describe('schedule/multiple', () => {
       // { id: 10, round: 1, teams: [3, 2] },
       // { id: 20, round: 2, teams: [1, 3] },
       // { id: 30, round: 3, teams: [2, 1] },
-      // threeGameResults: (expected structure from scheduleBalancer before annotation)
-      // [[{ id: 10, r:1, t:[3,2] }]],
-      // [[{ id: 20, r:2, t:[1,3] }]],
-      // [[{ id: 30, r:3, t:[2,1] }]],
       beforeEach(() => {
         args.tourneySchedule.schedule = threeGameSchedule; // This is Game[]
         args.tourneySchedule.games = 3;
@@ -195,27 +207,40 @@ describe('schedule/multiple', () => {
         args.playoffSchedule.games = 0;
       });
 
-      it('returns three rounds of games, as a team cannot play twice in the same round, annotated', () => {
-        const result = multiAreaSchedule(args as MultipleOptions);
-        expect(result.length).to.equal(3);
-        expect(result[0][0]).to.deep.include({ ...threeGameSchedule[0] });
-        expect(result[0][0].backToBackTeams).to.be.undefined;
+      describe('when scheduled (annotated)', () => {
+        let result: Game[][];
+        beforeEach(() => {
+          result = multiAreaSchedule(args as MultipleOptions);
+        });
 
-        expect(result[1][0]).to.deep.include({ ...threeGameSchedule[1] });
-        expect(result[1][0].backToBackTeams).to.deep.equal([3]); // Team 3 from game 0
-
-        expect(result[2][0]).to.deep.include({ ...threeGameSchedule[2] });
-        expect(result[2][0].backToBackTeams).to.deep.equal([1]); // Team 1 from game 1
+        it('should return three rounds of games', () => {
+          expect(result.length).to.equal(3);
+        });
+        it('should include the first tourney game in round 1', () => {
+          expect(result[0][0]).to.deep.include({ ...threeGameSchedule[0] });
+        });
+        it('should not mark the first tourney game as back-to-back', () => {
+          expect(result[0][0].backToBackTeams).to.be.undefined;
+        });
+        it('should include the second tourney game in round 2', () => {
+          expect(result[1][0]).to.deep.include({ ...threeGameSchedule[1] });
+        });
+        it('should mark team 3 as back-to-back for the second game', () => {
+          expect(result[1][0].backToBackTeams).to.deep.equal([3]); // Team 3 from game 0
+        });
+        it('should include the third tourney game in round 3', () => {
+          expect(result[2][0]).to.deep.include({ ...threeGameSchedule[2] });
+        });
+        it('should mark team 1 as back-to-back for the third game', () => {
+          expect(result[2][0].backToBackTeams).to.deep.equal([1]); // Team 1 from game 1
+        });
       });
+
 
       describe('and a two game playoff schedule, where the same teams play in the same round', () => {
         let playoffGamesInput: Game[];
         beforeEach(() => {
-          args.playoffSchedule.schedule = [
-            { id: 40, round: 1, teams: [3, 2] as any },
-            { id: 50, round: 1, teams: [1, 3] as any },
-          ];
-          playoffGamesInput = [ // Capture for use in assertions
+          playoffGamesInput = [
             { id: 40, round: 1, teams: [3, 2] as any },
             { id: 50, round: 1, teams: [1, 3] as any },
           ];
@@ -223,20 +248,40 @@ describe('schedule/multiple', () => {
           args.playoffSchedule.games = 2;
         });
 
-        it('returns five games in five rounds, annotated', () => {
-          const result = multiAreaSchedule(args as MultipleOptions);
-          expect(result.length).to.equal(5);
-          // Tourney part (first 3 blocks)
-          expect(result[0][0].backToBackTeams).to.be.undefined;
-          expect(result[1][0].backToBackTeams).to.deep.equal([3]); // Team 3 from block 0
-          expect(result[2][0].backToBackTeams).to.deep.equal([1]); // Team 1 from block 1
+        describe('when scheduled (annotated)', () => {
+          let result: Game[][];
+          beforeEach(() => {
+            result = multiAreaSchedule(args as MultipleOptions);
+          });
+
+          it('should return five games in five rounds', () => {
+            expect(result.length).to.equal(5);
+          });
+          // Tourney part (first 3 blocks) - already tested above, re-verifying context
+          it('should not mark the first tourney game (block 0) as back-to-back', () => {
+            expect(result[0][0].backToBackTeams).to.be.undefined;
+          });
+          it('should mark team 3 as back-to-back for the second tourney game (block 1)', () => {
+            expect(result[1][0].backToBackTeams).to.deep.equal([3]);
+          });
+          it('should mark team 1 as back-to-back for the third tourney game (block 2)', () => {
+            expect(result[2][0].backToBackTeams).to.deep.equal([1]);
+          });
           // Playoff part (next 2 blocks)
-          // Game {id: 40, t:[3,2]} is b2b with game {id:30, t:[2,1]} from block 2 (Team 2)
-          // Game {id: 50, t:[1,3]} is b2b with game {id:40, t:[3,2]} from block 3 (Team 3)
-          expect(result[3][0]).to.deep.include({ ...playoffGamesInput[0] });
-          expect(result[3][0].backToBackTeams).to.deep.equal([2]);
-          expect(result[4][0]).to.deep.include({ ...playoffGamesInput[1] });
-          expect(result[4][0].backToBackTeams).to.deep.equal([3]);
+          it('should include the first playoff game in block 3', () => {
+            expect(result[3][0]).to.deep.include({ ...playoffGamesInput[0] });
+          });
+          it('should mark team 2 as back-to-back for the first playoff game (block 3)', () => {
+            // Game {id: 40, t:[3,2]} is b2b with game {id:30, t:[2,1]} from block 2 (Team 2)
+            expect(result[3][0].backToBackTeams).to.deep.equal([2]);
+          });
+          it('should include the second playoff game in block 4', () => {
+            expect(result[4][0]).to.deep.include({ ...playoffGamesInput[1] });
+          });
+          it('should mark team 3 as back-to-back for the second playoff game (block 4)', () => {
+            // Game {id: 50, t:[1,3]} is b2b with game {id:40, t:[3,2]} from block 3 (Team 3)
+            expect(result[4][0].backToBackTeams).to.deep.equal([3]);
+          });
         });
       });
 
@@ -244,35 +289,51 @@ describe('schedule/multiple', () => {
         let playoffGamesInput: Game[];
         beforeEach(() => {
           playoffGamesInput = [
-            { id: 40, round: 1, teams: [3, 2] as any }, // Different round from tourney games for simplicity in old tests
-            { id: 50, round: 2, teams: [4, 1] as any }, // Different round
+            { id: 40, round: 1, teams: [3, 2] as any },
+            { id: 50, round: 2, teams: [4, 1] as any },
           ];
           args.playoffSchedule.schedule = playoffGamesInput;
           args.playoffSchedule.games = 2;
         });
+        describe('when scheduled (annotated)', () => {
+          let result: Game[][];
+          beforeEach(() => {
+            result = multiAreaSchedule(args as MultipleOptions);
+          });
 
-        it('returns five games in five rounds, annotated', () => {
-          const result = multiAreaSchedule(args as MultipleOptions);
-          expect(result.length).to.equal(5);
-           // Tourney part (first 3 blocks)
-          expect(result[0][0].backToBackTeams).to.be.undefined;
-          expect(result[1][0].backToBackTeams).to.deep.equal([3]);
-          expect(result[2][0].backToBackTeams).to.deep.equal([1]);
+          it('should return five games in five rounds', () => {
+            expect(result.length).to.equal(5);
+          });
+          // Tourney part (first 3 blocks) - already tested
+          it('should not mark game in block 0 as b2b', () => {
+            expect(result[0][0].backToBackTeams).to.be.undefined;
+          });
+          it('should mark game in block 1 b2b with team 3', () => {
+            expect(result[1][0].backToBackTeams).to.deep.equal([3]);
+          });
+          it('should mark game in block 2 b2b with team 1', () => {
+            expect(result[2][0].backToBackTeams).to.deep.equal([1]);
+          });
           // Playoff part
-          // Game {id: 40, t:[3,2]} is b2b with game {id:30, t:[2,1]} (Team 2)
-          // Game {id: 50, t:[4,1]} is b2b with game {id:40, t:[3,2]} (no common teams - this was an error in manual trace)
-          // Let's re-evaluate: prev block game is {id:40, t:[3,2]}. Current game {id:50, t:[4,1]}. No common teams.
-          expect(result[3][0]).to.deep.include({ ...playoffGamesInput[0] });
-          expect(result[3][0].backToBackTeams).to.deep.equal([2]);
-          expect(result[4][0]).to.deep.include({ ...playoffGamesInput[1] });
-          expect(result[4][0].backToBackTeams).to.be.undefined; // No common teams with [3,2]
+          it('should include first playoff game in block 3', () => {
+            expect(result[3][0]).to.deep.include({ ...playoffGamesInput[0] });
+          });
+          it('should mark game in block 3 b2b with team 2', () => {
+            // Game {id: 40, t:[3,2]} is b2b with game {id:30, t:[2,1]} (Team 2)
+            expect(result[3][0].backToBackTeams).to.deep.equal([2]);
+          });
+          it('should include second playoff game in block 4', () => {
+            expect(result[4][0]).to.deep.include({ ...playoffGamesInput[1] });
+          });
+          it('should not mark game in block 4 as b2b', () => {
+            // Game {id: 50, t:[4,1]} vs prev block game {id:40, t:[3,2]}. No common.
+            expect(result[4][0].backToBackTeams).to.be.undefined;
+          });
         });
       });
     });
 
     describe('given a six game tournament schedule', () => {
-      // sixGameSchedule is Game[]
-      // sixGameResults is Game[][] - this is the expected output from scheduleBalancer *before* annotation
       // Block 0: [{ teams: [4, 1], r:1,id:10 }, { teams: [3, 2], r:1,id:11 }]
       // Block 1: [{ teams: [1, 3], r:2,id:20 }, { teams: [4, 2], r:2,id:21 }]
       // Block 2: [{ teams: [2, 1], r:3,id:30 }, { teams: [4, 3], r:3,id:31 }]
@@ -282,67 +343,92 @@ describe('schedule/multiple', () => {
         args.playoffSchedule.schedule = [];
         args.playoffSchedule.games = 0;
       });
+      describe('when scheduled (annotated)', () => {
+        let result: Game[][];
+        beforeEach(() => {
+          result = multiAreaSchedule(args as MultipleOptions);
+        });
 
-      it('returns three rounds of games, annotated', () => {
-        const result = multiAreaSchedule(args as MultipleOptions);
-        expect(result.length).to.equal(3); // 3 blocks
-        // Block 0: No annotations
-        result[0].forEach(game => expect(game.backToBackTeams).to.be.undefined);
+        it('should return three rounds of games', () => {
+          expect(result.length).to.equal(3); // 3 blocks
+        });
 
-        // Block 1:
-        // Game id:20 {t:[1,3]} - Team 1 b2b with id:10 {t:[4,1]}. Team 3 b2b with id:11 {t:[3,2]}
-        expect(result[1].find(g=>g.id===20)!.backToBackTeams).to.deep.members([1,3]);
-        // Game id:21 {t:[4,2]} - Team 4 b2b with id:10 {t:[4,1]}. Team 2 b2b with id:11 {t:[3,2]}
-        expect(result[1].find(g=>g.id===21)!.backToBackTeams).to.deep.members([4,2]);
+        it('should not mark games in block 0 as back-to-back', () => {
+          result[0].forEach(game => expect(game.backToBackTeams).to.be.undefined);
+        });
 
-        // Block 2:
-        // Game id:30 {t:[2,1]} - Team 2 b2b with id:21 {t:[4,2]}. Team 1 b2b with id:20 {t:[1,3]}
-        expect(result[2].find(g=>g.id===30)!.backToBackTeams).to.deep.members([1,2]);
-        // Game id:31 {t:[4,3]} - Team 4 b2b with id:21 {t:[4,2]}. Team 3 b2b with id:20 {t:[1,3]}
-        expect(result[2].find(g=>g.id===31)!.backToBackTeams).to.deep.members([3,4]);
+        it('should mark game id:20 in block 1 as back-to-back with teams [1,3]', () => {
+          // Game id:20 {t:[1,3]} - Team 1 b2b with id:10 {t:[4,1]}. Team 3 b2b with id:11 {t:[3,2]}
+          expect(result[1].find(g => g.id === 20)!.backToBackTeams).to.deep.members([1, 3]);
+        });
+        it('should mark game id:21 in block 1 as back-to-back with teams [4,2]', () => {
+          // Game id:21 {t:[4,2]} - Team 4 b2b with id:10 {t:[4,1]}. Team 2 b2b with id:11 {t:[3,2]}
+          expect(result[1].find(g => g.id === 21)!.backToBackTeams).to.deep.members([4, 2]);
+        });
+        it('should mark game id:30 in block 2 as back-to-back with teams [1,2]', () => {
+          // Game id:30 {t:[2,1]} - Team 2 b2b with id:21 {t:[4,2]}. Team 1 b2b with id:20 {t:[1,3]}
+          expect(result[2].find(g => g.id === 30)!.backToBackTeams).to.deep.members([1, 2]);
+        });
+        it('should mark game id:31 in block 2 as back-to-back with teams [3,4]', () => {
+          // Game id:31 {t:[4,3]} - Team 4 b2b with id:21 {t:[4,2]}. Team 3 b2b with id:20 {t:[1,3]}
+          expect(result[2].find(g => g.id === 31)!.backToBackTeams).to.deep.members([3, 4]);
+        });
       });
 
+
       describe('and a four game playoff schedule', () => {
-        // fourGamePlayoff is Game[]
-        // fourGameResults is Game[][] - expected from scheduleBalancer for playoff part
         // Block P0: [{id:211, r:1, t:['S1','S4']}, {id:212, r:1, t:['S3','S2']}]
         // Block P1: [{id:221, r:2, t:['L211','L212']}, {id:222, r:2, t:['W211','W212']}]
         beforeEach(() => {
           args.playoffSchedule.schedule = fourGamePlayoff;
           args.playoffSchedule.games = 4;
         });
+        describe('when scheduled (annotated)', () => {
+          let result: Game[][];
+          beforeEach(() => {
+            result = multiAreaSchedule(args as MultipleOptions);
+          });
 
-        it('returns five rounds total, annotated', () => {
-          const result = multiAreaSchedule(args as MultipleOptions);
-          expect(result.length).to.equal(5); // 3 from tourney + 2 from playoff
+          it('should return five rounds total', () => {
+            expect(result.length).to.equal(5); // 3 from tourney + 2 from playoff
+          });
 
-          // Tourney annotations (already checked above, ensure they are still there)
-          expect(result[1].find(g=>g.id===20)!.backToBackTeams).to.deep.members([1,3]);
-          expect(result[1].find(g=>g.id===21)!.backToBackTeams).to.deep.members([4,2]);
-          expect(result[2].find(g=>g.id===30)!.backToBackTeams).to.deep.members([1,2]);
-          expect(result[2].find(g=>g.id===31)!.backToBackTeams).to.deep.members([3,4]);
+          // Tourney annotations (already checked above, re-verifying context)
+          it('should correctly annotate tourney game id:20 (block 1)', () => {
+            expect(result[1].find(g => g.id === 20)!.backToBackTeams).to.deep.members([1, 3]);
+          });
+          it('should correctly annotate tourney game id:21 (block 1)', () => {
+            expect(result[1].find(g => g.id === 21)!.backToBackTeams).to.deep.members([4, 2]);
+          });
+          it('should correctly annotate tourney game id:30 (block 2)', () => {
+            expect(result[2].find(g => g.id === 30)!.backToBackTeams).to.deep.members([1, 2]);
+          });
+          it('should correctly annotate tourney game id:31 (block 2)', () => {
+            expect(result[2].find(g => g.id === 31)!.backToBackTeams).to.deep.members([3, 4]);
+          });
 
           // Playoff annotations (Blocks 3 and 4 of combined schedule)
-          // Block 3 (was P0): Games id:211, id:212
-          // Teams from Block 2 (tourney): [2,1] from id:30 and [4,3] from id:31. So, [1,2,3,4]
-          // Game id:211 {t:['S1','S4']} - S1/S4 not in [1,2,3,4] (assuming string comparison)
-          // Game id:212 {t:['S3','S2']} - S3/S2 not in [1,2,3,4]
-          // So, no annotations for Block 3 if team names are distinct strings.
-          // The original test data uses strings like 'Seed 1'.
-          // The previous tourney games used numbers. They won't match.
-          result[3].forEach(game => expect(game.backToBackTeams).to.be.undefined);
+          it('should not mark playoff games in block 3 as back-to-back', () => {
+            // Teams from Block 2 (tourney): [2,1] from id:30 and [4,3] from id:31. So, [1,2,3,4]
+            // Game id:211 {t:['S1','S4']} - S1/S4 not in [1,2,3,4]
+            // Game id:212 {t:['S3','S2']} - S3/S2 not in [1,2,3,4]
+            result[3].forEach(game => expect(game.backToBackTeams).to.be.undefined);
+          });
 
-          // Block 4 (was P1): Games id:221, id:222
-          // Teams from Block 3 (playoff): ['S1','S4'] from id:211 and ['S3','S2'] from id:212. So, [S1,S2,S3,S4]
-          // Game id:221 {t:['L211','L212']} - These are placeholder names, not actual teams from previous block.
-          // Game id:222 {t:['W211','W212']} - Same here.
-          // Therefore, they should not be marked as back-to-back based on team name identity.
-          const game221 = result[4].find(g=>g.id===221);
-          const game222 = result[4].find(g=>g.id===222);
-          expect(game221, "Game 221 should exist").to.exist;
-          expect(game222, "Game 222 should exist").to.exist;
-          expect(game221!.backToBackTeams).to.be.undefined;
-          expect(game222!.backToBackTeams).to.be.undefined;
+          it('should ensure playoff game 221 exists in block 4', () => {
+            expect(result[4].find(g => g.id === 221), "Game 221 should exist").to.exist;
+          });
+          it('should not mark playoff game 221 in block 4 as back-to-back', () => {
+            // Game id:221 {t:['L211','L212']} vs Block 3 teams ['S1','S4'],['S3','S2']
+            expect(result[4].find(g => g.id === 221)!.backToBackTeams).to.be.undefined;
+          });
+          it('should ensure playoff game 222 exists in block 4', () => {
+            expect(result[4].find(g => g.id === 222), "Game 222 should exist").to.exist;
+          });
+          it('should not mark playoff game 222 in block 4 as back-to-back', () => {
+            // Game id:222 {t:['W211','W212']} vs Block 3 teams
+            expect(result[4].find(g => g.id === 222)!.backToBackTeams).to.be.undefined;
+          });
         });
       });
     });
